@@ -14,5 +14,7 @@
 section {
   width: 100%;
   background-color: bisque;
+
+  user-select: none;
 }
 </style>
