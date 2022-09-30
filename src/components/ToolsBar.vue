@@ -9,10 +9,12 @@
 
 <style scoped lang="scss">
 .tools-bar {
-  width: 150px;
+  width: 120px;
+  min-width: 120px;
+
   transition: all .3s ease-in-out;
 
-  background-color: bisque;
+  background-color: #7F91A1;
 
   @media screen and (max-width: 850px) {
     display: none;

@@ -2,19 +2,25 @@
 </script>
 
 <template>
-  <section>
-    <h1>Canvas</h1>
-    <n-card title="Card">
-      Card Content
-    </n-card>
+  <section class="canvas-section">
+    <h2>Canvas</h2>
+    <div class="test"></div>
   </section>
 </template>
 
 <style scoped lang="scss">
-section {
+.canvas-section {
   width: 100%;
-  background-color: bisque;
+  padding: 0 20px;
 
-  user-select: none;
+  background-color: #D3E1ED;
+}
+
+.test {
+  width: 800px;
+  height: 90vh;
+  background-color: #fff;
+  margin: auto;
+  border: 2px solid #ccc;
 }
 </style>

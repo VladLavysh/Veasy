@@ -1,22 +1,25 @@
 <script setup lang="ts">
-import { setButtonPosition, toggleSection } from '../../utils/toggle'
+const toggleSection = (event: MouseEvent) => {
+  const toggler = event.target! as HTMLElement
+  const toolsBar = document.getElementById('toolsBar') as HTMLElement
+
+  toggler.classList.toggle('home__resizer-btn-rotated')
+  toolsBar.classList.toggle('tools-bar-wide')
+}
 </script>
 
 <template>
-  <div class="home__resizer" @mousemove="setButtonPosition($event, false)"
-    @mouseleave="setButtonPosition($event, true)">
+  <div class="home__resizer">
     <div class="home__resizer-btn" @click="toggleSection"></div>
   </div>
 </template>
 
 <style scoped lang="scss">
 .home__resizer {
-  width: 10px;
+  width: 8px;
   position: relative;
 
-  cursor: pointer;
-
-  //background-color: white;
+  transition: width .2s ease-in-out;
 }
 
 .home__resizer-btn {
@@ -25,8 +28,9 @@ import { setButtonPosition, toggleSection } from '../../utils/toggle'
   top: 50%;
   transform: translate(-50%, -50%);
 
-  width: 20px;
-  height: 20px;
+
+  width: 15px;
+  height: 40px;
 
   background-color: #ffffff;
 
@@ -34,10 +38,10 @@ import { setButtonPosition, toggleSection } from '../../utils/toggle'
   color: #535353;
   padding: 5px;
 
+  cursor: pointer;
   border-radius: 50%;
   transition: all .2s ease-in-out;
 
-  opacity: 0.5;
   z-index: 8;
 
   &::before,
@@ -68,8 +72,8 @@ import { setButtonPosition, toggleSection } from '../../utils/toggle'
   }
 
   &:hover {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.1);
+    width: 25px;
+    height: 25px;
   }
 }
 

@@ -2,7 +2,7 @@
 import ToolsBar from '../components/ToolsBar.vue';
 import Canvas from '../components/Canvas.vue';
 import MenuBar from '../components/MenuBar.vue';
-import ToggleButton from '../components/utils/ToggleButton.vue';
+import ToggleButton from '../components/elements/ToggleButton.vue';
 </script>
 
 <template>
