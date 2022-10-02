@@ -1,0 +1,11 @@
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@mixin active-nav-button {
+  color: #ffffff;
+  //box-shadow: 0 0 5px #98acbf;
+  background-color: #98acbf;
+}

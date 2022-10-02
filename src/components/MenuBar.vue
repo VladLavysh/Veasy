@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { shallowRef } from 'vue';
 import { UserProfile, Template, DataViewAlt, SettingsAdjust, Contrast } from '@vicons/carbon'
 
-const menuIcons = [
-  { name: 'Profile', component: UserProfile },
-  { name: 'Templates', component: Template },
-  { name: 'My CV', component: DataViewAlt },
-  { name: 'Settings', component: SettingsAdjust },
-  { name: 'Theme', component: Contrast }
-]
+const menuIcons = shallowRef([
+  { name: 'Profile', component: UserProfile, isActive: false },
+  { name: 'Templates', component: Template, isActive: false },
+  { name: 'My CV', component: DataViewAlt, isActive: true },
+  { name: 'Settings', component: SettingsAdjust, isActive: false },
+  { name: 'Theme', component: Contrast, isActive: false }
+])
 </script>
 
 <template>
-  <aside class="menu-bar">
-    <div class="menu-bar__icons">
-      <div class="menu-icon" v-for="icon of menuIcons" :key="icon.name">
+  <aside class="menu_bar">
+    <div class="menu_bar__icons">
+      <div v-for="icon of menuIcons" :key="icon.name" :class="[icon.isActive ? 'menu_icon-active' : '', 'menu_icon']">
         <n-icon size="40">
           <component :is="icon.component" />
         </n-icon>
@@ -26,12 +26,13 @@ const menuIcons = [
 
 <!-- TODO: Flex mixins -->
 <style scoped lang="scss">
-.menu-bar {
+@import '../../src/utils/css/mixins.scss';
+
+.menu_bar {
   display: block;
   width: 100px;
-  //max-width: 120px;
+  min-width: 85px;
 
-  margin-left: 8px;
   padding: 20px 5px;
   background-color: #7F91A1;
 
@@ -41,35 +42,45 @@ const menuIcons = [
     width: 100%;
   }
 
-  //&:hover {
-  //  width: 120px;
-
-  //  .menu-icon>span {
-  //    display: inline;
-  //  }
-  //}
-
   &__icons {
-    display: flex;
-    flex-direction: column;
+    @include flex-column;
+
     justify-content: flex-start;
-    align-items: center;
-    gap: 30px;
+    gap: 25px;
+
+    height: 100%;
   }
 
-  .menu-icon {
-    display: flex;
-    flex-direction: column;
+  .menu_icon {
+    @include flex-column;
+
     justify-content: flex-start;
-    align-items: center;
-    gap: 10px;
+    gap: 5px;
+
+    width: 100%;
+    padding: 5px 0;
+
+    border-radius: 7px;
 
     color: #e3e8ed;
     cursor: pointer;
+    transition: all .2s ease-in-out;
 
     span {
       font-size: 1rem;
-      //display: none;
+      line-height: 1.1;
+    }
+
+    &:last-child {
+      margin-top: auto
+    }
+
+    &:hover {
+      @include active-nav-button;
+    }
+
+    &-active {
+      @include active-nav-button;
     }
   }
 }
