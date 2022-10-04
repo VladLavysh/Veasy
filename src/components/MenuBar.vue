@@ -15,7 +15,7 @@ const menuIcons = shallowRef([
   <aside class="menu_bar">
     <div class="menu_bar__icons">
       <div v-for="icon of menuIcons" :key="icon.name" :class="[icon.isActive ? 'menu_icon-active' : '', 'menu_icon']">
-        <n-icon size="40">
+        <n-icon size="35">
           <component :is="icon.component" />
         </n-icon>
         <span>{{icon.name}}</span>
@@ -30,8 +30,8 @@ const menuIcons = shallowRef([
 
 .menu_bar {
   display: block;
-  width: 100px;
-  min-width: 85px;
+  width: 90px;
+  min-width: 75px;
 
   padding: 20px 5px;
   background-color: #7F91A1;
@@ -52,35 +52,20 @@ const menuIcons = shallowRef([
   }
 
   .menu_icon {
-    @include flex-column;
-
-    justify-content: flex-start;
-    gap: 5px;
-
-    width: 100%;
-    padding: 5px 0;
-
-    border-radius: 7px;
-
-    color: #e3e8ed;
-    cursor: pointer;
-    transition: all .2s ease-in-out;
+    @include nav-and-tools-button(100%, pointer);
 
     span {
-      font-size: 1rem;
-      line-height: 1.1;
+      font-size: 0.9rem;
+      line-height: 1.5;
     }
 
     &:last-child {
       margin-top: auto
     }
 
-    &:hover {
-      @include active-nav-button;
-    }
-
     &-active {
-      @include active-nav-button;
+      color: #ffffff;
+      background-color: #98acbf;
     }
   }
 }
