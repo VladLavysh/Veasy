@@ -5,17 +5,12 @@ defineProps({
     required: true
   }
 })
-
-const dropItem = (e: MouseEvent) => {
-  console.log('e', e);
-
-}
 </script>
   
 <template>
-  <div class="item" draggable="true" @dragend="dropItem">
-    <span class="item__title">{{tool.name}}</span>
-    <n-icon size="35" class="item__icon">
+  <div class="item">
+    <span>{{tool.name}}</span>
+    <n-icon size="35">
       <component :is="tool.component" />
     </n-icon>
   </div>
@@ -25,18 +20,19 @@ const dropItem = (e: MouseEvent) => {
 @import '../../../src/utils/css/mixins.scss';
 
 .item {
-  @include nav-and-tools-button(80px, grabbing);
+  @include nav-and-tools-button(80px, grab);
 
   border: 2px solid #e3e8ed;
 
-  transition: border 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 
   &:hover {
     border-color: #98acbf;
   }
 
-  &__title {}
-
-  &__icon {}
+  &:active {
+    border-radius: 0;
+    cursor: grabbing;
+  }
 }
 </style>

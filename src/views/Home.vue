@@ -3,12 +3,15 @@ import ToolsBar from '../components/ToolsBar.vue';
 import Canvas from '../components/Canvas.vue';
 import MenuBar from '../components/MenuBar.vue';
 import ToggleButton from '../components/elements/ToggleButton.vue';
+import { ref } from 'vue';
+
+const isToolsPanelOpen = ref(false)
 </script>
 
 <template>
   <div class="home">
-    <ToolsBar id="toolsBar" />
-    <ToggleButton />
+    <ToolsBar :class="[isToolsPanelOpen ? 'tools-bar-wide' : '']" />
+    <ToggleButton @open="isToolsPanelOpen = !isToolsPanelOpen" />
     <Canvas />
     <MenuBar />
   </div>

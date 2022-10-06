@@ -1,3 +1,4 @@
-//export type Section = {
-//  $el: HTMLElement
-//}
+export type Tool = {
+  name: String,
+  id: String
+}

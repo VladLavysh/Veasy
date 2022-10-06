@@ -1,8 +1,11 @@
 <script setup lang="ts">
+import { TextSelection, List, Image, Blockchain, Barrier, Link, ChevronRight, Code, CircleDash } from '@vicons/carbon'
 import ToolsBarItem from '../components/elements/ToolsBarItem.vue'
-import { TextSelection, List, Image, Blockchain, Barrier, Link, ChevronRight, Code } from '@vicons/carbon'
-//import { useToolsStore } from '../store/tools';
-//const store = useToolsStore()
+import { useCanvasStore } from '../store/canvas'
+import { v4 as uuidv4 } from 'uuid'
+
+const canvasStore = useCanvasStore()
+
 const toolsBarItems = [
   { name: 'Text input', component: TextSelection },
   { name: 'List', component: List },
@@ -12,14 +15,31 @@ const toolsBarItems = [
   { name: 'Link', component: Link },
   { name: 'Arrow', component: ChevronRight },
   { name: 'Code', component: Code },
+  { name: 'Circle', component: CircleDash },
+  { name: 'Circle', component: CircleDash },
+  { name: 'Circle', component: CircleDash },
 ]
+
+const dropItem = (e: MouseEvent, name: String) => {
+  if (!canvasStore.isAddingAllowed) {
+    return
+  }
+
+  canvasStore.addNewTool({
+    name,
+    id: uuidv4().toString()
+  })
+
+  canvasStore.changeAddingStatus(false)
+}
 </script>
 
 <template>
   <section class="tools-bar">
     <h1>Tools Bar</h1>
     <div class="tools-bar__items">
-      <ToolsBarItem v-for="item of toolsBarItems" :key="item.name" :tool="item" />
+      <ToolsBarItem v-for="item of toolsBarItems" :key="item.name" :tool="item" draggable="true"
+        @dragend="dropItem($event, item.name)" />
     </div>
   </section>
 </template>
@@ -32,6 +52,7 @@ const toolsBarItems = [
   min-width: 120px;
 
   transition: all .3s ease-in-out;
+  overflow-y: scroll;
 
   background-color: #7F91A1;
 
@@ -42,9 +63,12 @@ const toolsBarItems = [
   &__items {
     @include flex-row;
 
+    width: 100%;
+
     flex-wrap: wrap;
     gap: 15px 0;
-    width: 100%;
+
+    padding: 5px 0 25px;
   }
 }
 

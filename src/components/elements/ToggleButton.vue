@@ -1,32 +1,34 @@
 <script setup lang="ts">
-const toggleSection = (event: MouseEvent) => {
-  const toggler = event.target! as HTMLElement
-  const toolsBar = document.getElementById('toolsBar') as HTMLElement
+import { ref } from 'vue';
 
-  toggler.classList.toggle('home__resizer-btn-rotated')
-  toolsBar.classList.toggle('tools-bar-wide')
+const emit = defineEmits(['open'])
+
+const isToolsPanelOpen = ref(false)
+
+const togglePanel = () => {
+  isToolsPanelOpen.value = !isToolsPanelOpen.value
+  emit('open')
 }
 </script>
 
 <template>
   <div class="home__resizer">
-    <div class="home__resizer-btn" @click="toggleSection"></div>
+    <div :class="[isToolsPanelOpen ? 'home__resizer-btn-rotated' : '', 'home__resizer-btn']" @click="togglePanel">
+    </div>
   </div>
 </template>
 
 <style scoped lang="scss">
 .home__resizer {
-  width: 8px;
+  width: 0;
   position: relative;
-
-  transition: width .2s ease-in-out;
 }
 
 .home__resizer-btn {
   position: relative;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-65%, -50%);
 
 
   width: 15px;
