@@ -1,33 +1,40 @@
 <script setup lang="ts">
-import { TextSelection, List, Image, Blockchain, Barrier, Link, ChevronRight, Code, CircleDash } from '@vicons/carbon'
+import { TextSelection, List, Image, Checkbox, Barrier, Link, ChevronRight, Code, CircleDash } from '@vicons/carbon'
 import ToolsBarItem from '../components/elements/ToolsBarItem.vue'
 import { useCanvasStore } from '../store/canvas'
 import { v4 as uuidv4 } from 'uuid'
+import { ref } from 'vue';
 
 const canvasStore = useCanvasStore()
 
+// TODO: REFACTORING COMPONENTS TO LAZY LOAD!
 const toolsBarItems = [
-  { name: 'Text input', component: TextSelection },
-  { name: 'List', component: List },
-  { name: 'Image', component: Image },
-  { name: 'Container', component: Blockchain },
-  { name: 'Barrier', component: Barrier },
-  { name: 'Link', component: Link },
-  { name: 'Arrow', component: ChevronRight },
-  { name: 'Code', component: Code },
-  { name: 'Circle', component: CircleDash },
-  { name: 'Circle', component: CircleDash },
-  { name: 'Circle', component: CircleDash },
+  { name: 'Text input', konvaName: 'v-text', component: TextSelection },
+  { name: 'List', konvaName: '', component: List },
+  { name: 'Image', konvaName: 'v-image', component: Image },
+  { name: 'Container', konvaName: 'v-rect', component: Checkbox },
+  { name: 'Barrier', konvaName: 'v-line', component: Barrier },
+  { name: 'Link', konvaName: '', component: Link },
+  { name: 'Arrow', konvaName: '', component: ChevronRight },
+  { name: 'Code', konvaName: '', component: Code },
+  { name: 'Circle', konvaName: 'v-circle', component: CircleDash },
+  { name: 'Circle', konvaName: 'v-circle', component: CircleDash },
+  { name: 'Circle', konvaName: 'v-circle', component: CircleDash },
 ]
 
-const dropItem = (e: MouseEvent, name: String) => {
+const dropItem = (e: MouseEvent, name: String, konvaName: String) => {
   if (!canvasStore.isAddingAllowed) {
     return
   }
 
+  const canvas = document.querySelector('.canvas') as HTMLDivElement
+
   canvasStore.addNewTool({
     name,
-    id: uuidv4().toString()
+    konvaName,
+    id: uuidv4().toString(),
+    x: e.pageY - canvas.offsetTop,
+    y: e.pageX - canvas.offsetLeft
   })
 
   canvasStore.changeAddingStatus(false)
@@ -39,7 +46,7 @@ const dropItem = (e: MouseEvent, name: String) => {
     <h1>Tools Bar</h1>
     <div class="tools-bar__items">
       <ToolsBarItem v-for="item of toolsBarItems" :key="item.name" :tool="item" draggable="true"
-        @dragend="dropItem($event, item.name)" />
+        @dragend="dropItem($event, item.name, item.konvaName)" />
     </div>
   </section>
 </template>

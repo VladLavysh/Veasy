@@ -1,4 +1,7 @@
 export type Tool = {
   name: String,
-  id: String
+  konvaName: String,
+  id: String,
+  x: number,
+  y: number
 }

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useCanvasStore } from '../store/canvas'
 import { configKonva } from '../utils/ts'
+import CanvasShape from './elements/CanvasShape.vue'
 
 const canvasStore = useCanvasStore()
 
@@ -8,9 +9,6 @@ const dragHandler = (isOver: Boolean) => {
   if (canvasStore.isAddingAllowed === isOver) {
     return
   }
-
-  console.log(isOver);
-
 
   canvasStore.changeAddingStatus(isOver)
 }
@@ -20,13 +18,10 @@ const dragHandler = (isOver: Boolean) => {
   <section class="canvas-section">
     <h2>Canvas Name</h2>
     <div class="canvas" @dragover.prevent="dragHandler(true)" @dragleave="dragHandler(false)">
-
-      <!--<div v-for="tool of canvasStore.tools" :key="tool.id">
-        {{tool.name}} - {{tool.id}}
-      </div>-->
-
       <v-stage :config="configKonva">
-
+        <v-layer>
+          <CanvasShape v-for="(tool, idx) of canvasStore.tools" :key="idx" :tool="tool" />
+        </v-layer>
       </v-stage>
     </div>
   </section>
