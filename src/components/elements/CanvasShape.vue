@@ -1,6 +1,10 @@
+<!-- NOT IN USE !!!!!!!!!!! -->
+<!--import CanvasShape from './elements/CanvasShape.vue'-->
+<!--<CanvasShape v-for="(tool, idx) of canvasStore.tools" :key="idx" :tool="tool" />-->
+
 <script setup lang="ts">
 import { Tool } from '../../types';
-import { shapeConfig } from '../../utils/ts/index'
+import { shapeConfig } from '../../utils/ts/canvas'
 
 defineProps({
   tool: {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useCanvasStore } from '../store/canvas'
-import { configKonva } from '../utils/ts'
-import CanvasShape from './elements/CanvasShape.vue'
+import { konvaConfig, shapeConfig, handleStageMouseDown, handleTransformEnd } from '../utils/ts/canvas'
+import { Tool } from '../types/index';
 
 const canvasStore = useCanvasStore()
 
@@ -9,21 +9,25 @@ const dragHandler = (isOver: Boolean) => {
   if (canvasStore.isAddingAllowed === isOver) {
     return
   }
-
   canvasStore.changeAddingStatus(isOver)
 }
 </script>
 
 <template>
   <section class="canvas-section">
-    <h2>Canvas Name</h2>
-    <div class="canvas" @dragover.prevent="dragHandler(true)" @dragleave="dragHandler(false)">
-      <v-stage :config="configKonva">
+    <h2 class="canvas-section__label">Canvas Name</h2>
+
+    <div class="canvas-section__canvas" @dragover.prevent="dragHandler(true)" @dragleave="dragHandler(false)">
+      <v-stage :config="konvaConfig" @mousedown="handleStageMouseDown" @touchstart="handleStageMouseDown">
         <v-layer>
-          <CanvasShape v-for="(tool, idx) of canvasStore.tools" :key="idx" :tool="tool" />
+          <component v-for="(tool, idx) of canvasStore.tools" :key="idx" :is="tool.konvaName"
+            :config="shapeConfig(tool as Tool)" @transformend="handleTransformEnd">
+          </component>
+          <v-transformer ref="transformer" />
         </v-layer>
       </v-stage>
     </div>
+
   </section>
 </template>
 
@@ -34,16 +38,20 @@ const dragHandler = (isOver: Boolean) => {
 
   overflow-y: scroll;
   background-color: #D3E1ED;
-}
 
-.canvas {
-  width: 800px;
-  height: 1120px;
+  &__label {
+    color: #465461;
+  }
 
-  margin: auto;
+  &__canvas {
+    width: 800px;
+    height: 1120px;
 
-  //border: 2px solid #ccc;
-  box-shadow: 0 0 5px 1px #bebebe;
-  background-color: #fff;
+    margin: auto;
+
+    //border: 2px solid #ccc;
+    box-shadow: 0 0 5px 1px #bebebe;
+    background-color: #fff;
+  }
 }
 </style>
