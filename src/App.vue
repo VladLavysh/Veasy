@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import Home from './views/Home.vue';
+import Creator from './views/Creator.vue';
 </script>
 
 <template>
-  <Home />
+  <Creator />
 </template>
 
 <style>

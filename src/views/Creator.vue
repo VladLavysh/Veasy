@@ -2,6 +2,7 @@
 import ToolsBar from '../components/ToolsBar.vue';
 import Canvas from '../components/Canvas.vue';
 import MenuBar from '../components/MenuBar.vue';
+import ToolEditor from '../components/ToolEditor.vue';
 import ToggleButton from '../components/elements/ToggleButton.vue';
 import { ref } from 'vue';
 
@@ -12,8 +13,19 @@ const isToolsPanelOpen = ref(false)
   <div class="home">
     <ToolsBar :class="[isToolsPanelOpen ? 'tools-bar-wide' : '']" />
     <ToggleButton @open="isToolsPanelOpen = !isToolsPanelOpen" />
+
     <Canvas />
+
     <MenuBar />
+
+    <!-- <n-tabs class="tabs" type="line" size="large" animated>
+      <n-tab-pane name="tool" tab="Tool Editor">
+        <ToolEditor/>
+      </n-tab-pane>
+      <n-tab-pane name="menu" tab="Menu">
+        <MenuBar />
+      </n-tab-pane>
+    </n-tabs> -->
   </div>
 </template>
 
@@ -30,5 +42,13 @@ const isToolsPanelOpen = ref(false)
     flex-direction: column-reverse;
     justify-content: flex-end;
   }
+}
+
+.tabs {
+  width: 90px;
+  // min-width: 75px;
+
+  // padding: 20px 5px;
+  background-color: #7F91A1;
 }
 </style>
