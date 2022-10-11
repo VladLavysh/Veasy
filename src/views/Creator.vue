@@ -10,42 +10,27 @@ const isToolsPanelOpen = ref(false)
 </script>
 
 <template>
-  <div class="home">
+  <div class="creator">
     <ToolsBar :class="[isToolsPanelOpen ? 'tools-bar-wide' : '']" />
     <ToggleButton @open="isToolsPanelOpen = !isToolsPanelOpen" />
 
     <Canvas />
-    <!-- <n-tabs class="tabs" type="line" size="large" animated>
-      <n-tab-pane name="tool" tab="Tool Editor">
-        <ToolEditor/>
-      </n-tab-pane>
-      <n-tab-pane name="menu" tab="Menu">
-        <MenuBar />
-      </n-tab-pane>
-    </n-tabs> -->
+
+    <ToolEditor />
   </div>
 </template>
 
 <style scoped lang="scss">
-.home {
+.creator {
   display: flex;
   justify-content: space-between;
 
   width: 100%;
-  height: 100vh;
-  max-height: 100vh;
+  height: calc(100vh - 35px);
 
   @media screen and (max-width: 530px) {
     flex-direction: column-reverse;
     justify-content: flex-end;
   }
-}
-
-.tabs {
-  width: 90px;
-  // min-width: 75px;
-
-  // padding: 20px 5px;
-  background-color: #7F91A1;
 }
 </style>

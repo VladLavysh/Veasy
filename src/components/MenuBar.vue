@@ -1,67 +1,72 @@
 <script setup lang="ts">
-import { shallowRef } from 'vue';
+import { ref, markRaw } from 'vue';
+import { useRoute } from 'vue-router'
 import { UserProfile, Template, DataViewAlt, SettingsAdjust, Contrast } from '@vicons/carbon'
 
-const menuIcons = shallowRef([
-  { name: 'Profile', component: UserProfile, isActive: false },
-  { name: 'Templates', component: Template, isActive: false },
-  { name: 'My CV', component: DataViewAlt, isActive: true },
-  { name: 'Settings', component: SettingsAdjust, isActive: false },
-  { name: 'Theme', component: Contrast, isActive: false }
+const route = useRoute()
+
+const menuIcons = ref([
+  { name: 'Profile', component: markRaw(UserProfile), path: '/profile', isActive: false },
+  { name: 'Templates', component: markRaw(Template), path: '/', isActive: false },
+  { name: 'CV Creator', component: markRaw(DataViewAlt), path: '/creator', isActive: true },
+  { name: 'Settings', component: markRaw(SettingsAdjust), path: '/settings', isActive: false },
 ])
+
+const themeButton = { name: 'Theme', component: Contrast }
+
+const updateIcons = (path: String) => {
+  if (path === route.path) return
+
+  menuIcons.value.forEach(el => {
+    el.isActive = el.path === path
+  })
+}
 </script>
 
 <template>
   <nav class="menu_bar">
     <div class="menu_bar__icons">
-      <div v-for="icon of menuIcons" :key="icon.name" :class="[icon.isActive ? 'menu_icon-active' : '', 'menu_icon']">
-        <n-icon size="35">
+      <RouterLink v-for="icon of menuIcons" :key="icon.name"
+        :class="[icon.isActive ? 'menu_icon-active' : '', 'menu_icon']" :to="icon.path" @click="updateIcons(icon.path)">
+        <n-icon size="25">
           <component :is="icon.component" />
         </n-icon>
         <span>{{icon.name}}</span>
+      </RouterLink>
+
+      <div class="menu_icon">
+        <n-icon size="25">
+          <component :is="themeButton.component" />
+        </n-icon>
+        <span>{{themeButton.name}}</span>
       </div>
     </div>
   </nav>
 </template>
 
-<!-- TODO: Flex mixins -->
 <style scoped lang="scss">
 @import '../../src/utils/css/mixins.scss';
 
 .menu_bar {
-  display: block;
   width: 100%;
-  //min-width: 75px;
+  height: 35px;
 
-  padding: 20px 5px;
   background-color: #7F91A1;
-
   transition: width .3s ease-in-out;
 
-  @media screen and (max-width: 530px) {
-    width: 100%;
-  }
+  //@media screen and (max-width: 530px) {
+  //  width: 100%;
+  //}
 
   &__icons {
     @include flex-row;
-
-    justify-content: flex-start;
-    gap: 25px;
-
-    height: 100%;
   }
 
   .menu_icon {
-    @include nav-and-tools-button(100%, pointer);
+    @include flex-row;
+    @include nav-and-tools-button(auto, pointer, 15px, none);
 
-    span {
-      font-size: 0.9rem;
-      line-height: 1.5;
-    }
-
-    //&:last-child {
-    //  margin-top: auto
-    //}
+    padding: 5px 20px;
 
     &-active {
       color: #ffffff;

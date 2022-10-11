@@ -31,8 +31,8 @@ const togglePanel = () => {
   transform: translate(-65%, -50%);
 
 
-  width: 15px;
-  height: 40px;
+  width: 20px;
+  height: 20px;
 
   background-color: #ffffff;
 
@@ -57,7 +57,7 @@ const togglePanel = () => {
     transition: all .2s ease-in-out;
     border-radius: 10px;
 
-    width: 12px;
+    width: 11px;
     height: 2px;
 
     background-color: #525252;
@@ -66,26 +66,21 @@ const togglePanel = () => {
   }
 
   &::before {
-    transform: translate(-40%, -230%) rotate(40deg);
+    transform: translate(-40%, -200%) rotate(40deg);
   }
 
   &::after {
-    transform: translate(-40%, 160%) rotate(-40deg);
-  }
-
-  &:hover {
-    width: 25px;
-    height: 25px;
+    transform: translate(-40%, 100%) rotate(-40deg);
   }
 }
 
 .home__resizer-btn-rotated {
   &::before {
-    transform: translate(-60%, -220%) rotate(-40deg);
+    transform: translate(-60%, -200%) rotate(-40deg);
   }
 
   &::after {
-    transform: translate(-60%, 150%) rotate(40deg);
+    transform: translate(-60%, 120%) rotate(40deg);
   }
 }
 </style>

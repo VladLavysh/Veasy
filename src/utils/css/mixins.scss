@@ -10,16 +10,13 @@
   align-items: center;
 }
 
-@mixin nav-and-tools-button($elemWidth, $cursorStyle) {
-  @include flex-column;
+@mixin nav-and-tools-button($width, $cursorStyle, $gap, $borderRadius) {
+  gap: $gap;
 
-  justify-content: flex-start;
-  gap: 5px;
-
-  width: $elemWidth;
+  width: $width;
   padding: 5px 0;
 
-  border-radius: 7px;
+  border-radius: $borderRadius;
 
   color: #e3e8ed;
   cursor: $cursorStyle;

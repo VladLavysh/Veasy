@@ -1,18 +1,14 @@
-import { VueRouter } from "vue"
-
-const Home = { template: '<div>Home</div>' }
-const About = { template: '<div>About</div>' }
+import { createRouter, createWebHistory } from "vue-router"
 
 const routes = [
-  { path: '/', component: Home },
-  { path: '/about', component: About },
+  { path: '/', name: 'Templates', component: () => import('../views/Templates.vue') },
+  { path: '/profile', name: 'Profile', component: () => import('../views/Profile.vue') },
+  { path: '/settings', name: 'Settings', component: () => import('../views/Settings.vue') },
+  { path: '/creator', name: 'Creator', component: () => import('../views/Creator.vue') },
+  { path: '/login', name: 'Login', component: () => import('../layouts/Login.vue') },
 ]
 
-// 3. Create the router instance and pass the `routes` option
-// You can pass in additional options here, but let's
-// keep it simple for now.
-export const router = VueRouter.createRouter({
-  // 4. Provide the history implementation to use. We are using the hash history for simplicity here.
-  history: VueRouter.createWebHashHistory(),
-  routes, // short for `routes: routes`
+export const router = createRouter({
+  history: createWebHistory(),
+  routes,
 })

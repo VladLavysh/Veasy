@@ -20,7 +20,8 @@ defineProps({
 @import '../../../src/utils/css/mixins.scss';
 
 .item {
-  @include nav-and-tools-button(80px, grab);
+  @include flex-column;
+  @include nav-and-tools-button(80px, grab, 5px, 7px);
 
   border: 2px solid #e3e8ed;
 

@@ -1,3 +1,5 @@
+import { Component } from "vue"
+
 export type Tool = {
   name: String,
   konvaName: String,
@@ -9,7 +11,7 @@ export type Tool = {
 export type ToolFromBar = {
   name: String,
   konvaName: String,
-  component?: any
+  component?: Component
   id?: String,
 }
 

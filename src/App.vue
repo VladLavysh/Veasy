@@ -9,5 +9,7 @@ import Main from './layouts/Main.vue';
 </template>
 
 <style>
-
+a {
+  text-decoration: none;
+}
 </style>

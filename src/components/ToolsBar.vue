@@ -13,14 +13,14 @@ const newToolData = ({ name, konvaName }: ToolFromBar) => ({
 </script>
 
 <template>
-  <section class="tools-bar">
+  <aside class="tools-bar">
     <h1 class="tools-bar__label">Tools Bar</h1>
 
     <div class="tools-bar__items">
       <ToolsBarItem v-for="item of toolsBarItems" :key="item.name" :tool="item" draggable="true"
         @dragend="addToCanvas($event, newToolData(item))" />
     </div>
-  </section>
+  </aside>
 </template>
 
 <style scoped lang="scss">
@@ -51,7 +51,7 @@ const newToolData = ({ name, konvaName }: ToolFromBar) => ({
     width: 100%;
 
     flex-wrap: wrap;
-    gap: 15px 0;
+    gap: 15px;
 
     padding: 5px 0 25px;
   }
