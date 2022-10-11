@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import Creator from './views/Creator.vue';
+import Main from './layouts/Main.vue';
+//import Login from './layouts/Login.vue';
 </script>
 
 <template>
-  <Creator />
+  <Main />
+  <!--<Login />-->
 </template>
 
 <style>

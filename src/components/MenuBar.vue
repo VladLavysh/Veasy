@@ -12,7 +12,7 @@ const menuIcons = shallowRef([
 </script>
 
 <template>
-  <aside class="menu_bar">
+  <nav class="menu_bar">
     <div class="menu_bar__icons">
       <div v-for="icon of menuIcons" :key="icon.name" :class="[icon.isActive ? 'menu_icon-active' : '', 'menu_icon']">
         <n-icon size="35">
@@ -21,7 +21,7 @@ const menuIcons = shallowRef([
         <span>{{icon.name}}</span>
       </div>
     </div>
-  </aside>
+  </nav>
 </template>
 
 <!-- TODO: Flex mixins -->
@@ -30,8 +30,8 @@ const menuIcons = shallowRef([
 
 .menu_bar {
   display: block;
-  width: 90px;
-  min-width: 75px;
+  width: 100%;
+  //min-width: 75px;
 
   padding: 20px 5px;
   background-color: #7F91A1;
@@ -43,7 +43,7 @@ const menuIcons = shallowRef([
   }
 
   &__icons {
-    @include flex-column;
+    @include flex-row;
 
     justify-content: flex-start;
     gap: 25px;
@@ -59,9 +59,9 @@ const menuIcons = shallowRef([
       line-height: 1.5;
     }
 
-    &:last-child {
-      margin-top: auto
-    }
+    //&:last-child {
+    //  margin-top: auto
+    //}
 
     &-active {
       color: #ffffff;

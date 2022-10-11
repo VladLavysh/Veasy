@@ -15,9 +15,6 @@ const isToolsPanelOpen = ref(false)
     <ToggleButton @open="isToolsPanelOpen = !isToolsPanelOpen" />
 
     <Canvas />
-
-    <MenuBar />
-
     <!-- <n-tabs class="tabs" type="line" size="large" animated>
       <n-tab-pane name="tool" tab="Tool Editor">
         <ToolEditor/>
