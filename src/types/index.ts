@@ -1,21 +1,22 @@
 import { Component } from "vue"
 
 export type Tool = {
-  name: String,
-  konvaName: String,
-  id: String,
+  name: string,
+  konvaName: string,
+  id: string,
   x: number,
   y: number
 }
 
 export type ToolFromBar = {
-  name: String,
-  konvaName: String,
+  name: string,
+  konvaName: string,
   component?: Component
-  id?: String,
+  id?: string,
 }
 
 export type ToolConfig = {
+  name: string,
   draggable: boolean,
 
   x?: number,

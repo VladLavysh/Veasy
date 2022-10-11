@@ -1,7 +1,10 @@
+import Konva from 'konva';
 import { Tool, ToolConfig } from "../../types"
 import { useCanvasStore } from '../../store/canvas'
 import { ToolFromBar } from '../../types'
 import { ref } from 'vue'
+
+const canvasStore = useCanvasStore()
 
 export const konvaConfig = {
   width: 800,
@@ -10,6 +13,7 @@ export const konvaConfig = {
 
 export const shapeConfig = (tool: Tool): ToolConfig | null => {
   const defaultConfig: ToolConfig = {
+    name: tool.name,
     draggable: true,
 
     x: tool.x - 40, // 40 - half of width/height (to center tool)
@@ -76,8 +80,6 @@ export const shapeConfig = (tool: Tool): ToolConfig | null => {
 }
 
 export const addToCanvas = (e: MouseEvent, {name, konvaName, id}: ToolFromBar) => {
-  const canvasStore = useCanvasStore()
-
   if (!canvasStore.isAddingAllowed) {
     return
   }
@@ -86,7 +88,7 @@ export const addToCanvas = (e: MouseEvent, {name, konvaName, id}: ToolFromBar) =
   const canvasSection = document.querySelector('.canvas-section') as HTMLDivElement
 
   canvasStore.addNewTool({
-    name,
+    name: `${name}_${id!.toString()}`,
     konvaName,
     id: id!.toString(),
     x: Math.round(e.pageX - canvas.offsetLeft + canvasSection.scrollLeft),
@@ -97,67 +99,56 @@ export const addToCanvas = (e: MouseEvent, {name, konvaName, id}: ToolFromBar) =
 }
 
 // Shape transformer functions (3)
+let selectedShapeName: string
+let stagetTransformer: any
+
 // https://codesandbox.io/s/github/konvajs/site/tree/master/vue-demos/transformer?from-embed=&file=/src/App.vue
 const updateTransformer = () => {
-  // here we need to manually attach or detach Transformer node
-  const transformerNode = this.$refs.transformer.getNode();
-  const stage = transformerNode.getStage();
-  const { selectedShapeName } = this;
+  const transformerNode = stagetTransformer.getNode()
+  const stage = transformerNode.getStage()
+  const selectedNode = stage.findOne('.' + selectedShapeName)
 
-  const selectedNode = stage.findOne('.' + selectedShapeName);
-  // do nothing if selected node is already attached
   if (selectedNode === transformerNode.node()) {
     return;
   }
 
-  if (selectedNode) {
-    // attach to another node
-    transformerNode.nodes([selectedNode]);
-  } else {
-    // remove transformer
-    transformerNode.nodes([]);
-  }
+  transformerNode.nodes(selectedNode ? [selectedNode] : [])
 }
 
-export const handleTransformEnd = () => {
-  // shape is transformed, let us save new attrs back to the node
-  // find element in our state
-  const rect = this.rectangles.find(
-    (r) => r.name === this.selectedShapeName
-  );
-  // update the state
-  rect.x = e.target.x();
-  rect.y = e.target.y();
-  rect.rotation = e.target.rotation();
-  rect.scaleX = e.target.scaleX();
-  rect.scaleY = e.target.scaleY();
+export const handleTransformEnd = (e: MouseEvent) => {
+  const target = e.target as HTMLElement
+  const shape = canvasStore.tools.find(r => r.name === selectedShapeName)
 
-  // change fill
-  rect.fill = Konva.Util.getRandomColor();
+  if (!shape) return
+
+  shape.x = target.x()
+  shape.y = target.y()
+  shape.rotation = target.rotation()
+  shape.scaleX = target.scaleX()
+  shape.scaleY = target.scaleY()
+
+  shape.fill = Konva.Util.getRandomColor()
 }
 
-export const handleStageMouseDown = () => {
-  // clicked on stage - clear selection
-  if (e.target === e.target.getStage()) {
-    this.selectedShapeName = '';
-    this.updateTransformer();
-    return;
+export const handleStageMouseDown = (e: MouseEvent, transformer: any) => {
+  stagetTransformer = transformer
+  const target = e.target as HTMLElement
+
+  if (target === target.getStage()) {
+    selectedShapeName = ''
+    updateTransformer()
+    return
   }
 
-  // clicked on transformer - do nothing
-  const clickedOnTransformer =
-    e.target.getParent().className === 'Transformer';
+  const clickedOnTransformer = target.getParent().className === 'Transformer'
   if (clickedOnTransformer) {
-    return;
+    return
   }
 
-  // find clicked rect by its name
-  const name = e.target.name();
-  const rect = this.rectangles.find((r) => r.name === name);
-  if (rect) {
-    this.selectedShapeName = name;
-  } else {
-    this.selectedShapeName = '';
-  }
-  updateTransformer();
+  const name = target.name()
+  const shape = canvasStore.tools.find(r => r.name === name)
+
+  selectedShapeName = shape ? name : ''
+
+  updateTransformer()
 }
