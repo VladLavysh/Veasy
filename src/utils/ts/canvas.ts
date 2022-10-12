@@ -154,7 +154,7 @@ export const handleStageMouseDown = (e: MouseEvent, transformer: any) => {
 
   selectedShapeName = shape ? name : ''
 
-  canvasStore.setSelectedTool(selectedShapeName)
+  canvasStore.setSelectedTool(selectedShapeName || null)
 
   updateTransformer()
 }

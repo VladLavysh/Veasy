@@ -4,7 +4,7 @@ import { Tool, ToolConfig } from '../types/index'
 export const useCanvasStore = defineStore('tools', {
   state: () => ({
     tools: [] as ToolConfig[],
-    selectedTool: null as ToolConfig,
+    selectedTool: null as ToolConfig | null,
     isAddingAllowed: false as Boolean
   }),
   getters: {
@@ -13,14 +13,16 @@ export const useCanvasStore = defineStore('tools', {
     addNewTool(newTool: ToolConfig) {
       this.tools.push(newTool)
     },
-    setSelectedTool(toolName: string) {
-      if (!toolName || this.selectedTool.name === toolName) {
-        //this.selectedTool = toolName
+    setSelectedTool(toolName: string | null) {
+      if (!toolName) {
+        this.selectedTool = null
+        return
+      }
+      if (this.selectedTool?.name === toolName) {
         return
       }
 
-      this.selectedTool = this.tools.find(el => el.name === toolName)
-      console.log('Selected tool', this.selectedTool);
+      this.selectedTool = this.tools.find(el => el.name === toolName) || null
     },
     changeAddingStatus(isAllowed: Boolean) {
       this.isAddingAllowed = isAllowed
