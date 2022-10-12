@@ -7,9 +7,3 @@ import Main from './layouts/Main.vue';
   <Main />
   <!--<Login />-->
 </template>
-
-<style>
-a {
-  text-decoration: none;
-}
-</style>

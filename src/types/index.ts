@@ -17,26 +17,24 @@ export type ToolFromBar = {
 
 export type ToolConfig = {
   name: string,
+  konvaName: string,
+  id: string,
+
   draggable: boolean,
+  rotation: number,
 
   x?: number,
   y?: number,
+  scaleX?: number,
+  scaleY?: number,
+
   width?: number,
   height?: number,
   radius?: number,
-  shadowBlur?: number,
-  scaleX?: number,
-  scaleY?: number,
 
   fill?: string,
   stroke?: string,
   dash?: number[],
 
   points?: number[],
-  fillLinearGradientColorStops?: (number|string)[],
-  fillLinearGradientStartPoint?: {x: number, y: number},
-  fillLinearGradientEndPoint?: {x: number, y: number},
-
-  tension?: number,
-  closed?: boolean
 }

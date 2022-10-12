@@ -1,11 +1,16 @@
 <script setup lang="ts">
+import { useCanvasStore } from '../store/canvas'
+
+const canvasStore = useCanvasStore()
 </script>
 
 <template>
   <aside class="tool-editor">
     <h1 class="tool-editor__label">Tool Editor</h1>
 
-    <div class="tool-editor__items"></div>
+    <div class="tool-editor__items">
+      {{canvasStore.selectedTool}}
+    </div>
   </aside>
 </template>
 

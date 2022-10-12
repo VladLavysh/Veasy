@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import ToolsBar from '../components/ToolsBar.vue';
 import Canvas from '../components/Canvas.vue';
-import MenuBar from '../components/MenuBar.vue';
 import ToolEditor from '../components/ToolEditor.vue';
 import ToggleButton from '../components/elements/ToggleButton.vue';
 import { ref } from 'vue';
@@ -26,7 +25,8 @@ const isToolsPanelOpen = ref(false)
   justify-content: space-between;
 
   width: 100%;
-  height: calc(100vh - 35px);
+  height: 100vh;
+  height: calc(100vh - 40px);
 
   @media screen and (max-width: 530px) {
     flex-direction: column-reverse;

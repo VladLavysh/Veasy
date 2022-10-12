@@ -1,7 +1,7 @@
 /* SCROLLBAR */
 /* width */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
 }
 
 /* Track */
@@ -20,4 +20,8 @@
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #5f6d79;
+}
+
+a {
+  text-decoration: none;
 }

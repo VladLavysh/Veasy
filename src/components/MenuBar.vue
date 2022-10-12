@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, markRaw } from 'vue';
 import { useRoute } from 'vue-router'
-import { UserProfile, Template, DataViewAlt, SettingsAdjust, Contrast } from '@vicons/carbon'
+import { UserProfile, Template, DataViewAlt, SettingsAdjust } from '@vicons/carbon'
 
 const route = useRoute()
 
@@ -11,8 +11,6 @@ const menuIcons = ref([
   { name: 'CV Creator', component: markRaw(DataViewAlt), path: '/creator', isActive: true },
   { name: 'Settings', component: markRaw(SettingsAdjust), path: '/settings', isActive: false },
 ])
-
-const themeButton = { name: 'Theme', component: Contrast }
 
 const updateIcons = (path: String) => {
   if (path === route.path) return
@@ -33,13 +31,6 @@ const updateIcons = (path: String) => {
         </n-icon>
         <span>{{icon.name}}</span>
       </RouterLink>
-
-      <div class="menu_icon">
-        <n-icon size="25">
-          <component :is="themeButton.component" />
-        </n-icon>
-        <span>{{themeButton.name}}</span>
-      </div>
     </div>
   </nav>
 </template>
@@ -51,6 +42,8 @@ const updateIcons = (path: String) => {
   width: 100%;
   height: 35px;
 
+  border-bottom: 5px solid #fff;
+
   background-color: #7F91A1;
   transition: width .3s ease-in-out;
 
@@ -60,6 +53,8 @@ const updateIcons = (path: String) => {
 
   &__icons {
     @include flex-row;
+    justify-content: start;
+    gap: 30px
   }
 
   .menu_icon {
@@ -72,6 +67,10 @@ const updateIcons = (path: String) => {
       color: #ffffff;
       background-color: #98acbf;
     }
+  }
+
+  .menu_icon:last-child {
+    margin-left: auto
   }
 }
 </style>

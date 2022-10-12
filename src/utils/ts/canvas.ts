@@ -1,8 +1,6 @@
-import Konva from 'konva';
 import { Tool, ToolConfig } from "../../types"
 import { useCanvasStore } from '../../store/canvas'
 import { ToolFromBar } from '../../types'
-import { ref } from 'vue'
 
 const canvasStore = useCanvasStore()
 
@@ -11,25 +9,27 @@ export const konvaConfig = {
   height: 1120
 }
 
-export const shapeConfig = (tool: Tool): ToolConfig | null => {
+export const shapeConfig = ({name, konvaName, id, x, y}: Tool): ToolConfig => {
   const defaultConfig: ToolConfig = {
-    name: tool.name,
-    draggable: true,
+    name,
+    konvaName,
+    id,
+    x,
+    y,
 
-    x: tool.x - 40, // 40 - half of width/height (to center tool)
-    y: tool.y - 40,
-    //width: 80,
-    //height: 80,
+    rotation: 0,
+    scaleX: 1,
+    scaleY: 1,
+
+    draggable: true,
 
     stroke: '#bebebe',
     dash: [5, 5],
   }
 
-  switch (tool.konvaName) {
+  switch (konvaName) {
     case 'v-circle':
       return Object.assign(defaultConfig, {
-        x: tool.x,
-        y: tool.y,
         radius: 40,
       })
 
@@ -44,7 +44,7 @@ export const shapeConfig = (tool: Tool): ToolConfig | null => {
       delete defaultConfig.y
 
       return Object.assign(defaultConfig, {
-        points: [tool.x - 100, tool.y, tool.x + 300, tool.y],
+        points: [x - 100, y, x + 300, y],
       })
 
     case 'v-path':
@@ -61,6 +61,8 @@ export const shapeConfig = (tool: Tool): ToolConfig | null => {
     case 'v-text':
       delete defaultConfig.dash
       delete defaultConfig.stroke
+      delete defaultConfig.scaleY
+      delete defaultConfig.scaleX
 
       return Object.assign(defaultConfig, {
         width: 80,
@@ -75,7 +77,7 @@ export const shapeConfig = (tool: Tool): ToolConfig | null => {
         height: 80,
       })
 
-    default: return null
+    default: return defaultConfig
   }
 }
 
@@ -87,24 +89,26 @@ export const addToCanvas = (e: MouseEvent, {name, konvaName, id}: ToolFromBar) =
   const canvas = document.querySelector('.canvas-section__canvas') as HTMLDivElement
   const canvasSection = document.querySelector('.canvas-section') as HTMLDivElement
 
-  canvasStore.addNewTool({
+  const baseToolConfig = {
     name: `${name}_${id!.toString()}`,
     konvaName,
     id: id!.toString(),
     x: Math.round(e.pageX - canvas.offsetLeft + canvasSection.scrollLeft),
     y: Math.round(e.pageY - canvas.offsetTop + canvasSection.scrollTop)
-  })
+  }
+
+  canvasStore.addNewTool(shapeConfig(baseToolConfig))
 
   canvasStore.changeAddingStatus(false)
 }
 
 // Shape transformer functions (3)
+// Source: https://codesandbox.io/s/github/konvajs/site/tree/master/vue-demos/transformer?from-embed=&file=/src/App.vue
 let selectedShapeName: string
-let stagetTransformer: any
+let stageTransformer: any
 
-// https://codesandbox.io/s/github/konvajs/site/tree/master/vue-demos/transformer?from-embed=&file=/src/App.vue
 const updateTransformer = () => {
-  const transformerNode = stagetTransformer.getNode()
+  const transformerNode = stageTransformer.getNode()
   const stage = transformerNode.getStage()
   const selectedNode = stage.findOne('.' + selectedShapeName)
 
@@ -126,16 +130,16 @@ export const handleTransformEnd = (e: MouseEvent) => {
   shape.rotation = target.rotation()
   shape.scaleX = target.scaleX()
   shape.scaleY = target.scaleY()
-
-  shape.fill = Konva.Util.getRandomColor()
 }
 
 export const handleStageMouseDown = (e: MouseEvent, transformer: any) => {
-  stagetTransformer = transformer
+  stageTransformer = transformer
   const target = e.target as HTMLElement
 
   if (target === target.getStage()) {
     selectedShapeName = ''
+    canvasStore.setSelectedTool('')
+
     updateTransformer()
     return
   }
@@ -149,6 +153,8 @@ export const handleStageMouseDown = (e: MouseEvent, transformer: any) => {
   const shape = canvasStore.tools.find(r => r.name === name)
 
   selectedShapeName = shape ? name : ''
+
+  canvasStore.setSelectedTool(selectedShapeName)
 
   updateTransformer()
 }

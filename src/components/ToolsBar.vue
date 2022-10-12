@@ -47,13 +47,13 @@ const newToolData = ({ name, konvaName }: ToolFromBar) => ({
 
   &__items {
     @include flex-row;
-
     width: 100%;
 
     flex-wrap: wrap;
     gap: 15px;
 
-    padding: 5px 0 25px;
+    padding: 5px 10px;
+    box-sizing: border-box;
   }
 }
 
