@@ -14,8 +14,8 @@ export const shapeConfig = ({name, konvaName, id, x, y}: Tool): ToolConfig => {
     name,
     konvaName,
     id,
-    x,
-    y,
+    x: x - 40, // 40 - half of default tool width/height
+    y: y - 40,
 
     rotation: 0,
     scaleX: 1,
@@ -27,16 +27,21 @@ export const shapeConfig = ({name, konvaName, id, x, y}: Tool): ToolConfig => {
     dash: [5, 5],
   }
 
-  switch (konvaName) {
+  switch (konvaName) {    
     case 'v-circle':
       return Object.assign(defaultConfig, {
+        // coords without padding (40)
+        x,
+        y,
         radius: 40,
+        fill: '#FFFFFFFF'
       })
 
     case 'v-rect':
       return Object.assign(defaultConfig, {
         width: 80,
         height: 80,
+        fill: '#FFFFFFFF'
       })
 
     case 'v-line':

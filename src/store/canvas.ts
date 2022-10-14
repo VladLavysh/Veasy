@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { Tool, ToolConfig } from '../types/index'
+import { ToolConfig } from '../types/index'
 
 export const useCanvasStore = defineStore('tools', {
   state: () => ({
@@ -8,6 +8,10 @@ export const useCanvasStore = defineStore('tools', {
     isAddingAllowed: false as Boolean
   }),
   getters: {
+    //getTool(): ToolConfig | null {
+    //  return this.selectedTool
+    //}
+    //selectedTool: (state) => state.selectedTool
   },
   actions: {
     addNewTool(newTool: ToolConfig) {

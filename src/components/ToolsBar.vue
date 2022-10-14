@@ -10,15 +10,21 @@ const newToolData = ({ name, konvaName }: ToolFromBar) => ({
   konvaName,
   id: uuidv4()
 })
+
+const draggingElementPos = (event: DragEvent) => {
+  if (event.dataTransfer) {
+    event.dataTransfer.setDragImage((event.target as Element), 45, 45);
+  }
+}
 </script>
 
 <template>
   <aside class="tools-bar">
-    <h1 class="tools-bar__label">Tools Bar</h1>
+    <h1 class="tools-bar__label">Tools</h1>
 
     <div class="tools-bar__items">
       <ToolsBarItem v-for="item of toolsBarItems" :key="item.name" :tool="item" draggable="true"
-        @dragend="addToCanvas($event, newToolData(item))" />
+        @dragstart="draggingElementPos" @dragend="addToCanvas($event, newToolData(item))" />
     </div>
   </aside>
 </template>

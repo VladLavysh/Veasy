@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useCanvasStore } from '../store/canvas'
-import { konvaConfig, shapeConfig, handleStageMouseDown, handleTransformEnd } from '../utils/ts/canvas'
-import { Tool } from '../types/index';
+import { konvaConfig, handleStageMouseDown, handleTransformEnd } from '../utils/ts/canvas'
 import { ref } from 'vue';
 
 const canvasStore = useCanvasStore()
@@ -16,6 +15,8 @@ const dragHandler = (isOver: Boolean) => {
 }
 </script>
 
+<!-- Grid 2.0 -->
+<!-- https://codepen.io/pierrebleroux/pen/gGpvxJ?editors=0010 -->
 <template>
   <section class="canvas-section">
     <h2 class="canvas-section__label">Canvas Name</h2>
