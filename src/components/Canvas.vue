@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useCanvasStore } from '../store/canvas'
-import { konvaConfig, handleStageMouseDown, handleTransformEnd } from '../utils/ts/canvas'
+import { konvaConfig, transformerConfig, handleStageMouseDown, handleTransformEnd } from '../utils/ts/canvas'
 import { ref } from 'vue';
 
 const canvasStore = useCanvasStore()
@@ -28,7 +28,7 @@ const dragHandler = (isOver: Boolean) => {
           <component v-for="(tool, idx) of canvasStore.tools" :key="idx" :is="tool.konvaName" :config="tool"
             @transformend="handleTransformEnd" @dragend="handleTransformEnd">
           </component>
-          <v-transformer ref="transformer" />
+          <v-transformer ref="transformer" :config="transformerConfig" />
         </v-layer>
       </v-stage>
     </div>

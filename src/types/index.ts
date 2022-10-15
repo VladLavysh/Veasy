@@ -34,6 +34,7 @@ export type ToolConfig = {
 
   fill?: string,
   stroke?: string,
+  strokeWidth?: number,
   dash?: number[],
 
   points?: number[],

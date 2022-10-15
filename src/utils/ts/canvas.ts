@@ -9,6 +9,13 @@ export const konvaConfig = {
   height: 1120
 }
 
+export const transformerConfig = {
+  anchorStroke: '#66727d',
+  anchorFill: '#ffffff',
+  anchorSize: 8,
+  borderStroke: '#66727d',
+}
+
 export const shapeConfig = ({name, konvaName, id, x, y}: Tool): ToolConfig => {
   const defaultConfig: ToolConfig = {
     name,
@@ -23,7 +30,8 @@ export const shapeConfig = ({name, konvaName, id, x, y}: Tool): ToolConfig => {
 
     draggable: true,
 
-    stroke: '#bebebe',
+    stroke: '#BFBEBEFF',
+    strokeWidth: 2,
     dash: [5, 5],
   }
 
@@ -112,6 +120,7 @@ export const addToCanvas = (e: MouseEvent, {name, konvaName, id}: ToolFromBar) =
 let selectedShapeName: string
 let stageTransformer: any
 
+// TODO: Make type TARGET
 const updateTransformer = () => {
   const transformerNode = stageTransformer.getNode()
   const stage = transformerNode.getStage()

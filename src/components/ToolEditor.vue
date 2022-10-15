@@ -2,28 +2,16 @@
 import { ref, reactive, computed, watch } from 'vue'
 import { Unlocked, Locked } from '@vicons/carbon'
 import { useCanvasStore } from '../store/canvas'
+import { borderTypes } from '../utils/ts/tools'
 
 const store = useCanvasStore()
-
-const fillSui = (color: string) => {
-  console.log('COLOR', color);
-
-}
 
 const tool = computed(() => {
   return store.selectedTool || null
 })
 
 const lockerComponent = computed(() => {
-  if (tool.value) {
-    return tool.value.draggable ? Unlocked : Locked
-  }
-})
-
-const normalizedToolName = computed(() => {
-  return tool.value
-    ? tool.value.name.match(/([^_]+)/)![0]
-    : ''
+  return tool.value?.draggable ? Unlocked : Locked
 })
 
 const lockerColor = computed(() => {
@@ -32,36 +20,89 @@ const lockerColor = computed(() => {
     : '#ffad9f'
 })
 
+const normalizedToolName = computed(() => {
+  return tool.value
+    ? tool.value.name.match(/([^_]+)/)![0]
+    : ''
+})
+
+const toolBorderType = computed(() => {
+  if (!tool.value) return
+  if (!Array.isArray(tool.value.dash)) return
+
+  return tool.value.dash[0] === 0
+    ? 'solid'
+    : 'dashed'
+})
+
 const toggleToolDraggable = () => {
-  if (tool.value) {
-    tool.value.draggable = !tool.value.draggable
-  }
+  if (!tool.value) return
+
+  tool.value.draggable = !tool.value.draggable
+}
+
+const changeToolBorder = (borderType: [0, 0] | [5, 5]) => {
+  if (!tool.value) return
+
+  tool.value.dash = borderType
+}
+
+const changeBorderVisibility = (isVisible: boolean) => {
+  if (!tool.value) return
+
+  tool.value.strokeWidth = isVisible ? 2 : 0
 }
 </script>
 
+<!-- Shapes switch animation (left to right) -->
 <template>
   <aside class="tool-editor">
-    <div class="tool-editor__label">
-      <h1>Tool Editor</h1>
-      <h3 v-if="!tool">Choose any tool to customize</h3>
-    </div>
+    <h1 class="tool-editor__label">Tool Editor</h1>
 
-    <div v-if="tool" class="tool-editor__items">
-      <n-divider class="item__divider" />
-      <div class="item__label">
-        <span>{{ normalizedToolName }}</span>
-        <n-icon size="20" :color="lockerColor" :component="lockerComponent" @click="toggleToolDraggable" />
-      </div>
+    <Transition name="editor" mode="out-in">
+      <div v-if="tool" class="tool-editor__items items">
+        <n-divider class="items__divider" />
 
-      <div class="item item__color">
-        <span>Fill color</span>
-        <n-color-picker v-model:value="tool.fill" />
+        <!-- Tool name -->
+        <div class="items__label">
+          <span>{{ normalizedToolName }}</span>
+          <n-icon size="20" :color="lockerColor" :component="lockerComponent" @click="toggleToolDraggable" />
+        </div>
+
+        <!-- Color -->
+        <div class="items__body">
+          <h3 class="item__label">Color</h3>
+          <div class="item item-no-margin" v-if="normalizedToolName !== 'Barrier'">
+            <span>Fill</span>
+            <n-color-picker v-model:value="tool.fill" />
+          </div>
+          <div class="item" v-if="normalizedToolName !== 'Arrow'">
+            <span>Stroke</span>
+            <n-color-picker v-model:value="tool.stroke" />
+          </div>
+        </div>
+
+        <!-- Border -->
+        <div class="items__body">
+          <div class="item__label item__label-border">
+            <h3>Border</h3>
+            <n-switch @update:value="changeBorderVisibility" :value="!!tool.strokeWidth" size="small" />
+          </div>
+          <div class="item">
+            <span>Type</span>
+            <n-select :value="toolBorderType" @update:value="changeToolBorder" :options="borderTypes"
+              :disabled="!(!!tool.strokeWidth)" />
+          </div>
+          <div class="item">
+            <span>Width</span>
+            <n-input-number v-model:value="tool.strokeWidth" :validator="(x: number) => x > 0"
+              :disabled="!(!!tool.strokeWidth)" size="medium" />
+          </div>
+        </div>
       </div>
-      <div class="item item__color">
-        <span>Stroke color</span>
-        <n-color-picker v-model:value="tool.stroke" />
-      </div>
-    </div>
+      <h3 v-else class="tool-editor__label">Choose any tool to customize</h3>
+    </Transition>
+
   </aside>
 </template>
 
@@ -92,9 +133,10 @@ const toggleToolDraggable = () => {
   }
 }
 
-.item {
-  width: 100%;
-  font-size: 1rem;
+.items {
+  &__divider {
+    margin: 10px 0 0;
+  }
 
   &__label {
     @include flex-row;
@@ -109,16 +151,53 @@ const toggleToolDraggable = () => {
       color: #aff9c4;
       cursor: pointer;
     }
+  }
 
-    .tool-locked {
-      color: #ffad9f;
-    }
+  &__body {
+    width: 100%;
+  }
+}
+
+.item {
+  width: 100%;
+  margin-bottom: 10px;
+
+  >span {
+    font-size: 0.9rem
+  }
+
+  &-no-margin {
+    margin: 0;
   }
 
   &__divider {
     margin: 10px 0;
   }
 
-  &__color {}
+  &__label {
+    margin: 10px 0 5px;
+
+    &-border {
+      @include flex-row;
+      justify-content: space-between;
+
+      height: 30px;
+    }
+  }
+}
+
+.editor-enter-active,
+.editor-leave-active {
+  transition: all 0.25s ease-out;
+}
+
+.editor-enter-from {
+  opacity: 0;
+  transform: translateY(-50px);
+}
+
+.editor-leave-to {
+  opacity: 0;
+  transform: translateY(80px);
 }
 </style>
