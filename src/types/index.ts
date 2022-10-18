@@ -37,5 +37,14 @@ export type ToolConfig = {
   strokeWidth?: number,
   dash?: number[],
 
+  text?: string,
+  fontFamily? : string,
+  fontSize?: number,
+  fontStyle?: string,
+  fontVariant?: string,
+  textDecoration?: string,
+  align?: string,
+  verticalAlign?: string
+
   points?: number[],
 }

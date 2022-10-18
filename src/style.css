@@ -1,5 +1,8 @@
 /* SCROLLBAR */
 /* width */
+#app {
+  overflow: hidden;
+}
 ::-webkit-scrollbar {
   width: 8px;
 }

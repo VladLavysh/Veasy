@@ -82,6 +82,12 @@ export const shapeConfig = ({name, konvaName, id, x, y}: Tool): ToolConfig => {
         height: 80,
         text: 'Type some text here',
         fontSize: 20,
+        fontFamily: 'Arial',
+        fontStyle: 'normal',
+        fontVariant: 'normal',
+        textDecoration: 'empty string',
+        align: 'left',
+        verticalAlign: 'top'
       })
 
     case 'v-image':

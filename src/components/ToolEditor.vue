@@ -2,7 +2,7 @@
 import { ref, reactive, computed, watch } from 'vue'
 import { Unlocked, Locked } from '@vicons/carbon'
 import { useCanvasStore } from '../store/canvas'
-import { borderTypes } from '../utils/ts/tools'
+import { borderTypes, textConfig } from '../utils/ts/tools'
 
 const store = useCanvasStore()
 
@@ -69,6 +69,73 @@ const changeBorderVisibility = (isVisible: boolean) => {
           <n-icon size="20" :color="lockerColor" :component="lockerComponent" @click="toggleToolDraggable" />
         </div>
 
+        <!-- Text -->
+        <div class="items__body" v-if="normalizedToolName === 'Text input'">
+          <h3 class="item__label">Container</h3>
+          <div class="item">
+            <span>Width</span>
+            <n-input-number v-model:value="tool.width" :validator="(x: number) => x > 0" size="medium" step="10" />
+          </div>
+          <div class="item">
+            <span>Height</span>
+            <n-input-number v-model:value="tool.height" :validator="(x: number) => x > 0" size="medium" step="10" />
+          </div>
+        </div>
+
+        <div class="items__body" v-if="normalizedToolName === 'Text input'">
+          <h3 class="item__label">Text</h3>
+
+          <div class="item">
+            <span>Value</span>
+            <n-input type="textarea" v-model:value="tool.text" size="medium" />
+          </div>
+          <div class="item">
+            <span>Font size</span>
+            <n-input-number v-model:value="tool.fontSize" :validator="(x: number) => x > 0" size="medium" />
+          </div>
+          <div class="item" v-for="config of textConfig" :key="config.label">
+            <span>{{ config.label }}</span>
+            <!-- Font Family -->
+            <n-select v-if="config.label === 'Font family'" v-model:value="tool.fontFamily" size="medium"
+              :options="config.options" />
+
+            <!-- Font Style -->
+            <div class="item__font-style" v-if="config.label === 'Font style'">
+              <n-icon-wrapper v-for="option of config.options" :key="option" :size="24" :border-radius="5" color="#fff">
+                <n-icon :size="18" :component="option" color="#333639" />
+              </n-icon-wrapper>
+            </div>
+
+            <!-- Font Variant -->
+            <div class="item__font-style" v-if="config.label === 'Font variant'">
+              <div class="item__font-variant" v-for="option of config.options">
+                <span>{{option}}</span>
+              </div>
+            </div>
+
+            <!-- Text Decoration -->
+            <div class="item__font-style" v-if="config.label === 'Text decoration'">
+              <n-icon-wrapper v-for="option of config.options" :key="option" :size="24" :border-radius="5" color="#fff">
+                <n-icon :size="18" :component="option" color="#333639" />
+              </n-icon-wrapper>
+            </div>
+
+            <!-- Horizontal Align -->
+            <div class="item__font-style" v-if="config.label === 'Horizontal align'">
+              <n-icon-wrapper v-for="option of config.options" :key="option" :size="24" :border-radius="5" color="#fff">
+                <n-icon :size="18" :component="option" color="#333639" />
+              </n-icon-wrapper>
+            </div>
+
+            <!-- Vertical Align -->
+            <div class="item__font-style" v-if="config.label === 'Vertical align'">
+              <n-icon-wrapper v-for="option of config.options" :key="option" :size="24" :border-radius="5" color="#fff">
+                <n-icon :size="18" :component="option" color="#333639" />
+              </n-icon-wrapper>
+            </div>
+          </div>
+        </div>
+
         <!-- Color -->
         <div class="items__body">
           <h3 class="item__label">Color</h3>
@@ -76,14 +143,14 @@ const changeBorderVisibility = (isVisible: boolean) => {
             <span>Fill</span>
             <n-color-picker v-model:value="tool.fill" />
           </div>
-          <div class="item" v-if="normalizedToolName !== 'Arrow'">
+          <div class="item" v-if="normalizedToolName !== 'Arrow' && normalizedToolName !== 'Text input'">
             <span>Stroke</span>
             <n-color-picker v-model:value="tool.stroke" />
           </div>
         </div>
 
         <!-- Border -->
-        <div class="items__body">
+        <div class="items__body" v-if="normalizedToolName !== 'Text input'">
           <div class="item__label item__label-border">
             <h3>Border</h3>
             <n-switch @update:value="changeBorderVisibility" :value="!!tool.strokeWidth" size="small" />
@@ -127,6 +194,9 @@ const changeBorderVisibility = (isVisible: boolean) => {
     justify-content: flex-start;
     align-items: flex-start;
     gap: 15px;
+
+    overflow: auto;
+    height: calc(100% - 80px);
 
     padding: 0 15px;
     color: #fff;
@@ -184,6 +254,34 @@ const changeBorderVisibility = (isVisible: boolean) => {
       height: 30px;
     }
   }
+
+  &__font-style {
+    display: flex;
+    gap: 10px;
+
+    cursor: pointer;
+
+    span {
+      color: #333639;
+      line-height: 0.8rem;
+    }
+  }
+
+  &__font-variant {
+    height: 24px;
+    width: 24px;
+
+    text-align: center;
+    line-height: 26px;
+
+    border-radius: 5px;
+    background: #fff;
+    color: #333639;
+  }
+
+  //&__font-style-active {
+  //  background: #aff9c4;
+  //}
 }
 
 .editor-enter-active,
