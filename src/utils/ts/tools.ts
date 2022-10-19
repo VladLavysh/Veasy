@@ -40,27 +40,57 @@ export const textConfig = readonly([
       {label: 'Monospace', value: 'monospace'},
     ]
   },
+  //{
+  //  label: 'Font variant',
+  //  options: [
+  //    {label: 'textLower', value: 's'},
+  //    {label: 'textUpper', value: 'B'}
+  //  ]
+  //},
   {
     label: 'Font style',
-    options: [markRaw(TextBold) , markRaw(TextItalic)]
-  },
-  {
-    label: 'Font variant',
-    options: ['n', 'N']
+    options: [
+      {label: 'bold', value: markRaw(TextBold)},
+      {label: 'italic', value: markRaw(TextItalic)}
+    ]
   },
   {
     label: 'Text decoration',
-    options: [markRaw(TextStrikethrough), markRaw(TextUnderline)]
+    options: [
+      {label: 'line-through', value: markRaw(TextStrikethrough)},
+      {label: 'underline', value: markRaw(TextUnderline)}
+    ]
   },
   {
     label: 'Horizontal align',
-    options: [markRaw(AlignHorizontalLeft), markRaw(AlignHorizontalCenter), markRaw(AlignHorizontalRight)]
+    options: [
+      {label: 'left', value: markRaw(AlignHorizontalLeft)},
+      {label: 'center', value: markRaw(AlignHorizontalCenter)},
+      {label: 'right', value: markRaw(AlignHorizontalRight)}
+    ]
   },
   {
     label: 'Vertical align',
-    options: [markRaw(AlignVerticalTop), markRaw(AlignVerticalCenter), markRaw(AlignVerticalBottom)]
+    options: [
+      {label: 'top', value: markRaw(AlignVerticalTop)},
+      {label: 'center', value: markRaw(AlignVerticalCenter)},
+      {label: 'bottom', value: markRaw(AlignVerticalBottom)}
+    ]
   }
 ])
+
+export const normalizeTextConfigLabel = (label: string): string => {
+  const splittedLabel = label.toLowerCase().split(' ')
+
+  if (label === 'Horizontal align') {
+    return splittedLabel[1]
+  }  
+
+  const lastWord = splittedLabel[1].slice(0, 1).toUpperCase() +
+                   splittedLabel[1].slice(1, splittedLabel[1].length)
+
+  return splittedLabel[0] + lastWord
+}
 
 //export const customSelectLabel = (option: SelectOption): VNodeChild => {
 //  return [

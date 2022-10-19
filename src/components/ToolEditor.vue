@@ -2,7 +2,7 @@
 import { ref, reactive, computed, watch } from 'vue'
 import { Unlocked, Locked } from '@vicons/carbon'
 import { useCanvasStore } from '../store/canvas'
-import { borderTypes, textConfig } from '../utils/ts/tools'
+import { borderTypes, textConfig, normalizeTextConfigLabel } from '../utils/ts/tools'
 
 const store = useCanvasStore()
 
@@ -52,6 +52,38 @@ const changeBorderVisibility = (isVisible: boolean) => {
 
   tool.value.strokeWidth = isVisible ? 2 : 0
 }
+
+const editItemClickHandler = (e: MouseEvent, configLabel: string, optionLabel: string) => {
+  if (!tool.value) return
+
+  //if (configLabel === 'Font variant') {
+  //  tool.value.text = optionLabel === 'textUpper'
+  //    ? tool.value.text?.toUpperCase()
+  //    : tool.value.text?.toLowerCase()
+
+  //  return
+  //}
+
+  let normalizedItemName = normalizeTextConfigLabel(configLabel)
+
+  if (normalizedItemName in tool.value) {
+    tool.value[normalizedItemName] = optionLabel
+  }
+}
+
+const isStyleExists = (configLabel: string, optionLabel: string) => {
+  if (!tool.value) return
+
+  //if (configLabel === 'Font variant') {
+  //  const isUpperCase = tool.value.text === tool.value.text?.toUpperCase()
+  //}
+
+  let normalizedItemName = normalizeTextConfigLabel(configLabel)
+
+  if (normalizedItemName in tool.value) {
+    return tool.value[normalizedItemName] === optionLabel
+  }
+}
 </script>
 
 <!-- Shapes switch animation (left to right) -->
@@ -95,42 +127,26 @@ const changeBorderVisibility = (isVisible: boolean) => {
           </div>
           <div class="item" v-for="config of textConfig" :key="config.label">
             <span>{{ config.label }}</span>
+
             <!-- Font Family -->
             <n-select v-if="config.label === 'Font family'" v-model:value="tool.fontFamily" size="medium"
               :options="config.options" />
 
-            <!-- Font Style -->
-            <div class="item__font-style" v-if="config.label === 'Font style'">
-              <n-icon-wrapper v-for="option of config.options" :key="option" :size="24" :border-radius="5" color="#fff">
-                <n-icon :size="18" :component="option" color="#333639" />
-              </n-icon-wrapper>
-            </div>
-
             <!-- Font Variant -->
-            <div class="item__font-style" v-if="config.label === 'Font variant'">
-              <div class="item__font-variant" v-for="option of config.options">
-                <span>{{option}}</span>
+            <!--<div v-else-if="config.label === 'Font variant'" class="item__font-style">
+              <div v-for="option of config.options"
+                :class="[isStyleExists(config.label, option.label) ? 'icon-active' : '', 'item__font-variant']"
+                @click="editItemClickHandler($event, config.label, option.label)">
+                <span>{{option.value}}</span>
               </div>
-            </div>
+            </div>-->
 
-            <!-- Text Decoration -->
-            <div class="item__font-style" v-if="config.label === 'Text decoration'">
-              <n-icon-wrapper v-for="option of config.options" :key="option" :size="24" :border-radius="5" color="#fff">
-                <n-icon :size="18" :component="option" color="#333639" />
-              </n-icon-wrapper>
-            </div>
-
-            <!-- Horizontal Align -->
-            <div class="item__font-style" v-if="config.label === 'Horizontal align'">
-              <n-icon-wrapper v-for="option of config.options" :key="option" :size="24" :border-radius="5" color="#fff">
-                <n-icon :size="18" :component="option" color="#333639" />
-              </n-icon-wrapper>
-            </div>
-
-            <!-- Vertical Align -->
-            <div class="item__font-style" v-if="config.label === 'Vertical align'">
-              <n-icon-wrapper v-for="option of config.options" :key="option" :size="24" :border-radius="5" color="#fff">
-                <n-icon :size="18" :component="option" color="#333639" />
+            <!-- Font Style, Text Decoration, Horizontal Align, Vertical Align -->
+            <div v-else class="item__font-style">
+              <n-icon-wrapper v-for="option of config.options" :key="option.label" :size="24" :border-radius="5"
+                @click="editItemClickHandler($event, config.label, option.label)" color="#fff"
+                :class="[isStyleExists(config.label, option.label) ? 'icon-active' : '']">
+                <n-icon :size="18" :component="option.value" color="#333639" />
               </n-icon-wrapper>
             </div>
           </div>
@@ -232,6 +248,8 @@ const changeBorderVisibility = (isVisible: boolean) => {
   width: 100%;
   margin-bottom: 10px;
 
+  user-select: none;
+
   >span {
     font-size: 0.9rem
   }
@@ -277,6 +295,15 @@ const changeBorderVisibility = (isVisible: boolean) => {
     border-radius: 5px;
     background: #fff;
     color: #333639;
+  }
+
+  .icon-active {
+    background-color: #545557 !important;
+
+    span,
+    i {
+      color: #fff !important;
+    }
   }
 
   //&__font-style-active {
