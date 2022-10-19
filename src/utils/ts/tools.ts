@@ -40,13 +40,6 @@ export const textConfig = readonly([
       {label: 'Monospace', value: 'monospace'},
     ]
   },
-  //{
-  //  label: 'Font variant',
-  //  options: [
-  //    {label: 'textLower', value: 's'},
-  //    {label: 'textUpper', value: 'B'}
-  //  ]
-  //},
   {
     label: 'Font style',
     options: [

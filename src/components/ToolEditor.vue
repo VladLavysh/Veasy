@@ -56,14 +56,6 @@ const changeBorderVisibility = (isVisible: boolean) => {
 const editItemClickHandler = (e: MouseEvent, configLabel: string, optionLabel: string) => {
   if (!tool.value) return
 
-  //if (configLabel === 'Font variant') {
-  //  tool.value.text = optionLabel === 'textUpper'
-  //    ? tool.value.text?.toUpperCase()
-  //    : tool.value.text?.toLowerCase()
-
-  //  return
-  //}
-
   let normalizedItemName = normalizeTextConfigLabel(configLabel)
 
   if (normalizedItemName in tool.value) {
@@ -73,10 +65,6 @@ const editItemClickHandler = (e: MouseEvent, configLabel: string, optionLabel: s
 
 const isStyleExists = (configLabel: string, optionLabel: string) => {
   if (!tool.value) return
-
-  //if (configLabel === 'Font variant') {
-  //  const isUpperCase = tool.value.text === tool.value.text?.toUpperCase()
-  //}
 
   let normalizedItemName = normalizeTextConfigLabel(configLabel)
 
@@ -131,15 +119,6 @@ const isStyleExists = (configLabel: string, optionLabel: string) => {
             <!-- Font Family -->
             <n-select v-if="config.label === 'Font family'" v-model:value="tool.fontFamily" size="medium"
               :options="config.options" />
-
-            <!-- Font Variant -->
-            <!--<div v-else-if="config.label === 'Font variant'" class="item__font-style">
-              <div v-for="option of config.options"
-                :class="[isStyleExists(config.label, option.label) ? 'icon-active' : '', 'item__font-variant']"
-                @click="editItemClickHandler($event, config.label, option.label)">
-                <span>{{option.value}}</span>
-              </div>
-            </div>-->
 
             <!-- Font Style, Text Decoration, Horizontal Align, Vertical Align -->
             <div v-else class="item__font-style">
