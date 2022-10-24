@@ -3,6 +3,7 @@ import { ref, reactive, computed, watch } from 'vue'
 import { Unlocked, Locked } from '@vicons/carbon'
 import { useCanvasStore } from '../store/canvas'
 import { borderTypes, textConfig, normalizeTextConfigLabel } from '../utils/ts/tools'
+import { ToolEditItem, ToolConfig } from '../types/index'
 
 const store = useCanvasStore()
 
@@ -53,24 +54,24 @@ const changeBorderVisibility = (isVisible: boolean) => {
   tool.value.strokeWidth = isVisible ? 2 : 0
 }
 
-const editItemClickHandler = (e: MouseEvent, configLabel: string, optionLabel: string) => {
+const editItemClickHandler = ({ _, configLabel, optionLabel, isHandler }: ToolEditItem) => {
   if (!tool.value) return
 
   let normalizedItemName = normalizeTextConfigLabel(configLabel)
 
-  if (normalizedItemName in tool.value) {
+  if (!(normalizedItemName in tool.value)) return
+
+  if ((isHandler && tool.value[normalizedItemName] === optionLabel) && (configLabel === 'Font style' || configLabel === 'Text decoration')) {
+    tool.value[normalizedItemName] = 'normal'
+    return
+  }
+
+  if (isHandler) {
     tool.value[normalizedItemName] = optionLabel
+    return
   }
-}
 
-const isStyleExists = (configLabel: string, optionLabel: string) => {
-  if (!tool.value) return
-
-  let normalizedItemName = normalizeTextConfigLabel(configLabel)
-
-  if (normalizedItemName in tool.value) {
-    return tool.value[normalizedItemName] === optionLabel
-  }
+  return tool.value[normalizedItemName] === optionLabel
 }
 </script>
 
@@ -123,8 +124,9 @@ const isStyleExists = (configLabel: string, optionLabel: string) => {
             <!-- Font Style, Text Decoration, Horizontal Align, Vertical Align -->
             <div v-else class="item__font-style">
               <n-icon-wrapper v-for="option of config.options" :key="option.label" :size="24" :border-radius="5"
-                @click="editItemClickHandler($event, config.label, option.label)" color="#fff"
-                :class="[isStyleExists(config.label, option.label) ? 'icon-active' : '']">
+                @click="editItemClickHandler({_: null, configLabel: config.label, optionLabel: option.label, isHandler: true})"
+                color="#fff"
+                :class="[editItemClickHandler({_: null, configLabel: config.label, optionLabel: option.label, isHandler: false}) ? 'icon-active' : '']">
                 <n-icon :size="18" :component="option.value" color="#333639" />
               </n-icon-wrapper>
             </div>

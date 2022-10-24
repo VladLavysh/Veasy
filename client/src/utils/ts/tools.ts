@@ -2,6 +2,7 @@
 import { TextSelection, Image, Checkbox, Barrier, ChevronRight, CircleDash, TextItalic, TextBold, TextStrikethrough, TextUnderline, AlignHorizontalLeft, AlignHorizontalCenter, AlignHorizontalRight, AlignVerticalTop, AlignVerticalCenter, AlignVerticalBottom} from '@vicons/carbon'
 
 import { readonly, markRaw } from 'vue'
+import { ToolConfig } from '../../types'
 
 // ----- Tools bar ----- //
 export const toolsBarItems = readonly([
@@ -72,17 +73,17 @@ export const textConfig = readonly([
   }
 ])
 
-export const normalizeTextConfigLabel = (label: string): string => {
+export const normalizeTextConfigLabel = (label: string): keyof ToolConfig => {
   const splittedLabel = label.toLowerCase().split(' ')
 
   if (label === 'Horizontal align') {
-    return splittedLabel[1]
+    return splittedLabel[1].toString() as keyof ToolConfig
   }  
 
   const lastWord = splittedLabel[1].slice(0, 1).toUpperCase() +
                    splittedLabel[1].slice(1, splittedLabel[1].length)
 
-  return splittedLabel[0] + lastWord
+  return splittedLabel[0] + lastWord as keyof ToolConfig
 }
 
 //export const customSelectLabel = (option: SelectOption): VNodeChild => {

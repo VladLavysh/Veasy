@@ -6,6 +6,7 @@ import { ref } from 'vue';
 const canvasStore = useCanvasStore()
 
 const transformer = ref(null)
+const showGrid = ref(true)
 
 const dragHandler = (isOver: Boolean) => {
   if (canvasStore.isAddingAllowed === isOver) {
@@ -28,6 +29,19 @@ const dragHandler = (isOver: Boolean) => {
           <component v-for="(tool, idx) of canvasStore.tools" :key="idx" :is="tool.konvaName" :config="tool"
             @transformend="handleTransformEnd" @dragend="handleTransformEnd">
           </component>
+
+          <!--<v-shape v-if="showGrid" :config="{
+            sceneFunc: function (context, shape) {
+              for (const y: number = 0; y < 500; y += 20) {
+                context.moveTo(25, y);
+                context.lineTo(25, y);
+              }
+              context.strokeStyle = '#888';
+              context.strokeWidth = 0.1;
+              context.strokeOpacity = 0.1;
+              context.stroke();
+            }
+          }" />-->
           <v-transformer ref="transformer" :config="transformerConfig" />
         </v-layer>
       </v-stage>
