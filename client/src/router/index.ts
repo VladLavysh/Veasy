@@ -8,7 +8,9 @@ const routes = [
   { path: '/login', name: 'Login', component: () => import('../layouts/Login.vue') },
 ]
 
-export const router = createRouter({
+const router = createRouter({
   history: createWebHistory(),
   routes,
 })
+
+export default router

@@ -1,5 +1,12 @@
 import { Component } from "vue"
 
+export type ToolEditItem = {
+  _: null,
+  configLabel: string,
+  optionLabel: keyof ToolConfig,
+  isHandler: boolean
+}
+
 export type Tool = {
   name: string,
   konvaName: string,
