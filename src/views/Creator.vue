@@ -3,9 +3,18 @@ import ToolsBar from '../components/ToolsBar.vue';
 import Canvas from '../components/Canvas.vue';
 import ToolEditor from '../components/ToolEditor.vue';
 import ToggleButton from '../components/elements/ToggleButton.vue';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
+import { useCanvasStore } from '../store/canvas';
+
+const store = useCanvasStore()
 
 const isToolsPanelOpen = ref(false)
+
+onMounted(async () => {
+  const selectedCV = await store.getSelectedCV()
+  console.log('selectedCV', selectedCV);
+})
+
 </script>
 
 <template>

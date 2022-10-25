@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import axios from 'axios'
 import { ToolConfig } from '../types/index'
 
 export const useCanvasStore = defineStore('tools', {
@@ -30,6 +31,9 @@ export const useCanvasStore = defineStore('tools', {
     },
     changeAddingStatus(isAllowed: Boolean) {
       this.isAddingAllowed = isAllowed
+    },
+    async getSelectedCV() {
+      return await axios.get('api/creator/get-selected-cv')
     }
   },
 })
