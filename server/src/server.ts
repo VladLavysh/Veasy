@@ -19,6 +19,6 @@ app.use('/profile', profileRoutes)
 app.use('/creator', creatorRoutes)
 app.use('/settings', settingsRoutes)
 
-app.use(express.static(path.join(__dirname, "..", "dist")));
+app.use(express.static(path.join(__dirname, "..", "dist") as string));
 
 export default app

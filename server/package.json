@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "watch": "tsc -w",
-    "dev": "ts-node-dev index.ts",
-    "start": "nodemon dist/server.js"
+    "dev": "ts-node-dev src/main.ts"
   },
   "author": "Vladislav",
   "license": "ISC",
