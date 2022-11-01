@@ -16,11 +16,6 @@ export const toolsBarItems = readonly([
   { name: 'Image', konvaName: 'v-image', component: markRaw(Image) },
   { name: 'Barrier', konvaName: 'v-line', component: markRaw(Barrier) },
   { name: 'Arrow', konvaName: 'v-path', component: markRaw(ChevronRight) },
-  { name: 'Arrow', konvaName: 'v-path', component: markRaw(ChevronRight) },
-  { name: 'Arrow', konvaName: 'v-path', component: markRaw(ChevronRight) },
-  { name: 'Arrow', konvaName: 'v-path', component: markRaw(ChevronRight) },
-  { name: 'Arrow', konvaName: 'v-path', component: markRaw(ChevronRight) },
-  { name: 'Arrow', konvaName: 'v-path', component: markRaw(ChevronRight) },
 ])
 
 // ----- Tool editor ----- //

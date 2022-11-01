@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { v4 as uuidv4 } from 'uuid'
 import ToolsBarItem from '../components/elements/ToolsBarItem.vue'
 import { ToolFromBar } from '../types';
@@ -19,6 +20,8 @@ const draggingElementPos = (event: DragEvent) => {
     event.dataTransfer.setDragImage((event.target as Element), 45, 45);
   }
 }
+
+const isListVisible = ref(false)
 </script>
 
 <template>
@@ -26,18 +29,25 @@ const draggingElementPos = (event: DragEvent) => {
     <div class="tools-bar__items">
       <h1 class="tools-bar__label">Tools</h1>
 
-      <ToolsBarItem v-for="item of toolsBarItems" :key="item.name" :tool="item" draggable="true"
-        @dragstart="draggingElementPos" @dragend="addToCanvas($event, newToolData(item))" />
+      <div class="tools-bar__items-content">
+        <ToolsBarItem v-for="item of toolsBarItems" :key="item.name" :tool="item" draggable="true"
+          @dragstart="draggingElementPos" @dragend="addToCanvas($event, newToolData(item))" />
+      </div>
     </div>
 
-    <div class="tools-bar__list">
-      <h1 class="tools-bar__label">Active tools</h1>
-      <ul v-if="store.getToolsName.length">
-        <li v-for="(itemName, idx) in store.getToolsName" :key="idx" draggable="true">
-          {{ itemName }}
-        </li>
-      </ul>
-      <h3 v-else> There are no tools here yet</h3>
+    <div :class="['tools-bar__list', isListVisible ? 'list-active' : '']" @click="isListVisible = !isListVisible">
+      <h1 class="tools-bar__label">Active</h1>
+
+      <Transition name="list" mode="out-in">
+        <div v-if="isListVisible">
+          <ul v-if="store.getToolsName.length">
+            <li v-for="(itemName, idx) in store.getToolsName" :key="idx" draggable="true">
+              {{ itemName }}
+            </li>
+          </ul>
+          <h3 v-else>There are no tools here yet</h3>
+        </div>
+      </Transition>
     </div>
 
   </aside>
@@ -62,23 +72,32 @@ const draggingElementPos = (event: DragEvent) => {
   }
 
   &__label {
+    position: sticky;
+    top: 5px;
+
     width: 100%;
-    height: 35px;
+    height: 30px;
+
     text-align: center;
+    align-self: flex-start;
     color: #fff;
   }
 
   &__items {
-    @include flex-row;
+    @include flex-column;
     width: 100%;
-
-    flex-wrap: wrap;
-    gap: 15px;
+    height: calc(100% - 65px);
 
     padding: 5px 10px;
     box-sizing: border-box;
 
     overflow-y: scroll;
+  }
+
+  &__items-content {
+    @include flex-row;
+    flex-wrap: wrap;
+    gap: 15px;
   }
 
   &__list {
@@ -87,27 +106,15 @@ const draggingElementPos = (event: DragEvent) => {
     left: 0;
 
     width: 100%;
-    max-height: 50%;
+    height: 65px;
 
     background: #7f91a1;
     box-shadow: 0 0 10px #5e5e5e;
 
+    transition: all .3s ease-in-out;
+    cursor: pointer;
+
     overflow-y: scroll;
-
-    &::before {
-      content: '';
-
-      position: absolute;
-      top: 0;
-      left: 0;
-
-      width: 100%;
-      height: 5px;
-
-      background: #fff;
-
-      z-index: 7;
-    }
 
     h3 {
       width: 100%;
@@ -119,9 +126,27 @@ const draggingElementPos = (event: DragEvent) => {
       color: #e3e8ed;
     }
   }
+
+  .list-active {
+    height: 50%;
+    overflow-y: scroll;
+  }
 }
 
 .tools-bar-wide {
   width: 500px;
+}
+
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.3s ease-out;
+}
+
+.list-enter-from {
+  opacity: 0;
+}
+
+.list-leave-to {
+  opacity: 0;
 }
 </style>

@@ -6,10 +6,10 @@ defineProps({
   }
 })
 </script>
-  
+
 <template>
   <div class="item">
-    <span>{{tool.name}}</span>
+    <span>{{ tool.name }}</span>
     <n-icon size="35">
       <component :is="tool.component" />
     </n-icon>
@@ -22,6 +22,8 @@ defineProps({
 .item {
   @include flex-column;
   @include nav-and-tools-button(80px, grab, 5px, 7px);
+
+  height: 65px;
 
   border: 2px solid #e3e8ed;
 
