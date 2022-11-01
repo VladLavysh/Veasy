@@ -124,9 +124,9 @@ const editItemClickHandler = ({ _, configLabel, optionLabel, isHandler }: ToolEd
             <!-- Font Style, Text Decoration, Horizontal Align, Vertical Align -->
             <div v-else class="item__font-style">
               <n-icon-wrapper v-for="option of config.options" :key="option.label" :size="24" :border-radius="5"
-                @click="editItemClickHandler({_: null, configLabel: config.label, optionLabel: option.label, isHandler: true})"
+                @click="editItemClickHandler({ _: null, configLabel: config.label, optionLabel: option.label as keyof ToolConfig, isHandler: true })"
                 color="#fff"
-                :class="[editItemClickHandler({_: null, configLabel: config.label, optionLabel: option.label, isHandler: false}) ? 'icon-active' : '']">
+                :class="[editItemClickHandler({ _: null, configLabel: config.label, optionLabel: option.label as keyof ToolConfig, isHandler: false }) ? 'icon-active' : '']">
                 <n-icon :size="18" :component="option.value" color="#333639" />
               </n-icon-wrapper>
             </div>
@@ -136,7 +136,7 @@ const editItemClickHandler = ({ _, configLabel, optionLabel, isHandler }: ToolEd
         <!-- Color -->
         <div class="items__body">
           <h3 class="item__label">Color</h3>
-          <div class="item item-no-margin" v-if="normalizedToolName !== 'Barrier'">
+          <div class="item item-no-margin" v-if="normalizedToolName !== 'Barrier' && normalizedToolName !== 'Image'">
             <span>Fill</span>
             <n-color-picker v-model:value="tool.fill" />
           </div>

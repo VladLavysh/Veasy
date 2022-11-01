@@ -35,7 +35,7 @@ export const shapeConfig = ({name, konvaName, id, x, y}: Tool): ToolConfig => {
     dash: [5, 5],
   }
 
-  switch (konvaName) {    
+  switch (konvaName) {
     case 'v-circle':
       return Object.assign(defaultConfig, {
         // coords without padding (40)
@@ -91,9 +91,14 @@ export const shapeConfig = ({name, konvaName, id, x, y}: Tool): ToolConfig => {
       })
 
     case 'v-image':
+      const image = new window.Image()
+      image.src = '../../../image_set.svg'
+
+      //await image.onload
       return Object.assign(defaultConfig, {
         width: 80,
         height: 80,
+        image
       })
 
     default: return defaultConfig
@@ -116,7 +121,9 @@ export const addToCanvas = (e: MouseEvent, {name, konvaName, id}: ToolFromBar) =
     y: Math.round(e.pageY - canvas.offsetTop + canvasSection.scrollTop)
   }
 
-  canvasStore.addNewTool(shapeConfig(baseToolConfig))
+  const config = shapeConfig(baseToolConfig)
+
+  canvasStore.addNewTool(config)
 
   canvasStore.changeAddingStatus(false)
 }
