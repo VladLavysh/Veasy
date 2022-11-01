@@ -10,10 +10,10 @@ const store = useCanvasStore()
 
 const isToolsPanelOpen = ref(false)
 
-onMounted(async () => {
-  const selectedCV = await store.getSelectedCV()
-  console.log('selectedCV', selectedCV);
-})
+//onMounted(async () => {
+//  const selectedCV = await store.getSelectedCV()
+//  console.log('selectedCV', selectedCV);
+//})
 
 </script>
 

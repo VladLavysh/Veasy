@@ -9,6 +9,11 @@ export const useCanvasStore = defineStore('tools', {
     isAddingAllowed: false as Boolean
   }),
   getters: {
+    getToolsName(): string[] {
+      return this.tools.length > 0
+        ? this.tools.map(el => el.name.substring(0, el.name.indexOf('_')))
+        : []
+    }
     //getTool(): ToolConfig | null {
     //  return this.selectedTool
     //}
