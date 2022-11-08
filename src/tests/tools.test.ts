@@ -1,12 +1,9 @@
-import {shapeConfig, addToCanvas, handleTransformEnd, handleStageMouseDown} from '../utils/ts/canvas'
+import {normalizeTextConfigLabel} from '../utils/ts/tools'
 
-describe('Canvas functions', () => {
-  beforeAll(() => {
-  });
-  
-  //test('Shape config', () => {
-  //})
+describe('Tool utils', () => {
+  test('Normalize label', () => {
+    const normalizedLabel = normalizeTextConfigLabel('Horizontal Align')
 
-  afterAll(() => {
-  });
+    expect(typeof normalizedLabel).toBe('string')
+  })
 })

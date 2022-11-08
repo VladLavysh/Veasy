@@ -1,11 +1,11 @@
 import { Tool, ToolConfig } from '../types';
 import {shapeConfig, addToCanvas, handleTransformEnd, handleStageMouseDown} from '../utils/ts/canvas'
 
-describe('Canvas functions', () => {
+describe('Tool config', () => {
   let tool: Tool
   let toolConfig: ToolConfig
 
-  beforeAll(() => {
+  test('Type is correct object', () => {
     tool = {
       name: "Circle_123",
       konvaName: 'Circle',
@@ -13,31 +13,20 @@ describe('Canvas functions', () => {
       x: 10,
       y: 10,
     }
-  });
-  
-  test('Shape config', () => {
-    expect(shapeConfig(tool)).toMatchObject(toolConfig);
+    toolConfig = shapeConfig(tool)
 
-    //expect(shapeConfig)
-    //  .toHaveBeenCalledWith(
-    //    expect.objectContaining({
-    //      name: expect.any(String),
-    //      konvaName: expect.any(String),
-    //      id: expect.any(String),
-    //      x: expect.any(Number),
-    //      y: expect.any(Number),
-    //    }),
-    //  )
-      //.
+    expect(toolConfig && typeof toolConfig === 'object').toBe(true)
   })
 
-  afterAll(() => {
-    tool = {
-      name: '',
-      konvaName: '',
-      id: '',
-      x: 0,
-      y: 0,
-    }
-  });
+  test('Have default values', () => {
+    const defaultValues = ['name', 'konvaName', 'id', 'draggable', 'rotation']
+    const haveDefaultValues = defaultValues.every(val => val in toolConfig)
+
+    expect(haveDefaultValues).toBe(true)
+  })
 })
+
+// describe('Add new tool', () => {
+//   let tool: Tool
+//   let toolConfig: ToolConfig
+// })
