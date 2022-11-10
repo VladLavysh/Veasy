@@ -12,5 +12,9 @@ const layout = computed(() => {
 </script>
 
 <template>
-  <component :is="layout"/>
+  <n-message-provider>
+    <n-loading-bar-provider>
+      <component :is="layout"/>
+    </n-loading-bar-provider>
+  </n-message-provider>
 </template>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, reactive, computed, watch } from 'vue'
 import { Unlocked, Locked } from '@vicons/carbon'
-import { useCanvasStore } from '../store/canvas'
-import { borderTypes, textConfig, normalizeTextConfigLabel } from '../utils/ts/tools'
-import { ToolEditItem, ToolConfig } from '../types/index'
+import { useCanvasStore } from '../../../store/canvas'
+import { borderTypes, textConfig, normalizeTextConfigLabel } from '../../../utils/ts/tools'
+import { ToolEditItem, ToolConfig } from '../../../types/index'
 
 const store = useCanvasStore()
 
