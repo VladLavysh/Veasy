@@ -1,6 +1,4 @@
-// TODO: REFACTORING COMPONENTS TO LAZY LOAD!
 import { TextSelection, Image, Checkbox, Barrier, ChevronRight, CircleDash, TextItalic, TextBold, TextStrikethrough, TextUnderline, AlignHorizontalLeft, AlignHorizontalCenter, AlignHorizontalRight, AlignVerticalTop, AlignVerticalCenter, AlignVerticalBottom} from '@vicons/carbon'
-
 import { readonly, markRaw } from 'vue'
 import { ToolConfig } from '../../types'
 

@@ -1,31 +1,37 @@
 <script setup lang="ts">
-import { ref, markRaw } from 'vue';
+import { ref, reactive, markRaw, onMounted } from 'vue';
 import { useRoute } from 'vue-router'
 import { UserProfile, Template, DataViewAlt, SettingsAdjust } from '@vicons/carbon'
 
 const route = useRoute()
 
-const menuIcons = ref([
-  { name: 'Profile', component: markRaw(UserProfile), path: '/profile', isActive: false },
-  { name: 'Templates', component: markRaw(Template), path: '/', isActive: false },
-  { name: 'CV Creator', component: markRaw(DataViewAlt), path: '/creator', isActive: true },
-  { name: 'Settings', component: markRaw(SettingsAdjust), path: '/settings', isActive: false },
+const menuIcons = reactive([
+  { name: 'Profile', component: markRaw(UserProfile), path: '/profile', isActive: route.path === '/profile' },
+  { name: 'Templates', component: markRaw(Template), path: '/', isActive: route.path === '/' },
+  { name: 'CV Creator', component: markRaw(DataViewAlt), path: '/creator', isActive: route.path === '/creator' },
+  { name: 'Settings', component: markRaw(SettingsAdjust), path: '/settings', isActive: route.path === '/settings' },
 ])
 
-const updateIcons = (path: String) => {
-  if (path === route.path) return
+const updateIcons = (path: String, isDefault: boolean) => {
+  if (!isDefault && path === route.path) return
 
-  menuIcons.value.forEach(el => {
+  menuIcons.forEach(el => {
     el.isActive = el.path === path
   })
 }
+
+// onMounted(async () => {
+  // setTimeout(() => {
+  //   updateIcons(route.path, true)
+  // }, 1000)
+// })
 </script>
 
 <template>
   <nav class="menu_bar">
     <div class="menu_bar__icons">
       <RouterLink v-for="icon of menuIcons" :key="icon.name"
-        :class="[icon.isActive ? 'menu_icon-active' : '', 'menu_icon']" :to="icon.path" @click="updateIcons(icon.path)">
+        :class="[icon.isActive ? 'menu_icon-active' : '', 'menu_icon']" :to="icon.path" @click="updateIcons(icon.path, false)">
         <n-icon size="25">
           <component :is="icon.component" />
         </n-icon>
