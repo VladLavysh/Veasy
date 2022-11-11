@@ -1,17 +1,19 @@
 <script setup lang="ts">
-import { useCanvasStore } from '../store/canvas'
-import { konvaConfig, transformerConfig, handleStageMouseDown, handleTransformEnd } from '../utils/ts/canvas'
 import { ref } from 'vue';
+import { konvaConfig, transformerConfig, handleStageMouseDown, handleTransformEnd } from '../utils/ts/canvas'
+import CanvasGrid from '../components/elements/CanvasGrid.vue'
+import { useCanvasStore } from '../store/canvas'
 
 const canvasStore = useCanvasStore()
 
 const transformer = ref(null)
-const showGrid = ref(true)
 
 const dragHandler = (isOver: Boolean) => {
   if (canvasStore.isAddingAllowed === isOver) {
     return
   }
+
+  canvasStore.changeGridStatus(isOver)
   canvasStore.changeAddingStatus(isOver)
 }
 </script>
@@ -21,27 +23,16 @@ const dragHandler = (isOver: Boolean) => {
 <template>
   <section class="canvas-section">
     <h2 class="canvas-section__label">Canvas Name</h2>
-
     <div class="canvas-section__canvas" @dragover.prevent="dragHandler(true)" @dragleave="dragHandler(false)">
-      <v-stage :config="konvaConfig" @mousedown="handleStageMouseDown($event, transformer)"
-        @touchstart="handleStageMouseDown($event, transformer)">
+      <v-stage :config="konvaConfig" @touchstart="handleStageMouseDown($event, transformer)"
+        @mousedown="handleStageMouseDown($event, transformer)" @mouseup="canvasStore.changeGridStatus(false)">
         <v-layer>
+          <CanvasGrid v-if="canvasStore.showGrid" />
+
           <component v-for="(tool, idx) of canvasStore.tools" :key="idx" :is="tool.konvaName" :config="tool"
             @transformend="handleTransformEnd" @dragend="handleTransformEnd">
           </component>
 
-          <!--<v-shape v-if="showGrid" :config="{
-            sceneFunc: function (context, shape) {
-              for (const y: number = 0; y < 500; y += 20) {
-                context.moveTo(25, y);
-                context.lineTo(25, y);
-              }
-              context.strokeStyle = '#888';
-              context.strokeWidth = 0.1;
-              context.strokeOpacity = 0.1;
-              context.stroke();
-            }
-          }" />-->
           <v-transformer ref="transformer" :config="transformerConfig" />
         </v-layer>
       </v-stage>

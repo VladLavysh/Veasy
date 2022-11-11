@@ -6,7 +6,9 @@ export const useCanvasStore = defineStore('tools', {
   state: () => ({
     tools: [] as ToolConfig[],
     selectedTool: null as ToolConfig | null,
-    isAddingAllowed: false as Boolean
+    isAddingAllowed: false as Boolean,
+    //showGridAlways: false as Boolean,
+    showGrid: false as Boolean
   }),
   getters: {
     getToolsName(): string[] {
@@ -36,6 +38,9 @@ export const useCanvasStore = defineStore('tools', {
     },
     changeAddingStatus(isAllowed: Boolean) {
       this.isAddingAllowed = isAllowed
+    },
+    changeGridStatus(isShow: Boolean) {
+      this.showGrid = isShow
     },
     async getSelectedCV() {
       return await axios.get('api/creator/get-selected-cv')

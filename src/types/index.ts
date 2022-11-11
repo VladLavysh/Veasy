@@ -1,4 +1,5 @@
 import { Component } from "vue"
+import type { UploadFileInfo } from 'naive-ui'
 
 export type ToolEditItem = {
   _: null,
@@ -30,6 +31,8 @@ export type ToolConfig = {
   draggable: boolean,
   rotation: number,
 
+  //zIndex: number
+
   x?: number,
   y?: number,
   scaleX?: number,
@@ -44,7 +47,7 @@ export type ToolConfig = {
   strokeWidth?: number,
   dash?: number[],
 
-  image?: unknown,
+  image?: HTMLImageElement,
   text?: string,
   fontFamily? : string,
   fontSize?: number,
@@ -55,4 +58,9 @@ export type ToolConfig = {
   verticalAlign?: string
 
   points?: number[],
+}
+
+export type UploadImage = {
+  file: UploadFileInfo,
+  fileList: UploadFileInfo[]
 }

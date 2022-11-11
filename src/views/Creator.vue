@@ -6,7 +6,7 @@ import ToggleButton from '../components/elements/ToggleButton.vue';
 import { onMounted, ref } from 'vue';
 import { useCanvasStore } from '../store/canvas';
 
-const store = useCanvasStore()
+//const store = useCanvasStore()
 
 const isToolsPanelOpen = ref(false)
 
@@ -19,7 +19,7 @@ const isToolsPanelOpen = ref(false)
 
 <template>
   <div class="creator">
-    <ToolsBar :class="[isToolsPanelOpen ? 'tools-bar-wide' : '']" />
+    <ToolsBar :class="[isToolsPanelOpen ? 'tools-bar-wide' : '']" :isToolsPanelOpen="isToolsPanelOpen" />
     <ToggleButton @open="isToolsPanelOpen = !isToolsPanelOpen" />
 
     <Canvas />

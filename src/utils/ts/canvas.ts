@@ -24,6 +24,8 @@ export const shapeConfig = ({name, konvaName, id, x, y}: Tool): ToolConfig => {
     x: x - 40, // 40 - half of default tool width/height
     y: y - 40,
 
+    //zIndex: 1,
+
     rotation: 0,
     scaleX: 1,
     scaleY: 1,
@@ -126,6 +128,11 @@ export const addToCanvas = (e: MouseEvent, {name, konvaName, id}: ToolFromBar) =
   canvasStore.addNewTool(config)
 
   canvasStore.changeAddingStatus(false)
+  canvasStore.changeGridStatus(false)
+}
+
+export const removeFromCanvas = (toolIdx: number) => {
+  canvasStore.tools = canvasStore.tools.filter((_, idx) => idx !== toolIdx)
 }
 
 // Shape transformer functions (3)
@@ -170,6 +177,8 @@ export const handleStageMouseDown = (e: MouseEvent, transformer: any) => {
     updateTransformer()
     return
   }
+
+  canvasStore.changeGridStatus(true)
 
   const clickedOnTransformer = target.getParent().className === 'Transformer'
   if (clickedOnTransformer) {

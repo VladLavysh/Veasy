@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, reactive, computed, watch } from 'vue'
+import { ref, reactive, computed, watch, Transition } from 'vue'
 import { Unlocked, Locked } from '@vicons/carbon'
 import { useCanvasStore } from '../store/canvas'
 import { borderTypes, textConfig, normalizeTextConfigLabel } from '../utils/ts/tools'
-import { ToolEditItem, ToolConfig } from '../types/index'
+import { ToolEditItem, ToolConfig, UploadImage } from '../types/index'
+import { NDivider, NIcon, NInputNumber, NInput, NSelect, NIconWrapper, NUpload, NButton, NColorPicker, NSwitch } from 'naive-ui'
 
 const store = useCanvasStore()
 
@@ -73,6 +74,23 @@ const editItemClickHandler = ({ _, configLabel, optionLabel, isHandler }: ToolEd
 
   return tool.value[normalizedItemName] === optionLabel
 }
+
+const beforeImageUpload = (data: UploadImage) => {
+  console.log(data.file.name);
+
+  // TODO upload image to server
+  //tool.value?.image?.src = `http://127.0.0.1:5173/${data.file.name}`
+
+  return false
+
+  // TODO Image type check
+  //const message = useMessage()
+  //if (data.file.file?.type !== 'image/png') {
+  //  message.error('Only upload picture files in png format, please re-upload.')
+  //  return false
+  //}
+  //return true
+}
 </script>
 
 <!-- Shapes switch animation (left to right) -->
@@ -130,6 +148,18 @@ const editItemClickHandler = ({ _, configLabel, optionLabel, isHandler }: ToolEd
                 <n-icon :size="18" :component="option.value" color="#333639" />
               </n-icon-wrapper>
             </div>
+          </div>
+        </div>
+
+        <!-- Image -->
+        <div class="items__body" v-if="normalizedToolName === 'Image'">
+          <h3 class="item__label">Image</h3>
+          <div class="item item-no-margin">
+            <span>Source</span>
+            <n-input v-model:value="tool.image!.src" type="text" placeholder="Image sourse" />
+            <n-upload action="https://www.mocky.io/v2/5e4bafc63100007100d8b70f" @before-upload="beforeImageUpload">
+              <n-button class="upload-btb" secondary color="#fff">Upload image</n-button>
+            </n-upload>
           </div>
         </div>
 
@@ -222,6 +252,11 @@ const editItemClickHandler = ({ _, configLabel, optionLabel, isHandler }: ToolEd
 
   &__body {
     width: 100%;
+  }
+
+  .upload-btb {
+    margin-top: 10px;
+    border: 2px solid #fff;
   }
 }
 

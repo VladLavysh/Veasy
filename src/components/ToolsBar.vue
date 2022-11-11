@@ -1,11 +1,16 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { v4 as uuidv4 } from 'uuid'
 import ToolsBarItem from '../components/elements/ToolsBarItem.vue'
 import { ToolFromBar } from '../types';
 import { toolsBarItems } from '../utils/ts/tools'
-import { addToCanvas } from '../utils/ts/canvas'
+import { addToCanvas, removeFromCanvas } from '../utils/ts/canvas'
 import { useCanvasStore } from '../store/canvas'
+import { Close } from '@vicons/carbon'
+
+const props = defineProps({
+  isToolsPanelOpen: Boolean
+})
 
 const store = useCanvasStore()
 
@@ -22,10 +27,16 @@ const draggingElementPos = (event: DragEvent) => {
 }
 
 const isListVisible = ref(false)
+
+const toggleListVisibility = () => {
+  if (!props.isToolsPanelOpen) return
+
+  isListVisible.value = !isListVisible.value
+}
 </script>
 
 <template>
-  <aside class="tools-bar">
+  <aside class="tools-bar" ref="tools_bar">
     <div class="tools-bar__items">
       <h1 class="tools-bar__label">Tools</h1>
 
@@ -35,14 +46,15 @@ const isListVisible = ref(false)
       </div>
     </div>
 
-    <div :class="['tools-bar__list', isListVisible ? 'list-active' : '']" @click="isListVisible = !isListVisible">
+    <div :class="['tools-bar__list', isListVisible ? 'list-active' : '']" @click="toggleListVisibility()">
       <h1 class="tools-bar__label">Active</h1>
 
       <Transition name="list" mode="out-in">
         <div v-if="isListVisible">
           <ul v-if="store.getToolsName.length">
             <li v-for="(itemName, idx) in store.getToolsName" :key="idx" draggable="true">
-              {{ itemName }}
+              <span>- {{ itemName }}</span>
+              <n-icon size="20" :component="Close" @click.stop="removeFromCanvas(idx)" />
             </li>
           </ul>
           <h3 v-else>There are no tools here yet</h3>
@@ -123,7 +135,17 @@ const isListVisible = ref(false)
     }
 
     li {
+      @include flex-row;
+      justify-content: flex-start;
+      gap: 10px;
+
+      list-style-type: none;
+
       color: #e3e8ed;
+
+      i {
+        padding: 5px;
+      }
     }
   }
 
