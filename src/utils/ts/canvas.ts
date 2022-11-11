@@ -1,8 +1,8 @@
 import { Tool, ToolConfig } from "../../types"
 import { useCanvasStore } from '../../store/canvas'
 import { ToolFromBar } from '../../types'
-
-const canvasStore = useCanvasStore()
+import { Shape } from "konva/lib/Shape"
+import { Stage } from "konva/lib/Stage"
 
 export const konvaConfig = {
   width: 800,
@@ -108,6 +108,8 @@ export const shapeConfig = ({name, konvaName, id, x, y}: Tool): ToolConfig => {
 }
 
 export const addToCanvas = (e: MouseEvent, {name, konvaName, id}: ToolFromBar) => {
+  const canvasStore = useCanvasStore()
+
   if (!canvasStore.isAddingAllowed) {
     return
   }
@@ -140,7 +142,6 @@ export const removeFromCanvas = (toolIdx: number) => {
 let selectedShapeName: string
 let stageTransformer: any
 
-// TODO: Make type TARGET
 const updateTransformer = () => {
   const transformerNode = stageTransformer.getNode()
   const stage = transformerNode.getStage()
@@ -154,7 +155,9 @@ const updateTransformer = () => {
 }
 
 export const handleTransformEnd = (e: MouseEvent) => {
-  const target = e.target as HTMLElement
+  const canvasStore = useCanvasStore()
+
+  const target = e.target as unknown as Shape
   const shape = canvasStore.tools.find(r => r.name === selectedShapeName)
 
   if (!shape) return
@@ -167,8 +170,10 @@ export const handleTransformEnd = (e: MouseEvent) => {
 }
 
 export const handleStageMouseDown = (e: MouseEvent, transformer: any) => {
+  const canvasStore = useCanvasStore()
+
   stageTransformer = transformer
-  const target = e.target as HTMLElement
+  const target = e.target as unknown as Shape | Stage
 
   if (target === target.getStage()) {
     selectedShapeName = ''

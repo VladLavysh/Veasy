@@ -60,6 +60,18 @@ export type ToolConfig = {
   points?: number[],
 }
 
+export type loginUserData = {
+  email: string,
+  password: string
+}
+
+export type registerUserData = {
+  email: string,
+  name: string,
+  password: string,
+  confirmPassword: string
+}
+
 export type UploadImage = {
   file: UploadFileInfo,
   fileList: UploadFileInfo[]

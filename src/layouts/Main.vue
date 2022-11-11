@@ -5,7 +5,7 @@ import MenuBar from '../components/MenuBar.vue'
 <template>
   <MenuBar />
 
-  <RouterView></RouterView>
+  <RouterView/>
 </template>
 
 <style scoped lang="scss">

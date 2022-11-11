@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { ref, reactive, computed, watch, Transition } from 'vue'
 import { Unlocked, Locked } from '@vicons/carbon'
-import { useCanvasStore } from '../store/canvas'
-import { borderTypes, textConfig, normalizeTextConfigLabel } from '../utils/ts/tools'
-import { ToolEditItem, ToolConfig, UploadImage } from '../types/index'
-import { NDivider, NIcon, NInputNumber, NInput, NSelect, NIconWrapper, NUpload, NButton, NColorPicker, NSwitch } from 'naive-ui'
+import { useCanvasStore } from '../../../store/canvas'
+import { borderTypes, textConfig, normalizeTextConfigLabel } from '../../../utils/ts/tools'
+import { ToolEditItem, ToolConfig, UploadImage } from '../../../types/index'
 
 const store = useCanvasStore()
 
