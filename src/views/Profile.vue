@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import ProfileSidebar from '../components/ProfileSidebar.vue'
-import ProfileContent from '../components/ProfileContent.vue'
+import ProfileSidebar from '../components/profile/ProfileSidebar.vue'
+import ProfileContent from '../components/profile/ProfileContent.vue'
 </script>
 
 <template>
   <div class="profile">
-    <ProfileSidebar/>
-    <ProfileContent/>
+    <ProfileSidebar />
+    <ProfileContent />
   </div>
 </template>
 

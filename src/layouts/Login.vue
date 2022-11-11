@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { reactive } from 'vue';
+import { useRouter } from 'vue-router';
 import { useMessage, useLoadingBar } from 'naive-ui'
 import { useLoginStore } from '../store/login'
 import { loginUserData, registerUserData } from '../types/index'
@@ -8,6 +9,7 @@ import { validation } from '../utils/ts/login'
 const { logIn, createNewUser } = useLoginStore()
 const message = useMessage()
 const loadingBar = useLoadingBar()
+const router = useRouter()
 
 const registerData = reactive<registerUserData>({
   name: '',
@@ -22,7 +24,7 @@ const loginData = reactive<loginUserData>({
 })
 
 const updateField = (value: string, key: keyof (registerUserData | loginUserData), isLogin: boolean) => {
-  isLogin 
+  isLogin
     ? loginData[key] = value
     : registerData[key] = value
 }
@@ -32,7 +34,7 @@ const resetForm = () => {
   registerData.email = registerData.name = registerData.password = registerData.confirmPassword = ''
 }
 
-const submitForm = (isLogin: boolean) => {
+const submitForm = async (isLogin: boolean) => {
   const isInputValid = validation(isLogin ? loginData : registerData)
 
   if (!isInputValid) {
@@ -42,89 +44,72 @@ const submitForm = (isLogin: boolean) => {
 
   loadingBar.start()
 
-  if (isLogin) {
-    logIn(loginData)
-    // ... server functions
+  const response = isLogin
+    ? await logIn(loginData)
+    : await createNewUser(registerData)
 
-    setTimeout(() => {
-      message.success('Welcome back!')
-      loadingBar.finish()
-    }, 1500)
-    
-  } else {
-    createNewUser(registerData)
-    // ... server functions
-    
-    setTimeout(() => {
-      message.success('User was created succesfully!')
-      loadingBar.finish()
-    }, 1500)
+  const responseData: { status: boolean, output: string } = response.data
+
+  responseData.status
+    ? message.success(responseData.output)
+    : message.error(responseData.output)
+
+  if (isLogin && responseData.status) {
+    router.push({ path: '/profile' })
   }
-  
+
+  loadingBar.finish()
+
   resetForm()
 }
 </script>
 
 <template>
-    <div class="login">
-      <n-card class="login__card">
-        <n-tabs
-          class="card-tabs"
-          default-value="signin"
-          size="large"
-          animated
-          pane-style="padding-left: 4px; padding-right: 4px; box-sizing: border-box;"
-        >
+  <div class="login">
+    <n-card class="login__card">
+      <n-tabs class="card-tabs" default-value="signin" size="large" animated
+        pane-style="padding-left: 4px; padding-right: 4px; box-sizing: border-box;">
         <!-- Sign In -->
-          <n-tab-pane name="signin" tab="Sign in">
-            <n-form>
-              <n-form-item-row label="Email">
-                <n-input @update:value="updateField($event, 'email', true)" :value="loginData.email" type="email"/>
-              </n-form-item-row>
-              <n-form-item-row label="Password">
-                <n-input @update:value="updateField($event, 'password', true)" :value="loginData.password"       
-                        type="password"
-                        show-password-on="mousedown"
-                        :maxlength="14" />
-              </n-form-item-row>
-            </n-form>
-            <n-button type="primary" block secondary strong 
-                      @click="submitForm(true)">
-              Sign In
-            </n-button>
-          </n-tab-pane>
+        <n-tab-pane name="signin" tab="Sign in">
+          <n-form>
+            <n-form-item-row label="Email">
+              <n-input @update:value="updateField($event, 'email', true)" :value="loginData.email" type="email" />
+            </n-form-item-row>
+            <n-form-item-row label="Password">
+              <n-input @update:value="updateField($event, 'password', true)" :value="loginData.password" type="password"
+                show-password-on="mousedown" :maxlength="14" />
+            </n-form-item-row>
+          </n-form>
+          <n-button type="primary" block secondary strong @click="submitForm(true)">
+            Sign In
+          </n-button>
+        </n-tab-pane>
 
-          <!-- Sign Up -->
-          <n-tab-pane name="signup" tab="Sign up">
-            <n-form>
-              <n-form-item-row label="Username">
-                <n-input @update:value="updateField($event, 'name', false)" :value="registerData.name" />
-              </n-form-item-row>
-              <n-form-item-row label="Email">
-                <n-input @update:value="updateField($event, 'email', false)" :value="registerData.email" 
-                        type="email"/>
-              </n-form-item-row>
-              <n-form-item-row label="Password">
-                <n-input @update:value="updateField($event, 'password', false)" :value="registerData.password"
-                        type="password"
-                        show-password-on="mousedown"
-                        :maxlength="14" />
-              </n-form-item-row>
-              <n-form-item-row label="Reenter Password">
-                <n-input @update:value="updateField($event, 'confirmPassword', false)" :value="registerData.confirmPassword"
-                        type="password"
-                        show-password-on="mousedown"
-                        :maxlength="14"/>
-              </n-form-item-row>
-            </n-form>
-            <n-button type="primary" block secondary strong 
-                      @click="submitForm(false)">
-              Sign Up
-            </n-button>
-          </n-tab-pane>
-        </n-tabs>
-      </n-card>
-    </div>
+        <!-- Sign Up -->
+        <n-tab-pane name="signup" tab="Sign up">
+          <n-form>
+            <n-form-item-row label="Username">
+              <n-input @update:value="updateField($event, 'name', false)" :value="registerData.name" />
+            </n-form-item-row>
+            <n-form-item-row label="Email">
+              <n-input @update:value="updateField($event, 'email', false)" :value="registerData.email" type="email" />
+            </n-form-item-row>
+            <n-form-item-row label="Password">
+              <n-input @update:value="updateField($event, 'password', false)" :value="registerData.password"
+                type="password" show-password-on="mousedown" :maxlength="14" />
+            </n-form-item-row>
+            <n-form-item-row label="Reenter Password">
+              <n-input @update:value="updateField($event, 'confirmPassword', false)"
+                :value="registerData.confirmPassword" type="password" show-password-on="mousedown" :maxlength="14" />
+            </n-form-item-row>
+          </n-form>
+          <n-button type="primary" block secondary strong @click="submitForm(false)">
+            Sign Up
+          </n-button>
+        </n-tab-pane>
+      </n-tabs>
+    </n-card>
+  </div>
 </template>
 
 <style scoped lang="scss">
@@ -135,7 +120,7 @@ const submitForm = (isLogin: boolean) => {
   height: 100vh;
 
   &__card {
-    position:absolute;
+    position: absolute;
     top: 50%;
     left: 50%;
 

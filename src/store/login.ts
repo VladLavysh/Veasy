@@ -6,11 +6,11 @@ export const useLoginStore = defineStore('login', {
   state: () => ({
   }),
   actions: {
-    logIn(userData: loginUserData) {
-        console.log('Login', userData);
+    async logIn(userData: loginUserData) {
+      return await axios.post<loginUserData>('api/login/sign-in', userData)
     },
-    createNewUser(userData: registerUserData) {
-        console.log('Create new user', userData);
+    async createNewUser(userData: registerUserData) {
+      return await axios.post<registerUserData>('api/login/sign-up', userData)
     }
   },
 })

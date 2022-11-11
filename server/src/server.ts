@@ -7,6 +7,7 @@ import templateRoutes from './routes/templates'
 import profileRoutes from './routes/profile'
 import creatorRoutes from './routes/creator'
 import settingsRoutes from './routes/settings'
+import loginRoutes from './routes/login'
 
 const app = express()
 
@@ -18,6 +19,7 @@ app.use('/', templateRoutes)
 app.use('/profile', profileRoutes)
 app.use('/creator', creatorRoutes)
 app.use('/settings', settingsRoutes)
+app.use('/login', loginRoutes)
 
 app.use(express.static(path.join(__dirname, "..", "dist") as string));
 

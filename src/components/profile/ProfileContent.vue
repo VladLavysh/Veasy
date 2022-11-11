@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useProfileStore } from '../store/profile'
+import { useProfileStore } from '../../store/profile'
 
 const store = useProfileStore()
 </script>
@@ -16,10 +16,10 @@ const store = useProfileStore()
 </template>
 
 <style lang="scss">
-@import '../utils/css/mixins.scss';
+@import '../../utils/css/mixins.scss';
 
 .profile__content {
     height: calc(100vh - 40px);
     width: calc(100% - 200px);
-  }
+}
 </style>
