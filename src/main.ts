@@ -17,4 +17,3 @@ createApp(App)
   .use(naive)
   .use(VueKonva)
   .mount('#app')
-
