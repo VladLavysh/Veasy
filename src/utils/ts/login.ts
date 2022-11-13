@@ -31,20 +31,25 @@ export const validation = (userData: loginUserData | registerUserData): boolean 
   let isValid = true
 
   for (const prop in userData) {
+    if (!(prop in userData)) continue
+
     switch (prop) {
       case 'email':
-        // email check
-      case 'name':
-        isValid = userData[prop].length > 0
+        isValid = userData[prop].length > 4 && !!userData[prop].match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)
         break
       case 'password':
         isValid = userData[prop].length >= 6
         break
       case 'confirmPassword':
-        isValid = userData[prop] === userData.password
+        isValid = userData[prop as keyof typeof userData] === userData.password
+        break
+      case 'name':
+        isValid = userData[prop as keyof typeof userData].length > 0
         break
       default: false
     }
+
+    if (!isValid) break
   }
 
   return isValid

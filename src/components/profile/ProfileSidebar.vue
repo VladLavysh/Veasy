@@ -1,9 +1,27 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
+import { useMessage } from 'naive-ui'
 import { useProfileStore } from '../../store/profile'
+import { useLoginStore } from '../../store/login'
+import { responseData } from '../../types'
 
+const router = useRouter()
 const store = useProfileStore()
+const message = useMessage()
 
-const logout = () => { }
+const logout = async () => {
+  const { logOut } = useLoginStore()
+
+  const response = await logOut()
+
+  const responseData: responseData = response.data
+
+  responseData.status
+    ? message.success(responseData.output)
+    : message.error(responseData.output)
+
+  router.push({ path: '/login' })
+}
 </script>
 
 <template>
@@ -20,12 +38,6 @@ const logout = () => { }
       </div>
       <div :class="['tab-button', !store.isDataTab ? 'tab-button-active' : '']" @click="store.changeActiveTab(false)">My
         CVs</div>
-      <!-- <n-button strong secondary :focusable="false" @click="store.changeActiveTab(true)">
-          My data
-        </n-button>
-        <n-button strong secondary :focusable="false" @click="store.changeActiveTab(false)">
-          My CVs
-        </n-button> -->
     </div>
 
     <n-button quaternary type="error" class="profile__sidebar-logout">

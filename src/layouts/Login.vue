@@ -3,7 +3,7 @@ import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { useMessage, useLoadingBar } from 'naive-ui'
 import { useLoginStore } from '../store/login'
-import { loginUserData, registerUserData } from '../types/index'
+import { loginUserData, registerUserData, responseData } from '../types/index'
 import { validation } from '../utils/ts/login'
 
 const { logIn, createNewUser } = useLoginStore()
@@ -23,10 +23,10 @@ const loginData = reactive<loginUserData>({
   password: ''
 })
 
-const updateField = (value: string, key: keyof (registerUserData | loginUserData), isLogin: boolean) => {
+const updateField = (value: string, key: (keyof loginUserData | keyof registerUserData), isLogin: boolean) => {
   isLogin
-    ? loginData[key] = value
-    : registerData[key] = value
+    ? loginData[key as keyof loginUserData] = value
+    : registerData[key as keyof registerUserData] = value
 }
 
 const resetForm = () => {
@@ -48,17 +48,20 @@ const submitForm = async (isLogin: boolean) => {
     ? await logIn(loginData)
     : await createNewUser(registerData)
 
-  const responseData: { status: boolean, output: string } = response.data
+  const responseObject: responseData = response.data
 
-  responseData.status
-    ? message.success(responseData.output)
-    : message.error(responseData.output)
+  console.log('responseObject', responseObject);
 
-  if (isLogin && responseData.status) {
+  responseObject.status
+    ? message.success(responseObject.output)
+    : message.error(responseObject.output)
+
+  if (responseObject.status) {
     router.push({ path: '/profile' })
+    loadingBar.finish()
+  } else {
+    loadingBar.error()
   }
-
-  loadingBar.finish()
 
   resetForm()
 }

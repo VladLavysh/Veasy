@@ -13,6 +13,8 @@ router.post('/sign-in', async (req: Request, res: Response) => {
       : null
 
     if (!candidate || !equalPasswords) {
+      console.log('FALSE');
+      
       res.status(200).json({status: false, output: 'Wrong user name or password'})
     }
 
@@ -43,6 +45,18 @@ router.post('/sign-up', async (req: Request, res: Response) => {
     await user.save()
 
     res.status(200).json({status: true, output: 'User was created succesfully'})
+  } catch (e: unknown) {
+    res.status(200).json({status: false, output: 'Something went wrong'})
+    console.log(e)
+  }
+})
+
+router.get('/log-out', async (req: Request, res: Response) => {
+  try {
+    //req.session.destroy(() => {
+    //  res.redirect('/auth/login#login')
+    //})
+    res.status(200).json({status: true, output: 'Log out completed successfully'})
   } catch (e: unknown) {
     res.status(200).json({status: false, output: 'Something went wrong'})
     console.log(e)

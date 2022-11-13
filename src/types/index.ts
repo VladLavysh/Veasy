@@ -76,3 +76,8 @@ export type UploadImage = {
   file: UploadFileInfo,
   fileList: UploadFileInfo[]
 }
+
+export type responseData = {
+  status: boolean,
+  output: string
+}
