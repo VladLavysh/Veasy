@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { konvaConfig, transformerConfig, handleStageMouseDown, handleTransformEnd } from '../utils/ts/canvas'
-import CanvasGrid from '../components/elements/CanvasGrid.vue'
-import { useCanvasStore } from '../store/canvas'
+import { konvaConfig, transformerConfig, handleStageMouseDown, handleTransformEnd } from '../../utils/ts/canvas'
+import CanvasGrid from './CanvasGrid.vue'
+import { useCanvasStore } from '../../store/canvas'
 
 const canvasStore = useCanvasStore()
 

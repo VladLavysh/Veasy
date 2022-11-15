@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, reactive, computed, watch, Transition } from 'vue'
 import { Unlocked, Locked } from '@vicons/carbon'
-import { useCanvasStore } from '../../../store/canvas'
-import { borderTypes, textConfig, normalizeTextConfigLabel } from '../../../utils/ts/tools'
-import { ToolEditItem, ToolConfig, UploadImage } from '../../../types/index'
+import { useCanvasStore } from '../../store/canvas'
+import { borderTypes, textConfig, normalizeTextConfigLabel } from '../../utils/ts/tools'
+import { ToolEditItem, ToolConfig, UploadImage } from '../../types/index'
 
 const store = useCanvasStore()
 
@@ -200,7 +200,7 @@ const beforeImageUpload = (data: UploadImage) => {
 </template>
 
 <style scoped lang="scss">
-@import '../../src/utils/css/mixins.scss';
+@import '../../utils/css/mixins.scss';
 
 .tool-editor {
   width: 400px;

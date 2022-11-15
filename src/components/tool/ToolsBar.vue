@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { v4 as uuidv4 } from 'uuid'
-import ToolsBarItem from '../components/elements/ToolsBarItem.vue'
-import { ToolFromBar } from '../types';
-import { toolsBarItems } from '../utils/ts/tools'
-import { addToCanvas, removeFromCanvas } from '../utils/ts/canvas'
-import { useCanvasStore } from '../store/canvas'
+import ToolsBarItem from './ToolsBarItem.vue'
+import { ToolFromBar } from '../../types';
+import { toolsBarItems } from '../../utils/ts/tools'
+import { addToCanvas, removeFromCanvas } from '../../utils/ts/canvas'
+import { useCanvasStore } from '../../store/canvas'
 import { Close } from '@vicons/carbon'
 
 const props = defineProps({
@@ -66,7 +66,7 @@ const toggleListVisibility = () => {
 </template>
 
 <style scoped lang="scss">
-@import '../../src/utils/css/mixins.scss';
+@import '../../utils/css/mixins.scss';
 
 .tools-bar {
   position: relative;

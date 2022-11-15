@@ -50,16 +50,12 @@ const submitForm = async (isLogin: boolean) => {
 
   const responseObject: responseData = response.data
 
-  console.log('responseObject', responseObject);
-
-  responseObject.status
-    ? message.success(responseObject.output)
-    : message.error(responseObject.output)
-
   if (responseObject.status) {
+    message.success(responseObject.output)
     router.push({ path: '/profile' })
     loadingBar.finish()
   } else {
+    message.error(responseObject.output)
     loadingBar.error()
   }
 

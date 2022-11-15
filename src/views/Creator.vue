@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import ToolsBar from '../components/ToolsBar.vue';
-import Canvas from '../components/Canvas.vue';
-import ToolEditor from '../components/ToolEditor.vue';
-import ToggleButton from '../components/elements/ToggleButton.vue';
+import ToolsBar from '../components/tool/ToolsBar.vue';
+import Canvas from '../components/canvas/Canvas.vue';
+import ToolEditor from '../components/tool/ToolEditor.vue';
+import ToggleButton from '../components/ToggleButton.vue';
 import { onMounted, ref } from 'vue';
 import { useCanvasStore } from '../store/canvas';
 
