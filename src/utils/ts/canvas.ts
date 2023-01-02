@@ -134,6 +134,8 @@ export const addToCanvas = (e: MouseEvent, {name, konvaName, id}: ToolFromBar) =
 }
 
 export const removeFromCanvas = (toolIdx: number) => {
+  const canvasStore = useCanvasStore()
+
   canvasStore.tools = canvasStore.tools.filter((_, idx) => idx !== toolIdx)
 }
 

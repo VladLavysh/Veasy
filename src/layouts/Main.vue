@@ -1,11 +1,5 @@
-<script setup lang="ts">
-import MenuBar from '../components/MenuBar.vue'
-</script>
-
 <template>
-  <MenuBar />
-
-  <RouterView/>
+  <RouterView />
 </template>
 
 <style scoped lang="scss">

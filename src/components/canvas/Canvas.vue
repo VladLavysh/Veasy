@@ -7,6 +7,7 @@ import { useCanvasStore } from '../../store/canvas'
 const canvasStore = useCanvasStore()
 
 const transformer = ref(null)
+//const isMouseDown = ref(false)
 
 const dragHandler = (isOver: Boolean) => {
   if (canvasStore.isAddingAllowed === isOver) {
