@@ -185,8 +185,6 @@ export const handleStageMouseDown = (e: MouseEvent, transformer: any) => {
     return
   }
 
-  canvasStore.changeGridStatus(true)
-
   const clickedOnTransformer = target.getParent().className === 'Transformer'
   if (clickedOnTransformer) {
     return

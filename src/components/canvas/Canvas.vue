@@ -7,7 +7,6 @@ import { useCanvasStore } from '../../store/canvas'
 const canvasStore = useCanvasStore()
 
 const transformer = ref(null)
-//const isMouseDown = ref(false)
 
 const dragHandler = (isOver: Boolean) => {
   if (canvasStore.isAddingAllowed === isOver) {
@@ -16,6 +15,11 @@ const dragHandler = (isOver: Boolean) => {
 
   canvasStore.changeGridStatus(isOver)
   canvasStore.changeAddingStatus(isOver)
+}
+
+const dragEndHandler = (event: MouseEvent) => {
+  canvasStore.changeGridStatus(false)
+  handleTransformEnd(event)
 }
 </script>
 
@@ -26,12 +30,14 @@ const dragHandler = (isOver: Boolean) => {
     <h2 class="canvas-section__label">Canvas Name</h2>
     <div class="canvas-section__canvas" @dragover.prevent="dragHandler(true)" @dragleave="dragHandler(false)">
       <v-stage :config="konvaConfig" @touchstart="handleStageMouseDown($event, transformer)"
-        @mousedown="handleStageMouseDown($event, transformer)" @mouseup="canvasStore.changeGridStatus(false)">
+        @mousedown="handleStageMouseDown($event, transformer)">
+
         <v-layer>
           <CanvasGrid v-if="canvasStore.showGrid" />
 
           <component v-for="(tool, idx) of canvasStore.tools" :key="idx" :is="tool.konvaName" :config="tool"
-            @transformend="handleTransformEnd" @dragend="handleTransformEnd">
+            @transformend="handleTransformEnd" @dragstart="canvasStore.changeGridStatus(true)"
+            @dragend="dragEndHandler">
           </component>
 
           <v-transformer ref="transformer" :config="transformerConfig" />
