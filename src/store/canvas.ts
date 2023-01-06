@@ -12,8 +12,9 @@ export const useCanvasStore = defineStore('tools', {
   }),
   getters: {
     getToolsName(): string[] {
+      //this.tools.map(el => el.name.substring(0, el.name.indexOf('_') + 6))
       return this.tools.length > 0
-        ? this.tools.map(el => el.name.substring(0, el.name.indexOf('_')))
+        ? this.tools.map(el => el.name.substring(0, el.name.indexOf('_') + 6))
         : []
     }
     //getTool(): ToolConfig | null {
