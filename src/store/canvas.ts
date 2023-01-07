@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import { ToolConfig } from '../types/index'
+import { ToolConfig, ActiveTools } from '../types/index'
 
 export const useCanvasStore = defineStore('tools', {
   state: () => ({
@@ -11,11 +11,13 @@ export const useCanvasStore = defineStore('tools', {
     showGrid: false as Boolean
   }),
   getters: {
-    getToolsName(): string[] {
-      //this.tools.map(el => el.name.substring(0, el.name.indexOf('_') + 6))
-      return this.tools.length > 0
-        ? this.tools.map(el => el.name.substring(0, el.name.indexOf('_') + 6))
-        : []
+    getActiveTools(): ActiveTools[] {
+      if (!this.tools.length) return []
+
+      return this.tools.map(el => ({
+        id: el.id,
+        name: el.name.substring(0, el.name.indexOf('_') + 6),
+      }))
     }
     //getTool(): ToolConfig | null {
     //  return this.selectedTool
@@ -23,6 +25,9 @@ export const useCanvasStore = defineStore('tools', {
     //selectedTool: (state) => state.selectedTool
   },
   actions: {
+    updateToolsList(newTools: ToolConfig[]) {
+      this.tools = newTools
+    },
     addNewTool(newTool: ToolConfig) {
       this.tools.push(newTool)
     },

@@ -23,6 +23,11 @@ export type ToolFromBar = {
   id?: string,
 }
 
+export type ActiveTools = {
+  name: string,
+  id: string,
+}
+
 export type ToolConfig = {
   name: string,
   konvaName: string,
@@ -30,8 +35,6 @@ export type ToolConfig = {
 
   draggable: boolean,
   rotation: number,
-
-  //zIndex: number
 
   x?: number,
   y?: number,

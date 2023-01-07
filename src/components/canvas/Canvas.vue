@@ -37,8 +37,7 @@ const dragEndHandler = (event: MouseEvent) => {
 
           <component v-for="(tool, idx) of canvasStore.tools" :key="idx" :is="tool.konvaName" :config="tool"
             @transformend="handleTransformEnd" @dragstart="canvasStore.changeGridStatus(true)"
-            @dragend="dragEndHandler">
-          </component>
+            @dragend="dragEndHandler" />
 
           <v-transformer ref="transformer" :config="transformerConfig" />
         </v-layer>

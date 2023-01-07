@@ -1,9 +1,21 @@
 <script lang="ts" setup>
+import draggable from 'vuedraggable'
+import { computed } from 'vue'
+
 import { Close } from '@vicons/carbon'
 import { removeFromCanvas } from '../../utils/ts/canvas'
 import { useCanvasStore } from '../../store/canvas'
 
 const store = useCanvasStore()
+
+const activeTools = computed({
+  get() {
+    return store.tools
+  },
+  set(tools) {
+    store.updateToolsList(tools)
+  }
+})
 
 const selectShape = (event: MouseEvent) => {
   const target = event.target as HTMLElement
@@ -12,18 +24,28 @@ const selectShape = (event: MouseEvent) => {
   //store.selectShape(shapeName)
 
 }
+
+const activeToolName = (name: string) => {
+  return name.substring(0, name.indexOf('_') + 6)
+}
 </script>
 
 <template>
   <div class='tools-bar__list'>
     <Transition name="list" mode="out-in">
-      <ul v-if="store.getToolsName.length">
-        <li v-for="(itemName, idx) in store.getToolsName" :key="idx" draggable="true" @click="selectShape">
-          <span>{{ itemName }}</span>
-          <n-icon size="20" :component="Close" @click.stop="removeFromCanvas(idx)" />
-        </li>
-      </ul>
+
+      <draggable v-if="store.getActiveTools.length" v-model="activeTools" item-key="id" tag="ul"
+        ghost-class="ghost-tool">
+        <template #item="{ element }">
+          <li @click="selectShape">
+            <span>{{ activeToolName(element.name) }}</span>
+            <n-icon size="20" :component="Close" @click.stop="removeFromCanvas(element.id)" />
+          </li>
+        </template>
+      </draggable>
+
       <h3 v-else>There are no tools here yet</h3>
+
     </Transition>
   </div>
 </template>
@@ -53,8 +75,13 @@ const selectShape = (event: MouseEvent) => {
     color: #fff;
   }
 
+  .ghost-tool {
+    opacity: 0.8;
+    background-color: #28bc99;
+  }
+
   ul {
-    padding: 0;
+    padding: 0
   }
 
   li {
@@ -64,22 +91,23 @@ const selectShape = (event: MouseEvent) => {
     color: #e3e8ed;
 
     list-style-type: none;
-    cursor: pointer;
+    cursor: move;
 
     padding: 0 30px 0 40px;
 
     transition: 0.2s ease-in-out all;
 
     &:hover {
-      background-color: #28bc99;
+      background-color: #637482;
     }
 
     i {
       transition: 0.2s ease-in-out all;
       padding: 5px;
+      cursor: pointer;
 
       &:hover {
-        color: #ff3737;
+        color: #fc5151;
       }
     }
   }
