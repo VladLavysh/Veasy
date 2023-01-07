@@ -4,7 +4,7 @@ import { ToolFromBar } from '../../types'
 import { Shape } from "konva/lib/Shape"
 import { Stage } from "konva/lib/Stage"
 
-export const konvaConfig = {
+export const canvasConfig = {
   width: 800,
   height: 1120
 }

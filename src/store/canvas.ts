@@ -7,20 +7,14 @@ export const useCanvasStore = defineStore('tools', {
     tools: [] as ToolConfig[],
     selectedTool: null as ToolConfig | null,
     isAddingAllowed: false as Boolean,
-    //showGridAlways: false as Boolean,
     showGrid: false as Boolean
   }),
   getters: {
     getToolsName(): string[] {
-      //this.tools.map(el => el.name.substring(0, el.name.indexOf('_') + 6))
       return this.tools.length > 0
         ? this.tools.map(el => el.name.substring(0, el.name.indexOf('_') + 6))
         : []
     }
-    //getTool(): ToolConfig | null {
-    //  return this.selectedTool
-    //}
-    //selectedTool: (state) => state.selectedTool
   },
   actions: {
     addNewTool(newTool: ToolConfig) {

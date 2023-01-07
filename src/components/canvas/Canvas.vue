@@ -1,28 +1,29 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
-import { konvaConfig, transformerConfig, handleStageMouseDown, handleTransformEnd } from '../../utils/ts/canvas'
-import CanvasGrid from './CanvasGrid.vue'
+import { onMounted, ref } from 'vue'
+import { fabric } from 'fabric'
+
+import { canvasConfig, transformerConfig, handleStageMouseDown, handleTransformEnd } from '../../utils/ts/canvas'
 import { useCanvasStore } from '../../store/canvas'
+//import CanvasGrid from './CanvasGrid.vue'
 
-import {fabric} from 'fabric'
-
-const canvasRef = ref(null)
-const canvas = ref(null)
+// --------------------------------------------------------- //
+const canvasRef = ref<HTMLCanvasElement | null>(null)
+const canvas = ref()
 
 onMounted(() => {
   canvas.value = new fabric.Canvas(canvasRef.value, {
     isDrawingMode: true,
-  });
-})
+  })
 
-  // canvas.add(
-  //   new fabric.Rect({ top: 100, left: 100, width: 50, height: 50, fill: '#f55' }),
-  //   new fabric.Circle({ top: 140, left: 230, radius: 75, fill: 'green' }),
-  //   new fabric.Triangle({ top: 300, left: 210, width: 100, height: 100, fill: 'blue' })
-  // );
+  canvas.value.add(
+    new fabric.Rect({ top: 100, left: 100, width: 50, height: 50, fill: '#f55' }),
+    new fabric.Circle({ top: 140, left: 230, radius: 75, fill: 'green' }),
+    new fabric.Triangle({ top: 300, left: 210, width: 100, height: 100, fill: 'blue' })
+  );
+})
+// --------------------------------------------------------- //
 
 const canvasStore = useCanvasStore()
-
 const transformer = ref(null)
 
 const dragHandler = (isOver: Boolean) => {
@@ -46,7 +47,8 @@ const dragEndHandler = (event: MouseEvent) => {
   <section class="canvas-section">
     <h2 class="canvas-section__label">Canvas Name</h2>
     <div class="canvas-section__canvas" @dragover.prevent="dragHandler(true)" @dragleave="dragHandler(false)">
-      <canvas ref="canvasRef" width="800" height="1120"></canvas>
+      <canvas ref="canvasRef" :width="canvasConfig.width" :height="canvasConfig.height"></canvas>
+
       <!-- <v-stage :config="konvaConfig" @touchstart="handleStageMouseDown($event, transformer)"
         @mousedown="handleStageMouseDown($event, transformer)">
 
