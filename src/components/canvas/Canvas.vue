@@ -1,8 +1,25 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { konvaConfig, transformerConfig, handleStageMouseDown, handleTransformEnd } from '../../utils/ts/canvas'
 import CanvasGrid from './CanvasGrid.vue'
 import { useCanvasStore } from '../../store/canvas'
+
+import {fabric} from 'fabric'
+
+const canvasRef = ref(null)
+const canvas = ref(null)
+
+onMounted(() => {
+  canvas.value = new fabric.Canvas(canvasRef.value, {
+    isDrawingMode: true,
+  });
+})
+
+  // canvas.add(
+  //   new fabric.Rect({ top: 100, left: 100, width: 50, height: 50, fill: '#f55' }),
+  //   new fabric.Circle({ top: 140, left: 230, radius: 75, fill: 'green' }),
+  //   new fabric.Triangle({ top: 300, left: 210, width: 100, height: 100, fill: 'blue' })
+  // );
 
 const canvasStore = useCanvasStore()
 
@@ -29,7 +46,8 @@ const dragEndHandler = (event: MouseEvent) => {
   <section class="canvas-section">
     <h2 class="canvas-section__label">Canvas Name</h2>
     <div class="canvas-section__canvas" @dragover.prevent="dragHandler(true)" @dragleave="dragHandler(false)">
-      <v-stage :config="konvaConfig" @touchstart="handleStageMouseDown($event, transformer)"
+      <canvas ref="canvasRef" width="800" height="1120"></canvas>
+      <!-- <v-stage :config="konvaConfig" @touchstart="handleStageMouseDown($event, transformer)"
         @mousedown="handleStageMouseDown($event, transformer)">
 
         <v-layer>
@@ -42,7 +60,7 @@ const dragEndHandler = (event: MouseEvent) => {
 
           <v-transformer ref="transformer" :config="transformerConfig" />
         </v-layer>
-      </v-stage>
+      </v-stage> -->
     </div>
 
   </section>

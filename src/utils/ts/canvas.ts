@@ -16,7 +16,7 @@ export const transformerConfig = {
   borderStroke: '#66727d',
 }
 
-export const shapeConfig = ({name, konvaName, id, x, y}: Tool): ToolConfig => {
+export const shapeConfig = ({ name, konvaName, id, x, y }: Tool): ToolConfig => {
   const defaultConfig: ToolConfig = {
     name,
     konvaName,
@@ -107,7 +107,7 @@ export const shapeConfig = ({name, konvaName, id, x, y}: Tool): ToolConfig => {
   }
 }
 
-export const addToCanvas = (e: MouseEvent, {name, konvaName, id}: ToolFromBar) => {
+export const addToCanvas = (e: MouseEvent, { name, konvaName, id }: ToolFromBar) => {
   const canvasStore = useCanvasStore()
 
   if (!canvasStore.isAddingAllowed) {
