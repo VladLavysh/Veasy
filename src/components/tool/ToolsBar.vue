@@ -14,7 +14,7 @@ const toggleHandler = () => {
 
 <template>
   <aside :class="[store.isPanelOpen ? 'tools-bar-wide' : '', 'tools-bar']" ref="tools_bar">
-    <div :class="[store.isPanelOpen ? 'toggle-btn-rotated' : '', 'toggle-btn']" @click="toggleHandler" />
+    <div class="toggle-btn" @click="toggleHandler" />
 
     <ToolsBarItems />
     <ToolsBarActive />
@@ -45,8 +45,9 @@ const toggleHandler = () => {
 .tools-bar-wide {
   width: 500px;
 
-  //&>div {
-  >.toggle-btn-rotated {
+  .toggle-btn {
+    left: 105%;
+
     &::before {
       transform: translate(-60%, -200%) rotate(-40deg);
     }
@@ -55,8 +56,6 @@ const toggleHandler = () => {
       transform: translate(-60%, 120%) rotate(40deg);
     }
   }
-
-  //}
 }
 
 // Toggle button styles
