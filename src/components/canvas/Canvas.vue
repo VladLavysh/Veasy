@@ -57,6 +57,7 @@ const dragEndHandler = (event: MouseEvent) => {
 
   &__label {
     color: #465461;
+    text-align: center;
   }
 
   &__canvas {

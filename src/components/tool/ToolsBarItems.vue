@@ -34,6 +34,17 @@ const draggingElementPos = (event: DragEvent) => {
 <style scoped lang="scss">
 @import '../../utils/css/mixins.scss';
 
+.tools-bar__items {
+  @include flex-column;
+  flex: 1;
+  width: 100%;
+
+  padding: 5px 10px;
+  box-sizing: border-box;
+
+  overflow-y: scroll;
+}
+
 .tools-bar__label {
   position: sticky;
   top: 5px;
@@ -44,17 +55,6 @@ const draggingElementPos = (event: DragEvent) => {
   text-align: center;
   align-self: flex-start;
   color: #fff;
-}
-
-.tools-bar__items {
-  @include flex-column;
-  width: 100%;
-  height: calc(100% - 65px);
-
-  padding: 5px 10px;
-  box-sizing: border-box;
-
-  overflow-y: scroll;
 }
 
 .tools-bar__items-content {

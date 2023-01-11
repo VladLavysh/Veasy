@@ -31,11 +31,12 @@ const updateIcons = (path: String, isDefault: boolean) => {
   <nav class="menu_bar">
     <div class="menu_bar__icons">
       <RouterLink v-for="icon of menuIcons" :key="icon.name"
-        :class="[icon.isActive ? 'menu_icon-active' : '', 'menu_icon']" :to="icon.path" @click="updateIcons(icon.path, false)">
+        :class="[icon.isActive ? 'menu_icon-active' : '', 'menu_icon']" :to="icon.path"
+        @click="updateIcons(icon.path, false)">
         <n-icon size="25">
           <component :is="icon.component" />
         </n-icon>
-        <span>{{icon.name}}</span>
+        <span>{{ icon.name }}</span>
       </RouterLink>
     </div>
   </nav>

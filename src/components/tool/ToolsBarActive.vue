@@ -5,15 +5,17 @@ import { computed } from 'vue'
 import { Close } from '@vicons/carbon'
 import { removeFromCanvas } from '../../utils/ts/canvas'
 import { useCanvasStore } from '../../store/canvas'
+import { useToolsStore } from '../../store/tools'
 
-const store = useCanvasStore()
+const toolsStore = useToolsStore()
+const canvasStore = useCanvasStore()
 
 const activeTools = computed({
   get() {
-    return store.tools
+    return canvasStore.tools
   },
   set(tools) {
-    store.updateToolsList(tools)
+    canvasStore.updateToolsList(tools)
   }
 })
 
@@ -22,7 +24,6 @@ const selectShape = (event: MouseEvent) => {
   const shapeName = target.innerText
 
   //store.selectShape(shapeName)
-
 }
 
 const activeToolName = (name: string) => {
@@ -33,19 +34,21 @@ const activeToolName = (name: string) => {
 <template>
   <div class='tools-bar__list'>
     <Transition name="list" mode="out-in">
+      <div v-if="toolsStore.isPanelOpen">
+        <draggable v-if="canvasStore.getActiveTools.length" v-model="activeTools" item-key="id" tag="ul"
+          ghost-class="ghost-tool">
+          <template #item="{ element }">
+            <li @click="selectShape">
+              <span>{{ activeToolName(element.name) }}</span>
+              <n-icon size="20" :component="Close" @click.stop="removeFromCanvas(element.id)" />
+            </li>
+          </template>
+        </draggable>
 
-      <draggable v-if="store.getActiveTools.length" v-model="activeTools" item-key="id" tag="ul"
-        ghost-class="ghost-tool">
-        <template #item="{ element }">
-          <li @click="selectShape">
-            <span>{{ activeToolName(element.name) }}</span>
-            <n-icon size="20" :component="Close" @click.stop="removeFromCanvas(element.id)" />
-          </li>
-        </template>
-      </draggable>
+        <h3 v-else>There are no tools here yet</h3>
+      </div>
 
-      <h3 v-else>There are no tools here yet</h3>
-
+      <h3 v-else>Tools: {{ canvasStore.getActiveTools.length }}</h3>
     </Transition>
   </div>
 </template>
@@ -55,19 +58,19 @@ const activeToolName = (name: string) => {
 @import '../../utils/css/mixins.scss';
 
 .tools-bar__list {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-
   width: 100%;
-  height: 30%;
+  max-height: 30%;
+
+  padding: 0 10px;
 
   background: #7f91a1;
   border-top: 1px solid #fff;
 
   transition: all .3s ease-in-out;
 
+  box-sizing: border-box;
   overflow-y: scroll;
+  overflow-x: hidden;
 
   h3 {
     width: 100%;
@@ -130,7 +133,7 @@ const activeToolName = (name: string) => {
 
 .list-enter-active,
 .list-leave-active {
-  transition: all 0.3s ease-out;
+  transition: all 0.25s ease-in-out;
 }
 
 .list-enter-from {

@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 import { ToolConfig, ActiveTools } from '../types/index'
 
-export const useCanvasStore = defineStore('tools', {
+export const useCanvasStore = defineStore('canvas', {
   state: () => ({
     tools: [] as ToolConfig[],
     selectedTool: null as ToolConfig | null,
