@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 import draggable from 'vuedraggable'
+import { Close } from '@vicons/carbon'
 import { computed } from 'vue'
 
-import { Close } from '@vicons/carbon'
 import { removeFromCanvas } from '../../utils/ts/canvas'
 import { useCanvasStore } from '../../store/canvas'
 import { useToolsStore } from '../../store/tools'
+import { ToolConfig } from '../../types'
 
 const toolsStore = useToolsStore()
 const canvasStore = useCanvasStore()
@@ -14,17 +15,10 @@ const activeTools = computed({
   get() {
     return canvasStore.tools
   },
-  set(tools) {
+  set(tools: ToolConfig[]) {
     canvasStore.updateToolsList(tools)
   }
 })
-
-const selectShape = (event: MouseEvent) => {
-  const target = event.target as HTMLElement
-  const shapeName = target.innerText
-
-  //store.selectShape(shapeName)
-}
 
 const activeToolName = (name: string) => {
   return name.substring(0, name.indexOf('_') + 6)
@@ -38,14 +32,14 @@ const activeToolName = (name: string) => {
         <draggable v-if="canvasStore.getActiveTools.length" v-model="activeTools" item-key="id" tag="ul"
           ghost-class="ghost-tool">
           <template #item="{ element }">
-            <li @click="selectShape">
+            <li>
               <span>{{ activeToolName(element.name) }}</span>
               <n-icon size="20" :component="Close" @click.stop="removeFromCanvas(element.id)" />
             </li>
           </template>
         </draggable>
 
-        <h3 v-else>There are no tools here yet</h3>
+        <h3 v-else>There are no tools yet</h3>
       </div>
 
       <h3 v-else>Tools: {{ canvasStore.getActiveTools.length }}</h3>
@@ -66,16 +60,16 @@ const activeToolName = (name: string) => {
   background: #7f91a1;
   border-top: 1px solid #fff;
 
-  transition: all .3s ease-in-out;
+  transition: all .25s ease-in-out;
 
   box-sizing: border-box;
   overflow-y: scroll;
   overflow-x: hidden;
 
   h3 {
-    width: 100%;
-    text-align: center;
     color: #fff;
+    text-align: center;
+    white-space: nowrap;
   }
 
   .ghost-tool {

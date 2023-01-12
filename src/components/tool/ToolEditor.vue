@@ -193,7 +193,7 @@ const beforeImageUpload = (data: UploadImage) => {
           </div>
         </div>
       </div>
-      <h3 v-else class="tool-editor__label">Choose any tool to customize</h3>
+      <h3 v-else class="tool-editor__label">Select a tool to customize</h3>
     </Transition>
 
   </aside>

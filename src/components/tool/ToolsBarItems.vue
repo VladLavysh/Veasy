@@ -61,5 +61,7 @@ const draggingElementPos = (event: DragEvent) => {
   @include flex-row;
   flex-wrap: wrap;
   gap: 15px;
+
+  transition: 0.3s ease-in-out all;
 }
 </style>

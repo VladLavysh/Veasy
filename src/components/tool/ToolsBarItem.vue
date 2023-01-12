@@ -14,7 +14,7 @@ defineProps({
 <template>
   <div :class="[!store.isPanelOpen ? 'item-small' : '', 'item']">
     <span>{{ tool.name }}</span>
-    <n-icon :size="store.isPanelOpen ? 35 : 25">
+    <n-icon size="35">
       <component :is="tool.component" />
     </n-icon>
   </div>
@@ -33,6 +33,10 @@ defineProps({
 
   transition: all 0.2s ease-in-out;
 
+  i {
+    transition: all 0.2s ease-in-out;
+  }
+
   &:hover {
     border-color: #98acbf;
   }
@@ -45,9 +49,10 @@ defineProps({
 
 .item-small {
   @include nav-and-tools-button(70px, grab, 5px, 7px);
-
-  font-size: 0.75rem;
-
   height: 50px;
+
+  i {
+    font-size: 22px !important;
+  }
 }
 </style>

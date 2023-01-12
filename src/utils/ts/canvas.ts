@@ -14,9 +14,10 @@ export const transformerConfig = {
   anchorFill: '#ffffff',
   anchorSize: 8,
   borderStroke: '#66727d',
+  ignoreStroke: true,
 }
 
-export const shapeConfig = ({name, konvaName, id, x, y}: Tool): ToolConfig => {
+export const shapeConfig = ({ name, konvaName, id, x, y }: Tool): ToolConfig => {
   const defaultConfig: ToolConfig = {
     name,
     konvaName,
@@ -29,6 +30,7 @@ export const shapeConfig = ({name, konvaName, id, x, y}: Tool): ToolConfig => {
     scaleY: 1,
 
     draggable: true,
+    strokeScaleEnabled: false,
 
     stroke: '#BFBEBEFF',
     strokeWidth: 2,
@@ -105,44 +107,14 @@ export const shapeConfig = ({name, konvaName, id, x, y}: Tool): ToolConfig => {
   }
 }
 
-export const addToCanvas = (e: MouseEvent, {name, konvaName, id}: ToolFromBar) => {
-  const canvasStore = useCanvasStore()
-
-  if (!canvasStore.isAddingAllowed) {
-    return
-  }
-
-  const canvas = document.querySelector('.canvas-section__canvas') as HTMLDivElement
-  const canvasSection = document.querySelector('.canvas-section') as HTMLDivElement
-
-  const baseToolConfig = {
-    name: `${name}_${id!.toString()}`,
-    konvaName,
-    id: id!.toString(),
-    x: Math.round(e.pageX - canvas.offsetLeft + canvasSection.scrollLeft),
-    y: Math.round(e.pageY - canvas.offsetTop + canvasSection.scrollTop)
-  }
-
-  const config = shapeConfig(baseToolConfig)
-
-  canvasStore.addNewTool(config)
-
-  canvasStore.changeAddingStatus(false)
-  canvasStore.changeGridStatus(false)
-}
-
-export const removeFromCanvas = (toolId: string) => {
-  const canvasStore = useCanvasStore()
-
-  canvasStore.tools = canvasStore.tools.filter(tool => tool.id !== toolId)
-}
-
 // Shape transformer functions (3)
 // Source: https://codesandbox.io/s/github/konvajs/site/tree/master/vue-demos/transformer?from-embed=&file=/src/App.vue
 let selectedShapeName: string
 let stageTransformer: any
 
 const updateTransformer = () => {
+  if (!stageTransformer) return
+
   const transformerNode = stageTransformer.getNode()
   const stage = transformerNode.getStage()
   const selectedNode = stage.findOne('.' + selectedShapeName)
@@ -175,7 +147,7 @@ export const handleStageMouseDown = (e: MouseEvent, transformer: any) => {
   stageTransformer = transformer
   const target = e.target as unknown as Shape | Stage
 
-  if (target === target.getStage()) {
+  if (!target || target === target.getStage()) {
     selectedShapeName = ''
     canvasStore.setSelectedTool('')
 
@@ -196,4 +168,40 @@ export const handleStageMouseDown = (e: MouseEvent, transformer: any) => {
   canvasStore.setSelectedTool(selectedShapeName || null)
 
   updateTransformer()
+}
+
+export const addToCanvas = (e: MouseEvent, { name, konvaName, id }: ToolFromBar) => {
+  const canvasStore = useCanvasStore()
+
+  if (!canvasStore.isAddingAllowed) {
+    return
+  }
+
+  const canvas = document.querySelector('.canvas-section__canvas') as HTMLDivElement
+  const canvasSection = document.querySelector('.canvas-section') as HTMLDivElement
+
+  const baseToolConfig = {
+    name: `${name}_${id!.toString()}`,
+    konvaName,
+    id: id!.toString(),
+    x: Math.round(e.pageX - canvas.offsetLeft + canvasSection.scrollLeft),
+    y: Math.round(e.pageY - canvas.offsetTop + canvasSection.scrollTop)
+  }
+
+  const config = shapeConfig(baseToolConfig)
+
+  canvasStore.addNewTool(config)
+
+  canvasStore.changeAddingStatus(false)
+  canvasStore.changeGridStatus(false)
+}
+
+export const removeFromCanvas = (toolId: string) => {
+  const canvasStore = useCanvasStore()
+
+  canvasStore.tools = canvasStore.tools.filter(tool => tool.id !== toolId)
+  canvasStore.setSelectedTool(null)
+
+  const transformerNode = stageTransformer.getNode()
+  transformerNode.nodes([])
 }

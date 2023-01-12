@@ -36,6 +36,8 @@ export type ToolConfig = {
   draggable: boolean,
   rotation: number,
 
+  strokeScaleEnabled: Boolean
+
   x?: number,
   y?: number,
   scaleX?: number,
@@ -52,7 +54,7 @@ export type ToolConfig = {
 
   image?: HTMLImageElement,
   text?: string,
-  fontFamily? : string,
+  fontFamily?: string,
   fontSize?: number,
   fontStyle?: string,
   fontVariant?: string,

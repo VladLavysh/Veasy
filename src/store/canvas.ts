@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { ToolConfig, ActiveTools } from '../types/index'
+import { Transformer } from 'konva/lib/shapes/Transformer'
+import { Stage } from 'konva/lib/Stage'
 
 export const useCanvasStore = defineStore('canvas', {
   state: () => ({
@@ -8,7 +10,7 @@ export const useCanvasStore = defineStore('canvas', {
     selectedTool: null as ToolConfig | null,
     isAddingAllowed: false as Boolean,
     //showGridAlways: false as Boolean,
-    showGrid: false as Boolean
+    showGrid: false as Boolean,
   }),
   getters: {
     getActiveTools(): ActiveTools[] {

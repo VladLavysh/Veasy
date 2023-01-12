@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
+import { Transformer } from 'konva/lib/shapes/Transformer'
+import { Stage } from 'konva/lib/Stage';
+
 import { konvaConfig, transformerConfig, handleStageMouseDown, handleTransformEnd } from '../../utils/ts/canvas'
 import CanvasGrid from './CanvasGrid.vue'
 import { useCanvasStore } from '../../store/canvas'
 
 const canvasStore = useCanvasStore()
 
-const transformer = ref(null)
+const transformer = ref<Transformer | null>(null)
 
 const dragHandler = (isOver: Boolean) => {
   if (canvasStore.isAddingAllowed === isOver) {
