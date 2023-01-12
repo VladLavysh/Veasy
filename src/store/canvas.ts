@@ -48,6 +48,8 @@ export const useCanvasStore = defineStore('canvas', {
       this.isAddingAllowed = isAllowed
     },
     changeGridStatus(isShow: Boolean) {
+      console.log('isShow', isShow);
+      
       this.showGrid = isShow
     },
     async getSelectedCV() {

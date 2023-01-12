@@ -3,7 +3,7 @@ import draggable from 'vuedraggable'
 import { Close } from '@vicons/carbon'
 import { computed } from 'vue'
 
-import { removeFromCanvas } from '../../utils/ts/canvas'
+import { removeFromCanvas, changeShapeZIndex } from '../../utils/ts/canvas'
 import { useCanvasStore } from '../../store/canvas'
 import { useToolsStore } from '../../store/tools'
 import { ToolConfig } from '../../types'
@@ -13,10 +13,10 @@ const canvasStore = useCanvasStore()
 
 const activeTools = computed({
   get() {
-    return canvasStore.tools
+    return [...canvasStore.tools].reverse()
   },
   set(tools: ToolConfig[]) {
-    canvasStore.updateToolsList(tools)
+    canvasStore.updateToolsList(tools.reverse())
   }
 })
 
@@ -32,7 +32,7 @@ const activeToolName = (name: string) => {
         <draggable v-if="canvasStore.getActiveTools.length" v-model="activeTools" item-key="id" tag="ul"
           ghost-class="ghost-tool">
           <template #item="{ element }">
-            <li>
+            <li @click="changeShapeZIndex(element.name)">
               <span>{{ activeToolName(element.name) }}</span>
               <n-icon size="20" :component="Close" @click.stop="removeFromCanvas(element.id)" />
             </li>

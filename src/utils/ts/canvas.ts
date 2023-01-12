@@ -10,11 +10,14 @@ export const konvaConfig = {
 }
 
 export const transformerConfig = {
+  ignoreStroke: true,
+  //centeredScaling: true,
+  rotationSnaps: [0, 90, 180, 270],
+
   anchorStroke: '#66727d',
   anchorFill: '#ffffff',
   anchorSize: 8,
   borderStroke: '#66727d',
-  ignoreStroke: true,
 }
 
 export const shapeConfig = ({ name, konvaName, id, x, y }: Tool): ToolConfig => {
@@ -110,12 +113,18 @@ export const shapeConfig = ({ name, konvaName, id, x, y }: Tool): ToolConfig => 
 let selectedShapeName: string
 let stageTransformer: any
 
-const updateTransformer = () => {
+const findShape = (name: string) => {
   if (!stageTransformer) return
 
   const transformerNode = stageTransformer.getNode()
   const stage = transformerNode.getStage()
-  const selectedNode = stage.findOne('.' + selectedShapeName)
+
+  return stage.findOne('.' + name)
+}
+
+const updateTransformer = () => {
+  const transformerNode = stageTransformer.getNode()
+  const selectedNode = findShape(selectedShapeName)
 
   if (selectedNode === transformerNode.node()) {
     return;
@@ -202,4 +211,15 @@ export const removeFromCanvas = (toolId: string) => {
 
   const transformerNode = stageTransformer.getNode()
   transformerNode.nodes([])
+}
+
+export const changeShapeZIndex = (shapeName: string) => {
+  const selectedNode = findShape(shapeName)
+
+  if (!selectedNode) return
+
+  selectedNode.zIndex(0)
+
+  console.log('selectedNode', selectedNode)
+  console.log('zIndex', selectedNode.zIndex(0))
 }
