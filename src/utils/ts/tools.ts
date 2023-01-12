@@ -4,7 +4,7 @@ import { ToolConfig } from '../../types'
 
 // ----- Tools bar ----- //
 export const toolsBarItems = readonly([
-  { name: 'Text input', konvaName: 'v-text', component: markRaw(TextSelection) },
+  { name: 'Text', konvaName: 'v-text', component: markRaw(TextSelection) },
   // ALL FIELDS BELOW ARE TYPE OF TEXT !!!
   //{ name: 'Code', konvaName: '', component: Code },
   //{ name: 'List', konvaName: '', component: List },

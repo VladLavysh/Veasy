@@ -80,8 +80,6 @@ export const shapeConfig = ({ name, konvaName, id, x, y }: Tool): ToolConfig => 
       delete defaultConfig.scaleX
 
       return Object.assign(defaultConfig, {
-        width: 80,
-        height: 80,
         text: 'Type some text here',
         fontSize: 20,
         fontFamily: 'Arial',

@@ -7,10 +7,11 @@ import { ToolEditItem, ToolConfig, UploadImage } from '../../types/index'
 
 const store = useCanvasStore()
 
-const tool = computed(() => {
+const tool = computed((): ToolConfig | null => {
   return store.selectedTool || null
 })
 
+// Computed properties
 const lockerComponent = computed(() => {
   return tool.value?.draggable ? Unlocked : Locked
 })
@@ -36,6 +37,7 @@ const toolBorderType = computed(() => {
     : 'dashed'
 })
 
+// Helper functions
 const toggleToolDraggable = () => {
   if (!tool.value) return
 
@@ -108,21 +110,7 @@ const beforeImageUpload = (data: UploadImage) => {
         </div>
 
         <!-- Text -->
-        <div class="items__body" v-if="normalizedToolName === 'Text input'">
-          <h3 class="item__label">Container</h3>
-          <div class="item">
-            <span>Width</span>
-            <n-input-number v-model:value="tool.width" :validator="(x: number) => x > 0" size="medium" step="10" />
-          </div>
-          <div class="item">
-            <span>Height</span>
-            <n-input-number v-model:value="tool.height" :validator="(x: number) => x > 0" size="medium" step="10" />
-          </div>
-        </div>
-
-        <div class="items__body" v-if="normalizedToolName === 'Text input'">
-          <h3 class="item__label">Text</h3>
-
+        <div class="items__body" v-if="normalizedToolName === 'Text'">
           <div class="item">
             <span>Value</span>
             <n-input type="textarea" v-model:value="tool.text" size="medium" />
@@ -169,14 +157,14 @@ const beforeImageUpload = (data: UploadImage) => {
             <span>Fill</span>
             <n-color-picker v-model:value="tool.fill" />
           </div>
-          <div class="item" v-if="normalizedToolName !== 'Arrow' && normalizedToolName !== 'Text input'">
+          <div class="item" v-if="normalizedToolName !== 'Arrow' && normalizedToolName !== 'Text'">
             <span>Stroke</span>
             <n-color-picker v-model:value="tool.stroke" />
           </div>
         </div>
 
         <!-- Border -->
-        <div class="items__body" v-if="normalizedToolName !== 'Text input'">
+        <div class="items__body" v-if="normalizedToolName !== 'Text'">
           <div class="item__label item__label-border">
             <h3>Border</h3>
             <n-switch @update:value="changeBorderVisibility" :value="!!tool.strokeWidth" size="small" />
