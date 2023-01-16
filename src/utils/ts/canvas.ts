@@ -1,3 +1,6 @@
+import jsPDF from "jspdf"
+import toPDF from "html-to-pdf-js"
+
 import { Tool, ToolConfig } from "../../types"
 import { useCanvasStore } from '../../store/canvas'
 import { ToolFromBar } from '../../types'
@@ -213,13 +216,32 @@ export const removeFromCanvas = (toolId: string) => {
   transformerNode.nodes([])
 }
 
-export const changeShapeZIndex = (shapeName: string) => {
-  const selectedNode = findShape(shapeName)
+export const exportToPDF = (stageElem: any) => {
+  const stage = stageElem.getStage()
 
-  if (!selectedNode) return
+  const pdf = new jsPDF('p', 'px', [stage.width(), stage.height()])
+  pdf.setTextColor('#000000')
 
-  selectedNode.zIndex(0)
+  // Text is not rendered in the PDF, so we need to render it manually
+  stage.find('Text').forEach((text: any) => {
+    const size = text.fontSize() / 0.75; // convert pixels to points
 
-  console.log('selectedNode', selectedNode)
-  console.log('zIndex', selectedNode.zIndex(0))
+    // TODO: Set the font options properly
+    pdf.setFontSize(size);
+    pdf.text(text.text(), text.x(), text.y(), {
+      baseline: 'top',
+      angle: -text.getAbsoluteRotation(),
+    });
+  });
+
+  // Render the rest of the stage
+  pdf.addImage(
+    stage.toDataURL({ pixelRatio: 2 }),
+    0,
+    0,
+    stage.width(),
+    stage.height()
+  );
+
+  pdf.save('new-canvas.pdf');
 }

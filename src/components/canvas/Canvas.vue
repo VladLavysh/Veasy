@@ -1,15 +1,17 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 import { Transformer } from 'konva/lib/shapes/Transformer'
-import { Stage } from 'konva/lib/Stage';
+import { DocumentDownload } from '@vicons/carbon'
 
-import { konvaConfig, transformerConfig, handleStageMouseDown, handleTransformEnd } from '../../utils/ts/canvas'
+import { konvaConfig, transformerConfig, handleStageMouseDown, handleTransformEnd, exportToPDF } from '../../utils/ts/canvas'
 import CanvasGrid from './CanvasGrid.vue'
 import { useCanvasStore } from '../../store/canvas'
+import { Stage } from 'konva/lib/Stage';
 
 const canvasStore = useCanvasStore()
 
 const transformer = ref<Transformer | null>(null)
+const stage = ref<Stage | null>(null)
 
 const dragHandler = (isOver: Boolean) => {
   if (canvasStore.isAddingAllowed === isOver) {
@@ -32,7 +34,7 @@ const dragEndHandler = (event: MouseEvent) => {
   <section class="canvas-section">
     <h2 class="canvas-section__label">Canvas Name</h2>
     <div class="canvas-section__canvas" @dragover.prevent="dragHandler(true)" @dragleave="dragHandler(false)">
-      <v-stage :config="konvaConfig" @touchstart="handleStageMouseDown($event, transformer)"
+      <v-stage :config="konvaConfig" ref="stage" @touchstart="handleStageMouseDown($event, transformer)"
         @mousedown="handleStageMouseDown($event, transformer)">
 
         <v-layer>
@@ -42,10 +44,14 @@ const dragEndHandler = (event: MouseEvent) => {
             @transformend="handleTransformEnd" @dragstart="canvasStore.changeGridStatus(true)"
             @dragend="dragEndHandler" />
 
-          <v-transformer ref="transformer" :config="transformerConfig" />
+          <v-transformer :config="transformerConfig" ref="transformer" />
         </v-layer>
       </v-stage>
     </div>
+
+    <button class="canvas-section__export" @click="exportToPDF(stage)">
+      <n-icon size="30" :component="DocumentDownload" />
+    </button>
 
   </section>
 </template>
@@ -72,6 +78,12 @@ const dragEndHandler = (event: MouseEvent) => {
     //border: 2px solid #ccc;
     box-shadow: 0 0 5px 1px #bebebe;
     background-color: #fff;
+  }
+
+  &__export {
+    position: sticky;
+    left: 95%;
+    bottom: 0;
   }
 }
 </style>
