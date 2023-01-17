@@ -245,3 +245,5 @@ export const exportToPDF = (stageElem: any) => {
 
   pdf.save('new-canvas.pdf');
 }
+
+export const saveCanvas = () => { }

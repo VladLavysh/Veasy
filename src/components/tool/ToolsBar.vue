@@ -14,7 +14,7 @@ const toggleHandler = () => {
 
 <template>
   <aside :class="[store.isPanelOpen ? 'tools-bar-wide' : '', 'tools-bar']" ref="tools_bar">
-    <div class="toggle-btn" @click="toggleHandler" />
+    <!-- <div class="toggle-btn" @click="toggleHandler" /> -->
 
     <ToolsBarItems />
     <ToolsBarActive />
