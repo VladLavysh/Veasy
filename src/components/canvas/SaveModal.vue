@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import { DocumentDownload, UserProfile } from '@vicons/carbon'
 import { useMessage } from 'naive-ui'
 
@@ -14,12 +14,6 @@ const emit = defineEmits<{
 }>()
 
 // Variables
-const message = useMessage()
-const fileData = reactive<{ name: string, type: string, saveTo: string }>({
-  name: 'canvas',
-  type: '.pdf',
-  saveTo: ''
-})
 const fileExtensions = [
   {
     label: '.pdf',
@@ -38,6 +32,16 @@ const fileExtensions = [
     value: 'svg',
   }
 ]
+const message = useMessage()
+const fileData = reactive<{ name: string, type: string, saveTo: string }>({
+  name: 'canvas',
+  type: '.pdf',
+  saveTo: ''
+})
+
+const isBtnActive = computed(() => {
+  return !props.isSaving && !!fileData.name.trim() && !!fileData.saveTo
+})
 
 // Methods
 const selectSavePlace = ($event: MouseEvent) => {
@@ -51,8 +55,7 @@ const selectSavePlace = ($event: MouseEvent) => {
 
 const submitHandler = () => {
   if (!fileData.saveTo || !fileData.name) {
-    // TODO: show error + validation
-    message.info('Some fields are empty etc.')
+    message.info('Some fields are empty!')
     return
   }
 
@@ -75,11 +78,13 @@ const resetModalState = () => {
     <div class="save-modal">
       <h3 style="margin-top: 0">Save canvas to:</h3>
       <div class="save-modal__btns" @click="selectSavePlace">
-        <div :class="[fileData.saveTo === 'account' ? 'btn-active' : '', 'btn']" data-save-to="account">
+        <div :class="[fileData.saveTo === 'account' ? 'btn-active' : '', props.isSaving ? 'btn-inactive' : '', 'btn']"
+          data-save-to="account">
           <h2>Account</h2>
           <n-icon size="50" :component="UserProfile" />
         </div>
-        <div :class="[fileData.saveTo === 'device' ? 'btn-active' : '', 'btn']" data-save-to="device">
+        <div :class="[fileData.saveTo === 'device' ? 'btn-active' : '', props.isSaving ? 'btn-inactive' : '', 'btn']"
+          data-save-to="device">
           <h2>Device</h2>
           <n-icon size="50" :component="DocumentDownload" />
         </div>
@@ -90,12 +95,13 @@ const resetModalState = () => {
     <div>
       <h3 style="margin-top: 0">File name and extention:</h3>
       <n-input-group>
-        <n-input v-model:value="fileData.name" type="text" placeholder="File name" />
-        <n-select v-model:value="fileData.type" :options="fileExtensions" style="width: 33%" />
+        <n-input v-model:value="fileData.name" :disabled="props.isSaving" type="text" placeholder="File name" />
+        <n-select v-model:value="fileData.type" :disabled="props.isSaving" :options="fileExtensions"
+          style="width: 33%" />
       </n-input-group>
     </div>
     <template #footer>
-      <n-button type="primary" size="medium" :disabled="isSaving" style="width: 90px"
+      <n-button type="primary" size="medium" :disabled="!isBtnActive" style="width: 90px"
         @click="submitHandler">Save</n-button>
     </template>
   </n-modal>
@@ -143,6 +149,11 @@ const resetModalState = () => {
     .btn-active {
       box-shadow: 0 0 5px 2px #18a058;
       border-color: #18a058 !important;
+    }
+
+    .btn-inactive {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
 
     &:hover>.btn:not(:hover) {

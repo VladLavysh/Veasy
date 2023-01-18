@@ -34,7 +34,7 @@ const dragEndHandler = (event: MouseEvent) => {
 
 const saveCanvasHandler = (fileData: { name: string, type: string, saveTo: string }) => {
   //if (!canvasStore.tools.length) {
-  //  message.info('There is nothing to save')
+  //  message.info('Canvas is clear. There is nothing to save')
   //  return
   //}
 
@@ -44,10 +44,11 @@ const saveCanvasHandler = (fileData: { name: string, type: string, saveTo: strin
 
   setTimeout(() => {
     if (fileData.saveTo === 'account') {
-      //saveCanvas()
+      message.loading('Saving canvas to db...')
+      saveCanvas()
       message.success('Saved successfully!')
     } else {
-      //exportToPDF(stage.value)
+      exportToPDF(stage.value)
     }
 
     showModal.value = false

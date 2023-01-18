@@ -1,6 +1,4 @@
 import jsPDF from "jspdf"
-import toPDF from "html-to-pdf-js"
-
 import { Tool, ToolConfig } from "../../types"
 import { useCanvasStore } from '../../store/canvas'
 import { ToolFromBar } from '../../types'
@@ -228,6 +226,8 @@ export const exportToPDF = (stageElem: any) => {
 
     // TODO: Set the font options properly
     pdf.setFontSize(size);
+    console.log('text', text);
+    
     pdf.text(text.text(), text.x(), text.y(), {
       baseline: 'top',
       angle: -text.getAbsoluteRotation(),
@@ -243,7 +243,9 @@ export const exportToPDF = (stageElem: any) => {
     stage.height()
   );
 
-  pdf.save('new-canvas.pdf');
+  //pdf.save('new-canvas.pdf');
 }
 
-export const saveCanvas = () => { }
+export const saveCanvas = () => {
+  console.log('Saving canvas to db...');
+}
