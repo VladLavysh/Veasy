@@ -6,6 +6,8 @@ const xLinesCount = Math.round(konvaConfig.width / divider)
 const yLinesCount = Math.round(konvaConfig.height / divider)
 </script>
 
+<!-- Grid 2.0 -->
+<!-- https://codepen.io/pierrebleroux/pen/gGpvxJ?editors=0010 -->
 <template>
   <v-group>
     <!-- Lines by X coordinates -->

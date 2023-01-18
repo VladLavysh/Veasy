@@ -4,8 +4,6 @@ import Creator from './views/Creator.vue'
 
 <template>
   <n-message-provider>
-    <n-loading-bar-provider>
-      <Creator />
-    </n-loading-bar-provider>
+    <Creator />
   </n-message-provider>
 </template>
