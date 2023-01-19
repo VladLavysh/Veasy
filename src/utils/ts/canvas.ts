@@ -4,15 +4,30 @@ import { useCanvasStore } from '../../store/canvas'
 import { ToolFromBar } from '../../types'
 import { Shape } from "konva/lib/Shape"
 import { Stage } from "konva/lib/Stage"
+import { Text } from "konva/lib/shapes/Text"
 
+// ----- Konfigs -----
 export const konvaConfig = {
   width: 800,
   height: 1120
+}
+export const canvasBackgroundConfig = {
+  name: 'canvas-background',
+  x: 0,
+  y: 0,
+  width: konvaConfig.width,
+  height: konvaConfig.height,
+
+  draggable: false,
+  listening: false,
+
+  fill: '#FFFFFFFF'
 }
 
 export const transformerConfig = {
   ignoreStroke: true,
   //centeredScaling: true,
+  resizeEnabled: true,
   rotationSnaps: [0, 90, 180, 270],
 
   anchorStroke: '#66727d',
@@ -109,7 +124,7 @@ export const shapeConfig = ({ name, konvaName, id, x, y }: Tool): ToolConfig => 
   }
 }
 
-// Shape transformer functions (3)
+// ----- Konva transformer methods -----
 // Source: https://codesandbox.io/s/github/konvajs/site/tree/master/vue-demos/transformer?from-embed=&file=/src/App.vue
 let selectedShapeName: string
 let stageTransformer: any
@@ -117,21 +132,19 @@ let stageTransformer: any
 const findShape = (name: string) => {
   if (!stageTransformer) return
 
-  const transformerNode = stageTransformer.getNode()
-  const stage = transformerNode.getStage()
+  const stage = stageTransformer.getStage()
 
   return stage.findOne('.' + name)
 }
 
 const updateTransformer = () => {
-  const transformerNode = stageTransformer.getNode()
   const selectedNode = findShape(selectedShapeName)
 
-  if (selectedNode === transformerNode.node()) {
+  if (selectedNode === stageTransformer.node()) {
     return;
   }
 
-  transformerNode.nodes(selectedNode ? [selectedNode] : [])
+  stageTransformer.nodes(selectedNode ? [selectedNode] : [])
 }
 
 export const handleTransformEnd = (e: MouseEvent) => {
@@ -152,7 +165,7 @@ export const handleTransformEnd = (e: MouseEvent) => {
 export const handleStageMouseDown = (e: MouseEvent, transformer: any) => {
   const canvasStore = useCanvasStore()
 
-  stageTransformer = transformer
+  stageTransformer = transformer.getNode()
   const target = e.target as unknown as Shape | Stage
 
   if (!target || target === target.getStage()) {
@@ -171,6 +184,8 @@ export const handleStageMouseDown = (e: MouseEvent, transformer: any) => {
   const name = target.name()
   const shape = canvasStore.tools.find(r => r.name === name)
 
+  stageTransformer.attrs.resizeEnabled = shape?.konvaName !== 'v-text'
+
   selectedShapeName = shape ? name : ''
 
   canvasStore.setSelectedTool(selectedShapeName || null)
@@ -178,6 +193,7 @@ export const handleStageMouseDown = (e: MouseEvent, transformer: any) => {
   updateTransformer()
 }
 
+// ----- Kanvas methods -----
 export const addToCanvas = (e: MouseEvent, { name, konvaName, id }: ToolFromBar) => {
   const canvasStore = useCanvasStore()
 
@@ -210,40 +226,75 @@ export const removeFromCanvas = (toolId: string) => {
   canvasStore.tools = canvasStore.tools.filter(tool => tool.id !== toolId)
   canvasStore.setSelectedTool(null)
 
-  const transformerNode = stageTransformer.getNode()
-  transformerNode.nodes([])
+  stageTransformer.nodes([])
 }
 
-export const exportToPDF = (stageElem: any) => {
+// ----- Canvas save/export methods -----
+export const downloadCanvas = (stageElem: Stage, fileName: string, fileType: string) => {
   const stage = stageElem.getStage()
+  const canvasStore = useCanvasStore()
 
-  const pdf = new jsPDF('p', 'px', [stage.width(), stage.height()])
+  const pdf = new jsPDF('p', 'px', [konvaConfig.width, konvaConfig.height])
   pdf.setTextColor('#000000')
 
-  // Text is not rendered in the PDF, so we need to render it manually
-  stage.find('Text').forEach((text: any) => {
-    const size = text.fontSize() / 0.75; // convert pixels to points
+  console.log('fileType', fileType);
+  if (fileType === 'pdf') {
 
-    // TODO: Set the font options properly
-    pdf.setFontSize(size);
-    console.log('text', text);
-    
-    pdf.text(text.text(), text.x(), text.y(), {
-      baseline: 'top',
-      angle: -text.getAbsoluteRotation(),
+    //  TODO: ----- Add support for text -----
+    // stage.find('Text').forEach((text: any) => {
+    //   const textArrts = text.attrs
+
+    //   const size = textArrts.fontSize / 0.75 // convert pixels to points
+    //   pdf.setFontSize(size)
+
+    //   pdf.text(textArrts.text.trim(), textArrts.x, textArrts.y, {
+    //     align: textArrts.align as "left" | "center" | "right" | "justify" | undefined,
+    //     baseline: textArrts.verticalAlign as "top" | "bottom" | "middle" | undefined,
+    //     angle: -textArrts.rotation,
+    //   })
+
+    //   // Delete konva shape node
+    //   // text.destroy()
+    // })
+
+    pdf.addImage(
+      stage.toDataURL({ pixelRatio: 2 }),
+      0,
+      0,
+      konvaConfig.width,
+      konvaConfig.height
+    )
+
+    pdf.save(`${fileName}.${fileType}`);
+  } else { // png, jpeg
+
+    const dataUrl = stage.toDataURL({
+      mimeType: `image/${fileType}`,
+      x: 0,
+      y: 0,
+      width: konvaConfig.width,
+      height: konvaConfig.height,
+      pixelRatio: 2
     });
-  });
 
-  // Render the rest of the stage
-  pdf.addImage(
-    stage.toDataURL({ pixelRatio: 2 }),
-    0,
-    0,
-    stage.width(),
-    stage.height()
-  );
+    downloadURI(dataUrl, `${fileName}.${fileType}`);
+  }
 
-  //pdf.save('new-canvas.pdf');
+  if (canvasStore.selectedTool) {
+    canvasStore.setSelectedTool(null)
+    stageTransformer?.nodes([])
+  }
+}
+
+function downloadURI(uri: string, name: string) {
+  const link = document.createElement('a')
+  link.download = name
+  link.href = uri
+
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  link.remove()
 }
 
 export const saveCanvas = () => {

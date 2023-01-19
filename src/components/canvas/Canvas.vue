@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { Transformer } from 'konva/lib/shapes/Transformer'
 import { Save } from '@vicons/carbon'
 import { Stage } from 'konva/lib/Stage';
 import { MessageReactive, useMessage } from 'naive-ui'
 
-import { konvaConfig, transformerConfig, handleStageMouseDown, handleTransformEnd, exportToPDF, saveCanvas } from '../../utils/ts/canvas'
+import { konvaConfig, canvasBackgroundConfig, transformerConfig, handleStageMouseDown, handleTransformEnd, downloadCanvas, saveCanvas } from '../../utils/ts/canvas'
 import { useCanvasStore } from '../../store/canvas'
 import SaveModal from './SaveModal.vue'
 import CanvasGrid from './CanvasGrid.vue'
@@ -33,10 +33,10 @@ const dragEndHandler = (event: MouseEvent) => {
 }
 
 const saveCanvasHandler = (fileData: { name: string, type: string, saveTo: string }) => {
-  //if (!canvasStore.tools.length) {
-  //  message.info('Canvas is clear. There is nothing to save')
-  //  return
-  //}
+  if (!canvasStore.tools.length) {
+   message.info('Canvas is clear - there is nothing to save')
+   return
+  }
 
   const messageReactive: MessageReactive | null = fileData.saveTo === 'account'
     ? message.loading('Saving...')
@@ -48,7 +48,7 @@ const saveCanvasHandler = (fileData: { name: string, type: string, saveTo: strin
       saveCanvas()
       message.success('Saved successfully!')
     } else {
-      exportToPDF(stage.value)
+      downloadCanvas({...stage.value} as Stage, fileData.name, fileData.type)
     }
 
     showModal.value = false
@@ -67,13 +67,15 @@ const saveCanvasHandler = (fileData: { name: string, type: string, saveTo: strin
         @mousedown="handleStageMouseDown($event, transformer)">
 
         <v-layer>
-          <CanvasGrid v-if="canvasStore.showGrid" />
+          <v-rect :config="canvasBackgroundConfig"/> <!-- white bg for png\jpeg -->
+
+          <CanvasGrid v-if="canvasStore.showGrid" /> <!-- grid -->
 
           <component v-for="(tool, idx) of canvasStore.tools" :key="idx" :is="tool.konvaName" :config="tool"
             @transformend="handleTransformEnd" @dragstart="canvasStore.changeGridStatus(true)"
-            @dragend="dragEndHandler" />
+            @dragend="dragEndHandler" /> <!-- shapes -->
 
-          <v-transformer :config="transformerConfig" ref="transformer" />
+          <v-transformer :config="transformerConfig" ref="transformer" /> <!-- transformer for shapes -->
         </v-layer>
       </v-stage>
     </div>

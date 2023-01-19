@@ -26,16 +26,12 @@ const fileExtensions = [
   {
     label: '.jpeg',
     value: 'jpeg',
-  },
-  {
-    label: '.svg',
-    value: 'svg',
   }
 ]
 const message = useMessage()
 const fileData = reactive<{ name: string, type: string, saveTo: string }>({
   name: 'canvas',
-  type: '.pdf',
+  type: fileExtensions[0].value,
   saveTo: ''
 })
 
@@ -66,7 +62,7 @@ const submitHandler = () => {
 const resetModalState = () => {
   fileData.saveTo = ''
   fileData.name = 'canvas'
-  fileData.type = '.pdf'
+  fileData.type = fileExtensions[0].value
 }
 </script>
 
