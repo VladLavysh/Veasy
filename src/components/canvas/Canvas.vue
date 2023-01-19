@@ -82,7 +82,7 @@ const saveCanvasHandler = (fileData: { name: string, type: string, saveTo: strin
 
     <n-icon class="canvas-section__save" size="30" :component="Save" @click="showModal = true" />
 
-    <SaveModal :isOpen="showModal" v-model:isSaving="savingCanvas" @close="showModal = false"
+    <SaveModal v-model:isOpen="showModal" v-model:isSaving="savingCanvas" @close="showModal = false"
       @save="saveCanvasHandler" />
   </section>
 </template>

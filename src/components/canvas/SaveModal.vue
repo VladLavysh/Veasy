@@ -11,6 +11,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'save', { }: { name: string, type: string, saveTo: string }): void
   (e: 'update:isSaving', isSaving: Boolean): void
+  (e: 'update:isOpen', isOpen: Boolean): void
 }>()
 
 // Variables
@@ -67,9 +68,10 @@ const resetModalState = () => {
 </script>
 
 <template>
-  <n-modal ref="loadingBarTargetRef" v-model:show="props.isOpen" preset="card" :style="{ width: '400px' }" title="Save"
-    size="huge" :segmented="{ content: 'soft', footer: 'soft' }" @after-leave="resetModalState"
-    footer-style="text-align: center">
+  <n-modal ref="loadingBarTargetRef" preset="card" footer-style="text-align: center" title="Save" size="huge"
+    :style="{ width: '400px' }" v-model:show="props.isOpen" :segmented="{ content: 'soft', footer: 'soft' }"
+    @after-leave="resetModalState" @mask-click="emit('update:isOpen', false)" @esc="emit('update:isOpen', false)"
+  >
 
     <div class="save-modal">
       <h3 style="margin-top: 0">Save canvas to:</h3>
