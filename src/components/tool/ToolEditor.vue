@@ -191,7 +191,8 @@ const beforeImageUpload = (data: UploadImage) => {
 @import '../../utils/css/mixins.scss';
 
 .tool-editor {
-  width: 100%;
+  width: 400px;
+  min-width: 250px;
   height: 100%;
 
   transition: all .3s ease-in-out;
@@ -206,7 +207,6 @@ const beforeImageUpload = (data: UploadImage) => {
   &__items {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
     align-items: flex-start;
     gap: 15px;
 
@@ -220,7 +220,7 @@ const beforeImageUpload = (data: UploadImage) => {
 
 .items {
   &__divider {
-    margin: 10px 0 0;
+    margin: 0;
   }
 
   &__label {

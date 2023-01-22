@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, onBeforeUnmount, ref } from 'vue';
 import { Transformer } from 'konva/lib/shapes/Transformer'
-import { Save } from '@vicons/carbon'
 import { Stage } from 'konva/lib/Stage';
+import { Save } from '@vicons/carbon'
 import { MessageReactive, useMessage } from 'naive-ui'
-
 import { konvaConfig, canvasBackgroundConfig, transformerConfig, handleStageMouseDown, handleTransformEnd, downloadCanvas, saveCanvas } from '../../utils/ts/canvas'
 import { useCanvasStore } from '../../store/canvas'
 import SaveModal from './SaveModal.vue'
@@ -34,8 +33,8 @@ const dragEndHandler = (event: MouseEvent) => {
 
 const saveCanvasHandler = (fileData: { name: string, type: string, saveTo: string }) => {
   if (!canvasStore.tools.length) {
-   message.info('Canvas is clear - there is nothing to save')
-   return
+    message.info('Canvas is clear - there is nothing to save')
+    return
   }
 
   const messageReactive: MessageReactive | null = fileData.saveTo === 'account'
@@ -48,7 +47,7 @@ const saveCanvasHandler = (fileData: { name: string, type: string, saveTo: strin
       saveCanvas()
       message.success('Saved successfully!')
     } else {
-      downloadCanvas({...stage.value} as Stage, fileData.name, fileData.type)
+      downloadCanvas({ ...stage.value } as Stage, fileData.name, fileData.type)
     }
 
     showModal.value = false
@@ -56,18 +55,35 @@ const saveCanvasHandler = (fileData: { name: string, type: string, saveTo: strin
     messageReactive?.destroy()
   }, 2000)
 }
+
+const changeHeaderStyle = (event: Event) => {
+  const target = event.target as HTMLElement
+  const header = document.querySelector('.canvas-section__header') as HTMLElement
+
+  header.classList.toggle('header-scrolled', target.scrollTop > 0)
+}
+
 </script>
 
 <template>
-  <section class="canvas-section">
-    <h2 class="canvas-section__label">Canvas Name</h2>
+  <section class="canvas-section" @scroll="changeHeaderStyle">
+    <div class="canvas-section__header">
+      <h2 class="canvas-section__label">Canvas Name</h2>
+      <div class="canvas-section__header-buttons">
+        <n-button type="primary" size="small" @click="showModal = true">
+          <Save />
+          <span>Edit canvas</span>
+        </n-button>
+      </div>
+    </div>
+    <!--<h2 class="canvas-section__label">Canvas Name</h2>-->
 
     <div class="canvas-section__canvas" @dragover.prevent="dragHandler(true)" @dragleave="dragHandler(false)">
       <v-stage :config="konvaConfig" ref="stage" @touchstart="handleStageMouseDown($event, transformer)"
         @mousedown="handleStageMouseDown($event, transformer)">
 
         <v-layer>
-          <v-rect :config="canvasBackgroundConfig"/> <!-- white bg for png\jpeg -->
+          <v-rect :config="canvasBackgroundConfig" /> <!-- bg for png\jpeg -->
 
           <CanvasGrid v-if="canvasStore.showGrid" /> <!-- grid -->
 
@@ -97,27 +113,21 @@ const saveCanvasHandler = (fileData: { name: string, type: string, saveTo: strin
   overflow-y: scroll;
   background-color: #D3E1ED;
 
+  &__header {
+    @include flex-row;
+    position: sticky;
+    top: 0;
+
+    z-index: 9;
+
+    transition: all .25s ease-in-out;
+    //justify-content: center;
+  }
+
   &__label {
-    width: 100%;
+    //width: 100%;
     text-align: center;
-
     color: #465461;
-
-    h2 {
-      flex: 1;
-    }
-
-    i {
-      cursor: pointer;
-      transition: all .25s ease-in-out;
-
-      border-radius: 5px;
-
-      &:hover {
-        color: rgb(32, 32, 32);
-        box-shadow: 0 0 5px 2px #a8b8c7;
-      }
-    }
   }
 
   &__canvas {
@@ -155,5 +165,10 @@ const saveCanvasHandler = (fileData: { name: string, type: string, saveTo: strin
       box-shadow: 0 0 5px 0 #000000;
     }
   }
+}
+
+.header-scrolled {
+  height: 40px;
+  font-size: 0.75rem;
 }
 </style>

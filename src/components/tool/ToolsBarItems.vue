@@ -39,7 +39,7 @@ const draggingElementPos = (event: DragEvent) => {
   flex: 1;
   width: 100%;
 
-  padding: 5px 10px;
+  padding: 0 10px;
   box-sizing: border-box;
 
   overflow-y: scroll;
