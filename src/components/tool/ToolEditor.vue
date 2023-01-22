@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed, watch, Transition } from 'vue'
+import { computed, Transition } from 'vue'
 import { Unlocked, Locked } from '@vicons/carbon'
 import { useCanvasStore } from '../../store/canvas'
 import { borderTypes, textConfig, normalizeTextConfigLabel } from '../../utils/ts/tools'
@@ -16,19 +16,19 @@ const lockerComponent = computed(() => {
   return tool.value?.draggable ? Unlocked : Locked
 })
 
-const lockerColor = computed(() => {
+const lockerColor = computed<string>(() => {
   return tool.value?.draggable
     ? '#aff9c4'
     : '#ffad9f'
 })
 
-const normalizedToolName = computed(() => {
+const normalizedToolName = computed<string>(() => {
   return tool.value
     ? tool.value.name.match(/([^_]+)/)![0]
     : ''
 })
 
-const toolBorderType = computed(() => {
+const toolBorderType = computed<string | undefined>(() => {
   if (!tool.value) return
   if (!Array.isArray(tool.value.dash)) return
 
@@ -56,6 +56,7 @@ const changeBorderVisibility = (isVisible: boolean) => {
   tool.value.strokeWidth = isVisible ? 2 : 0
 }
 
+// TODO: Fix type errors
 const editItemClickHandler = ({ _, configLabel, optionLabel, isHandler }: ToolEditItem) => {
   if (!tool.value) return
 
@@ -183,7 +184,6 @@ const beforeImageUpload = (data: UploadImage) => {
       </div>
       <h3 v-else class="tool-editor__label">Select a tool to customize</h3>
     </Transition>
-
   </aside>
 </template>
 
@@ -191,7 +191,8 @@ const beforeImageUpload = (data: UploadImage) => {
 @import '../../utils/css/mixins.scss';
 
 .tool-editor {
-  width: 400px;
+  width: 100%;
+  height: 100%;
 
   transition: all .3s ease-in-out;
   //overflow-y: scroll;

@@ -70,8 +70,8 @@ const resetModalState = () => {
 <template>
   <n-modal ref="loadingBarTargetRef" preset="card" footer-style="text-align: center" title="Save" size="huge"
     :style="{ width: '400px' }" v-model:show="props.isOpen" :segmented="{ content: 'soft', footer: 'soft' }"
-    @after-leave="resetModalState" @mask-click="emit('update:isOpen', false)" @esc="emit('update:isOpen', false)"
-  >
+    :mask-closable="false" @after-leave="resetModalState" @mask-click="emit('update:isOpen', false)"
+    @esc="emit('update:isOpen', false)">
 
     <div class="save-modal">
       <h3 style="margin-top: 0">Save canvas to:</h3>
