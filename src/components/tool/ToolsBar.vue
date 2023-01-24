@@ -68,7 +68,7 @@ const toggleHandler = () => {
   height: 20px;
 
   background-color: #ffffff;
-  box-shadow: 3px 0 5px 0 #bebebe;
+  box-shadow: 4px 0 5px 0 #bebebe;
 
   font-size: 1.2rem;
   color: #535353;

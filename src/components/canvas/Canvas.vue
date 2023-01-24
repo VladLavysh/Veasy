@@ -8,6 +8,7 @@ import { konvaConfig, canvasBackgroundConfig, transformerConfig, handleStageMous
 import { useCanvasStore } from '../../store/canvas'
 import SaveModal from './SaveModal.vue'
 import CanvasGrid from './CanvasGrid.vue'
+import SettingsModal from './SettingsModal.vue';
 
 const message = useMessage()
 const canvasStore = useCanvasStore()
@@ -68,9 +69,9 @@ const changeHeaderStyle = (event: Event) => {
 <template>
   <section class="canvas-section" @scroll="changeHeaderStyle">
     <div class="canvas-section__header">
-      <h2 class="canvas-section__label">Canvas Name</h2>
+      <h2 class="canvas-section__label">{{ canvasStore.canvasSettings.name }}</h2>
       <div class="canvas-section__header-buttons">
-        <n-button quaternary type="info" size="large" title="Canvas options">
+        <n-button quaternary type="info" size="large" title="Canvas settings">
           <template #icon>
             <n-icon color="#5e6b77" :component="SettingsAdjust" @click="showCanvasSettingsModal = true" />
           </template>
@@ -88,7 +89,7 @@ const changeHeaderStyle = (event: Event) => {
         @mousedown="handleStageMouseDown($event, transformer)">
 
         <v-layer>
-          <v-rect :config="canvasBackgroundConfig" /> <!-- bg for png\jpeg -->
+          <v-rect :config="{...canvasBackgroundConfig, fill: canvasStore.canvasSettings.backgroundColor}" /> <!-- bg for png\jpeg -->
 
           <CanvasGrid v-if="canvasStore.showGrid" /> <!-- grid -->
 
@@ -105,6 +106,8 @@ const changeHeaderStyle = (event: Event) => {
 
     <SaveModal v-model:isOpen="showSaveModal" v-model:isSaving="savingCanvas" @close="showSaveModal = false"
       @save="saveCanvasHandler" />
+
+    <SettingsModal v-model:isOpen="showCanvasSettingsModal" @close="showCanvasSettingsModal = false" />
   </section>
 </template>
 
@@ -141,11 +144,18 @@ const changeHeaderStyle = (event: Event) => {
     text-align: center;
     color: #465461;
 
-    margin-left: 112px;
+    margin-left: 122px;
   }
 
-  &__header-buttons i {
+  &__header-buttons, i {
     transition: all .25s ease-in-out;
+  } 
+  &__header-buttons {
+    display: flex;
+    gap: 10px;
+    
+  }
+  &__header-buttons i {
     font-size: 30px;
   }
 
@@ -189,7 +199,7 @@ const changeHeaderStyle = (event: Event) => {
 .header-scrolled {
   @include flex-row;
 
-  height: 40px;
+  height: 35px;
   width: 800px;
   justify-content: space-between;
 
@@ -199,6 +209,10 @@ const changeHeaderStyle = (event: Event) => {
   font-size: 0.75rem;
 
   background-color: #ffffff86;
+
+  .canvas-section__header-buttons {
+    gap: 0;
+  }
 
   i {
     font-size: 25px;

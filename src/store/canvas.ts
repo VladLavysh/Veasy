@@ -6,6 +6,10 @@ import { Stage } from 'konva/lib/Stage'
 
 export const useCanvasStore = defineStore('canvas', {
   state: () => ({
+    canvasSettings: {
+      name: 'Canvas name',
+      backgroundColor: '#fff',
+    } as { name: string, backgroundColor: string },
     tools: [] as ToolConfig[],
     selectedTool: null as ToolConfig | null,
     isAddingAllowed: false as Boolean,
@@ -27,6 +31,9 @@ export const useCanvasStore = defineStore('canvas', {
     //selectedTool: (state) => state.selectedTool
   },
   actions: {
+    updateCanvasSettings(newSettings: { name: string, backgroundColor: string }) {
+      this.canvasSettings = Object.assign(this.canvasSettings, newSettings)
+    },
     updateToolsList(newTools: ToolConfig[]) {
       this.tools = newTools
     },

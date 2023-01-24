@@ -19,9 +19,7 @@ export const canvasBackgroundConfig = {
   height: konvaConfig.height,
 
   draggable: false,
-  listening: false,
-
-  fill: '#FFFFFFFF'
+  listening: false
 }
 
 export const transformerConfig = {
