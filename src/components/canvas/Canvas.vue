@@ -2,7 +2,7 @@
 import { onMounted, onBeforeUnmount, ref } from 'vue';
 import { Transformer } from 'konva/lib/shapes/Transformer'
 import { Stage } from 'konva/lib/Stage';
-import { Save } from '@vicons/carbon'
+import { Save, UserProfile, SettingsAdjust } from '@vicons/carbon'
 import { MessageReactive, useMessage } from 'naive-ui'
 import { konvaConfig, canvasBackgroundConfig, transformerConfig, handleStageMouseDown, handleTransformEnd, downloadCanvas, saveCanvas } from '../../utils/ts/canvas'
 import { useCanvasStore } from '../../store/canvas'
@@ -15,7 +15,8 @@ const canvasStore = useCanvasStore()
 const transformer = ref<Transformer | null>(null)
 const stage = ref<Stage | null>(null)
 const savingCanvas = ref<Boolean>(false)
-const showModal = ref<Boolean>(false)
+const showSaveModal = ref<Boolean>(false)
+const showCanvasSettingsModal = ref<Boolean>(false)
 
 const dragHandler = (isOver: Boolean) => {
   if (canvasStore.isAddingAllowed === isOver) {
@@ -50,7 +51,7 @@ const saveCanvasHandler = (fileData: { name: string, type: string, saveTo: strin
       downloadCanvas({ ...stage.value } as Stage, fileData.name, fileData.type)
     }
 
-    showModal.value = false
+    showSaveModal.value = false
     savingCanvas.value = false
     messageReactive?.destroy()
   }, 2000)
@@ -62,7 +63,6 @@ const changeHeaderStyle = (event: Event) => {
 
   header.classList.toggle('header-scrolled', target.scrollTop > 0)
 }
-
 </script>
 
 <template>
@@ -70,13 +70,18 @@ const changeHeaderStyle = (event: Event) => {
     <div class="canvas-section__header">
       <h2 class="canvas-section__label">Canvas Name</h2>
       <div class="canvas-section__header-buttons">
-        <n-button type="primary" size="small" @click="showModal = true">
-          <Save />
-          <span>Edit canvas</span>
+        <n-button quaternary type="info" size="large" title="Canvas options">
+          <template #icon>
+            <n-icon color="#5e6b77" :component="SettingsAdjust" @click="showCanvasSettingsModal = true" />
+          </template>
+        </n-button>
+        <n-button quaternary type="info" size="large" title="User profile">
+          <template #icon>
+            <n-icon color="#5e6b77" :component="UserProfile" />
+          </template>
         </n-button>
       </div>
     </div>
-    <!--<h2 class="canvas-section__label">Canvas Name</h2>-->
 
     <div class="canvas-section__canvas" @dragover.prevent="dragHandler(true)" @dragleave="dragHandler(false)">
       <v-stage :config="konvaConfig" ref="stage" @touchstart="handleStageMouseDown($event, transformer)"
@@ -96,9 +101,9 @@ const changeHeaderStyle = (event: Event) => {
       </v-stage>
     </div>
 
-    <n-icon class="canvas-section__save" size="30" :component="Save" @click="showModal = true" />
+    <n-icon class="canvas-section__save" size="30" :component="Save" @click="showSaveModal = true" title="Save canvas" />
 
-    <SaveModal v-model:isOpen="showModal" v-model:isSaving="savingCanvas" @close="showModal = false"
+    <SaveModal v-model:isOpen="showSaveModal" v-model:isSaving="savingCanvas" @close="showSaveModal = false"
       @save="saveCanvasHandler" />
   </section>
 </template>
@@ -108,26 +113,40 @@ const changeHeaderStyle = (event: Event) => {
 
 .canvas-section {
   width: 100%;
-  padding: 0 20px 40px;
+  padding-bottom: 40px;
 
   overflow-y: scroll;
   background-color: #D3E1ED;
 
   &__header {
     @include flex-row;
+    justify-content: space-between;
+
+    height: 80px;
+    width: 800px;
     position: sticky;
     top: 0;
-
-    z-index: 9;
-
+    
+    margin: auto;
+    
+    z-index: 8;
+    
     transition: all .25s ease-in-out;
-    //justify-content: center;
+    box-sizing: border-box;
   }
 
   &__label {
-    //width: 100%;
+    align-self: center;
+    flex: 1;
     text-align: center;
     color: #465461;
+
+    margin-left: 112px;
+  }
+
+  &__header-buttons i {
+    transition: all .25s ease-in-out;
+    font-size: 30px;
   }
 
   &__canvas {
@@ -168,7 +187,21 @@ const changeHeaderStyle = (event: Event) => {
 }
 
 .header-scrolled {
+  @include flex-row;
+
   height: 40px;
+  width: 800px;
+  justify-content: space-between;
+
+  padding: 0;
+  margin: auto;
+
   font-size: 0.75rem;
+
+  background-color: #ffffff86;
+
+  i {
+    font-size: 25px;
+  }
 }
 </style>

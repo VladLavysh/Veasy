@@ -46,7 +46,7 @@ const toggleHandler = () => {
   width: 500px;
 
   .toggle-btn {
-    left: 105%;
+    left: 98%;
 
     &::before {
       transform: translate(-60%, -200%) rotate(-40deg);
@@ -61,23 +61,24 @@ const toggleHandler = () => {
 // Toggle button styles
 .toggle-btn {
   position: absolute;
-  left: 110%;
+  left: 95%;
   top: 15px;
 
   width: 20px;
   height: 20px;
 
   background-color: #ffffff;
+  box-shadow: 3px 0 5px 0 #bebebe;
 
   font-size: 1.2rem;
   color: #535353;
   padding: 5px;
 
   cursor: pointer;
-  border-radius: 50%;
+  border-radius: 5px;
   transition: all .2s ease-in-out;
 
-  z-index: 8;
+  z-index: 9;
 
   &::before,
   &::after {
