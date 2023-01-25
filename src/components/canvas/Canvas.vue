@@ -9,6 +9,7 @@ import { useCanvasStore } from '../../store/canvas'
 import SaveModal from './SaveModal.vue'
 import CanvasGrid from './CanvasGrid.vue'
 import SettingsModal from './SettingsModal.vue';
+import { log } from 'console';
 
 const message = useMessage()
 const canvasStore = useCanvasStore()
@@ -62,7 +63,11 @@ const changeHeaderStyle = (event: Event) => {
   const target = event.target as HTMLElement
   const header = document.querySelector('.canvas-section__header') as HTMLElement
 
-  header.classList.toggle('header-scrolled', target.scrollTop > 0)
+  if (target.scrollTop > 40 && header.classList.contains('header-scrolled')) {
+    return
+  }
+
+  header.classList.toggle('header-scrolled', target.scrollTop > 40)
 }
 </script>
 
@@ -125,7 +130,7 @@ const changeHeaderStyle = (event: Event) => {
     @include flex-row;
     justify-content: space-between;
 
-    height: 80px;
+    height: 70px;
     width: 800px;
     position: sticky;
     top: 0;
@@ -199,7 +204,7 @@ const changeHeaderStyle = (event: Event) => {
 .header-scrolled {
   @include flex-row;
 
-  height: 35px;
+  // height: 35px;
   width: 800px;
   justify-content: space-between;
 
