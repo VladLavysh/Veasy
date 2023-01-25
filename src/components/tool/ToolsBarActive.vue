@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import draggable from 'vuedraggable'
-import { Close } from '@vicons/carbon'
+import { Close, Draggable } from '@vicons/carbon'
 import { computed } from 'vue'
 
-import { removeFromCanvas } from '../../utils/ts/canvas'
+import { removeFromCanvas, handleStageMouseDown } from '../../utils/ts/canvas'
 import { useCanvasStore } from '../../store/canvas'
 import { useToolsStore } from '../../store/tools'
 import { ToolConfig } from '../../types'
@@ -23,6 +23,11 @@ const activeTools = computed({
 const activeToolName = (name: string) => {
   return name.substring(0, name.indexOf('_') + 6)
 }
+
+const setSelectedTool = (name: string) => {
+  // canvasStore.setSelectedTool(name)
+  handleStageMouseDown(name)
+}
 </script>
 
 <template>
@@ -30,9 +35,10 @@ const activeToolName = (name: string) => {
     <Transition name="list" mode="out-in">
       <div v-if="toolsStore.isPanelOpen">
         <draggable v-if="canvasStore.getActiveTools.length" v-model="activeTools" item-key="id" tag="ul"
-          ghost-class="ghost-tool">
+          ghost-class="ghost-tool" handle=".handle-tool">
           <template #item="{ element }">
-            <li>
+            <li @click="setSelectedTool(element.name)" :class="[canvasStore.selectedTool?.name === element.name ? 'active-tool' : '']">
+              <n-icon size="20" class="handle-tool" :component="Draggable" />
               <span>{{ activeToolName(element.name) }}</span>
               <n-icon size="20" :component="Close" @click.stop="removeFromCanvas(element.id)" />
             </li>
@@ -77,6 +83,15 @@ const activeToolName = (name: string) => {
     background-color: #28bc99;
   }
 
+  .handle-tool {
+    transition: 0.25s ease-in-out all;
+    cursor: move;
+
+     &:hover {
+      color: #28bc99;
+    }
+  }
+
   ul {
     padding: 0
   }
@@ -87,19 +102,20 @@ const activeToolName = (name: string) => {
 
     color: #e3e8ed;
 
+    border-radius: 5px;
     list-style-type: none;
-    cursor: move;
+    cursor: default;
 
-    padding: 0 30px 0 40px;
+    padding: 0 10px 0 20px;
 
-    transition: 0.2s ease-in-out all;
+    transition: 0.25s ease-in-out all;
 
     &:hover {
-      background-color: #637482;
+      background-color: #6f8497;
     }
 
-    i {
-      transition: 0.2s ease-in-out all;
+    i:last-child {
+      transition: 0.25s ease-in-out all;
       padding: 5px;
       cursor: pointer;
 
@@ -108,6 +124,10 @@ const activeToolName = (name: string) => {
       }
     }
   }
+}
+
+.active-tool {
+  background-color: #28bc99;
 }
 
 .tools-bar__label {

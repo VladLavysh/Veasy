@@ -9,7 +9,6 @@ import { useCanvasStore } from '../../store/canvas'
 import SaveModal from './SaveModal.vue'
 import CanvasGrid from './CanvasGrid.vue'
 import SettingsModal from './SettingsModal.vue';
-import { log } from 'console';
 
 const message = useMessage()
 const canvasStore = useCanvasStore()
@@ -69,6 +68,10 @@ const changeHeaderStyle = (event: Event) => {
 
   header.classList.toggle('header-scrolled', target.scrollTop > 40)
 }
+
+onMounted(() => {
+  canvasStore.setTransformer(transformer.value as Transformer)
+})
 </script>
 
 <template>
@@ -90,8 +93,8 @@ const changeHeaderStyle = (event: Event) => {
     </div>
 
     <div class="canvas-section__canvas" @dragover.prevent="dragHandler(true)" @dragleave="dragHandler(false)">
-      <v-stage :config="konvaConfig" ref="stage" @touchstart="handleStageMouseDown($event, transformer)"
-        @mousedown="handleStageMouseDown($event, transformer)">
+      <v-stage :config="konvaConfig" ref="stage" @touchstart="handleStageMouseDown($event)"
+        @mousedown="handleStageMouseDown($event)">
 
         <v-layer>
           <v-rect :config="{...canvasBackgroundConfig, fill: canvasStore.canvasSettings.backgroundColor}" /> <!-- bg for png\jpeg -->

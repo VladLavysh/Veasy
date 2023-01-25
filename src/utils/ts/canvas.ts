@@ -145,6 +145,47 @@ const updateTransformer = () => {
   stageTransformer.nodes(selectedNode ? [selectedNode] : [])
 }
 
+const getTargetName = (target: Shape | Stage) => {
+  const canvasStore = useCanvasStore()
+
+  if (!target || target === target.getStage()) {
+    selectedShapeName = ''
+    canvasStore.setSelectedTool('')
+
+    updateTransformer()
+    return
+  }
+
+  if (target.getParent().className === 'Transformer') {
+    return
+  }
+
+  return target.name()
+}
+
+export const handleStageMouseDown = (event: MouseEvent | string) => {
+  const canvasStore = useCanvasStore()
+  const transformer = canvasStore.transformer
+
+  stageTransformer = transformer?.getNode()
+
+  const targetName = typeof event === 'object'
+    ? getTargetName(event.target as unknown as Shape | Stage)
+    : event
+
+  if (!targetName) return
+
+  const shape = canvasStore.tools.find(r => r.name === targetName)
+
+  stageTransformer.attrs.resizeEnabled = shape?.konvaName !== 'v-text'
+
+  selectedShapeName = shape ? targetName : ''
+
+  canvasStore.setSelectedTool(selectedShapeName || null)
+
+  updateTransformer()
+}
+
 export const handleTransformEnd = (e: MouseEvent) => {
   const canvasStore = useCanvasStore()
 
@@ -158,37 +199,6 @@ export const handleTransformEnd = (e: MouseEvent) => {
   shape.rotation = target.rotation()
   shape.scaleX = target.scaleX()
   shape.scaleY = target.scaleY()
-}
-
-export const handleStageMouseDown = (e: MouseEvent, transformer: any) => {
-  const canvasStore = useCanvasStore()
-
-  stageTransformer = transformer.getNode()
-  const target = e.target as unknown as Shape | Stage
-
-  if (!target || target === target.getStage()) {
-    selectedShapeName = ''
-    canvasStore.setSelectedTool('')
-
-    updateTransformer()
-    return
-  }
-
-  const clickedOnTransformer = target.getParent().className === 'Transformer'
-  if (clickedOnTransformer) {
-    return
-  }
-
-  const name = target.name()
-  const shape = canvasStore.tools.find(r => r.name === name)
-
-  stageTransformer.attrs.resizeEnabled = shape?.konvaName !== 'v-text'
-
-  selectedShapeName = shape ? name : ''
-
-  canvasStore.setSelectedTool(selectedShapeName || null)
-
-  updateTransformer()
 }
 
 // ----- Kanvas methods -----

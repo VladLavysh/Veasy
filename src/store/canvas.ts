@@ -12,8 +12,8 @@ export const useCanvasStore = defineStore('canvas', {
     } as { name: string, backgroundColor: string },
     tools: [] as ToolConfig[],
     selectedTool: null as ToolConfig | null,
+    transformer: null as Transformer | null,
     isAddingAllowed: false as Boolean,
-    //showGridAlways: false as Boolean,
     showGrid: false as Boolean,
   }),
   getters: {
@@ -50,6 +50,9 @@ export const useCanvasStore = defineStore('canvas', {
       }
 
       this.selectedTool = this.tools.find(el => el.name === toolName) || null
+    },
+    setTransformer(transformer: Transformer) {
+      this.transformer = transformer
     },
     changeAddingStatus(isAllowed: Boolean) {
       this.isAddingAllowed = isAllowed
