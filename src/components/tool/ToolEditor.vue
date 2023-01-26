@@ -144,7 +144,7 @@ const beforeImageUpload = (data: UploadImage) => {
           <h3 class="item__label">Image</h3>
           <div class="item item-no-margin">
             <span>Source</span>
-            <n-input v-model:value="tool.image!.src" type="text" placeholder="Image sourse" />
+            <n-input v-model:value="tool.image.src" type="text" placeholder="Image sourse" />
             <n-upload action="https://www.mocky.io/v2/5e4bafc63100007100d8b70f" @before-upload="beforeImageUpload">
               <n-button class="upload-btb" secondary color="#fff">Upload image</n-button>
             </n-upload>

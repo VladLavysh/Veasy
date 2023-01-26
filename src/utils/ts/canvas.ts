@@ -21,7 +21,6 @@ export const canvasBackgroundConfig = {
   draggable: false,
   listening: false
 }
-
 export const transformerConfig = {
   ignoreStroke: true,
   //centeredScaling: true,
@@ -32,6 +31,13 @@ export const transformerConfig = {
   anchorFill: '#ffffff',
   anchorSize: 8,
   borderStroke: '#66727d',
+}
+export const shadowConfig = {
+  fill: '#56e398',
+  opacity: 0.5,
+  stroke: '#37ba74',
+  strokeWidth: 2,
+  dash: [15, 2]
 }
 
 export const shapeConfig = ({ name, konvaName, id, x, y }: Tool): ToolConfig => {
@@ -51,7 +57,7 @@ export const shapeConfig = ({ name, konvaName, id, x, y }: Tool): ToolConfig => 
 
     stroke: '#BFBEBEFF',
     strokeWidth: 2,
-    dash: [5, 5],
+    dash: [0, 0],
   }
 
   switch (konvaName) {
@@ -104,7 +110,8 @@ export const shapeConfig = ({ name, konvaName, id, x, y }: Tool): ToolConfig => 
         fontVariant: 'normal',
         textDecoration: 'empty string',
         align: 'left',
-        verticalAlign: 'top'
+        verticalAlign: 'top',
+        fill: '#000000'
       })
 
     case 'v-image':
@@ -126,6 +133,17 @@ export const shapeConfig = ({ name, konvaName, id, x, y }: Tool): ToolConfig => 
 // Source: https://codesandbox.io/s/github/konvajs/site/tree/master/vue-demos/transformer?from-embed=&file=/src/App.vue
 let selectedShapeName: string
 let stageTransformer: any
+
+type ShapeAttrs = {
+  konvaName: string,
+  x: number,
+  y: number,
+  // width: number,
+  // height: number,
+  radius: number,
+  scaleX: number,
+  scaleY: number
+}
 
 const findShape = (name: string) => {
   if (!stageTransformer) return
@@ -163,17 +181,42 @@ const getTargetName = (target: Shape | Stage) => {
   return target.name()
 }
 
+const getShadowCoords = (shapeAttrs: ShapeAttrs, applyToShadow: boolean) => {
+  const { konvaName, x, y, radius, scaleX, scaleY } = shapeAttrs
+
+  // TODO: Make variable for grid rect size (20)
+  let xCoord = Math.round(x / 20) * 20
+  let yCoord = Math.round(y / 20) * 20
+
+  // const circleCoords = {
+  //   x: applyToShadow ? xCoord - Math.round(radius * scaleX) : xCoord + Math.round(radius * scaleX),
+  //   y: applyToShadow ? yCoord - Math.round(radius * scaleY) : yCoord + Math.round(radius * scaleY),
+  // }
+
+  // return konvaName === 'v-circle'
+  //   ? {
+  //     x: circleCoords.x,
+  //     y: circleCoords.y
+  //   }
+  //   : { x: xCoord, y: yCoord }
+
+  return konvaName === 'v-circle'
+    ? {
+      x: xCoord - Math.round(radius * scaleX),
+      y: yCoord - Math.round(radius * scaleY)
+    }
+    : { x: xCoord, y: yCoord }
+}
+
 export const handleStageMouseDown = (event: MouseEvent | string) => {
   const canvasStore = useCanvasStore()
-  const transformer = canvasStore.transformer
-
-  stageTransformer = transformer?.getNode()
+  stageTransformer = canvasStore.transformer?.getNode()
 
   const targetName = typeof event === 'object'
     ? getTargetName(event.target as unknown as Shape | Stage)
     : event
 
-  if (!targetName) return
+  if (!targetName || targetName === selectedShapeName) return
 
   const shape = canvasStore.tools.find(r => r.name === targetName)
 
@@ -194,11 +237,35 @@ export const handleTransformEnd = (e: MouseEvent) => {
 
   if (!shape) return
 
-  shape.x = target.x()
-  shape.y = target.y()
+  const { x: xCoord, y: yCoord } = getShadowCoords(target.attrs, false)
+
+  console.log('SHADOW', canvasStore.shadowPosition.x);
+  console.log('SHAPE', xCoord);
+
+  shape.x = canvasStore.shadowPosition.x ?? xCoord
+  shape.y = canvasStore.shadowPosition.y ?? yCoord
+
   shape.rotation = target.rotation()
   shape.scaleX = target.scaleX()
   shape.scaleY = target.scaleY()
+
+  canvasStore.updateShadowPosition(Object.assign(canvasStore.shadowPosition, {
+    width: Math.round(target.width() * target.scaleX()),
+    height: Math.round(target.height() * target.scaleY()),
+  }))
+}
+
+export const renderShadow = (e: MouseEvent) => {
+  const canvasStore = useCanvasStore()
+  const shape = e.target as unknown as Shape
+
+  if (!(shape instanceof Shape)) return
+
+  canvasStore.updateShadowPosition({
+    width: Math.round(shape.width() * shape.scaleX()),
+    height: Math.round(shape.height() * shape.scaleY()),
+    ...getShadowCoords(shape.attrs, true)
+  })
 }
 
 // ----- Kanvas methods -----

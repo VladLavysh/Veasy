@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { konvaConfig } from '../../utils/ts/canvas'
 
-const divider = 16
+const divider = 20
 const xLinesCount = Math.round(konvaConfig.width / divider)
 const yLinesCount = Math.round(konvaConfig.height / divider)
 </script>
@@ -11,7 +11,7 @@ const yLinesCount = Math.round(konvaConfig.height / divider)
 <template>
   <v-group>
     <!-- Lines by X coordinates -->
-    <v-line v-for="n in xLinesCount" :config="{
+    <v-line v-for="n in xLinesCount" :key="n" :config="{
       x: n * divider,
       y: 0,
       points: [0, 0, 0, konvaConfig.height],
@@ -20,7 +20,7 @@ const yLinesCount = Math.round(konvaConfig.height / divider)
       opacity: 0.6,
     }" />
     <!-- Lines by Y coordinates -->
-    <v-line v-for="n in yLinesCount" :config="{
+    <v-line v-for="n in yLinesCount" :key="n" :config="{
       x: 0,
       y: n * divider,
       points: [0, 0, konvaConfig.width, 0],

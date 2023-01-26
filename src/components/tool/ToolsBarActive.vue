@@ -23,11 +23,6 @@ const activeTools = computed({
 const activeToolName = (name: string) => {
   return name.substring(0, name.indexOf('_') + 6)
 }
-
-const setSelectedTool = (name: string) => {
-  // canvasStore.setSelectedTool(name)
-  handleStageMouseDown(name)
-}
 </script>
 
 <template>
@@ -37,7 +32,7 @@ const setSelectedTool = (name: string) => {
         <draggable v-if="canvasStore.getActiveTools.length" v-model="activeTools" item-key="id" tag="ul"
           ghost-class="ghost-tool" handle=".handle-tool">
           <template #item="{ element }">
-            <li @click="setSelectedTool(element.name)" :class="[canvasStore.selectedTool?.name === element.name ? 'active-tool' : '']">
+            <li @click="handleStageMouseDown(element.name)" :class="[canvasStore.selectedTool?.name === element.name ? 'active-tool' : '']">
               <n-icon size="20" class="handle-tool" :component="Draggable" />
               <span>{{ activeToolName(element.name) }}</span>
               <n-icon size="20" :component="Close" @click.stop="removeFromCanvas(element.id)" />

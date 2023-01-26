@@ -8,8 +8,14 @@ export const useCanvasStore = defineStore('canvas', {
   state: () => ({
     canvasSettings: {
       name: 'Canvas name',
-      backgroundColor: '#fff',
+      backgroundColor: '#F5F5F5FF',
     } as { name: string, backgroundColor: string },
+    shadowPosition: {
+      width: 0,
+      height: 0,
+      x: null,
+      y: null
+    } as { width: number, height: number, x: number | null, y: number | null },
     tools: [] as ToolConfig[],
     selectedTool: null as ToolConfig | null,
     transformer: null as Transformer | null,
@@ -25,12 +31,11 @@ export const useCanvasStore = defineStore('canvas', {
         name: el.name.substring(0, el.name.indexOf('_') + 6),
       }))
     }
-    //getTool(): ToolConfig | null {
-    //  return this.selectedTool
-    //}
-    //selectedTool: (state) => state.selectedTool
   },
   actions: {
+    updateShadowPosition(newConfig: { width: number, height: number, x: number | null, y: number | null }) {
+      this.shadowPosition = Object.assign(this.shadowPosition, newConfig)
+    },
     updateCanvasSettings(newSettings: { name: string, backgroundColor: string }) {
       this.canvasSettings = Object.assign(this.canvasSettings, newSettings)
     },

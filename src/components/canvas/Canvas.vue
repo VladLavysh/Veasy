@@ -2,22 +2,23 @@
 import { onMounted, onBeforeUnmount, ref } from 'vue';
 import { Transformer } from 'konva/lib/shapes/Transformer'
 import { Stage } from 'konva/lib/Stage';
+import { Shape } from 'konva/lib/Shape'; 
 import { Save, UserProfile, SettingsAdjust } from '@vicons/carbon'
 import { MessageReactive, useMessage } from 'naive-ui'
-import { konvaConfig, canvasBackgroundConfig, transformerConfig, handleStageMouseDown, handleTransformEnd, downloadCanvas, saveCanvas } from '../../utils/ts/canvas'
+import { konvaConfig, canvasBackgroundConfig, transformerConfig, shadowConfig, handleStageMouseDown, handleTransformEnd, renderShadow, downloadCanvas, saveCanvas } from '../../utils/ts/canvas'
 import { useCanvasStore } from '../../store/canvas'
 import SaveModal from './SaveModal.vue'
 import CanvasGrid from './CanvasGrid.vue'
 import SettingsModal from './SettingsModal.vue';
-
-const message = useMessage()
-const canvasStore = useCanvasStore()
 
 const transformer = ref<Transformer | null>(null)
 const stage = ref<Stage | null>(null)
 const savingCanvas = ref<Boolean>(false)
 const showSaveModal = ref<Boolean>(false)
 const showCanvasSettingsModal = ref<Boolean>(false)
+
+const message = useMessage()
+const canvasStore = useCanvasStore()
 
 const dragHandler = (isOver: Boolean) => {
   if (canvasStore.isAddingAllowed === isOver) {
@@ -97,15 +98,22 @@ onMounted(() => {
         @mousedown="handleStageMouseDown($event)">
 
         <v-layer>
-          <v-rect :config="{...canvasBackgroundConfig, fill: canvasStore.canvasSettings.backgroundColor}" /> <!-- bg for png\jpeg -->
+          <!-- BG for png\jpeg -->
+          <v-rect :config="{...canvasBackgroundConfig, fill: canvasStore.canvasSettings.backgroundColor}" />
 
-          <CanvasGrid v-if="canvasStore.showGrid" /> <!-- grid -->
+          <!-- Grid -->
+          <CanvasGrid v-if="canvasStore.showGrid" />
 
+          <!-- Shape shadow -->
+          <v-rect v-if="canvasStore.showGrid" :config="{...canvasStore.shadowPosition, ...shadowConfig}" ref="shadow" />
+
+          <!-- Shapes -->
           <component v-for="(tool, idx) of canvasStore.tools" :key="idx" :is="tool.konvaName" :config="tool"
-            @transformend="handleTransformEnd" @dragstart="canvasStore.changeGridStatus(true)"
-            @dragend="dragEndHandler" /> <!-- shapes -->
+            @transformend="handleTransformEnd" @dragstart="canvasStore.changeGridStatus(true)" @dragmove="renderShadow"
+            @dragend="dragEndHandler" />
 
-          <v-transformer :config="transformerConfig" ref="transformer" /> <!-- transformer for shapes -->
+          <!-- Transformer for shapes -->
+          <v-transformer :config="transformerConfig" ref="transformer" />
         </v-layer>
       </v-stage>
     </div>
@@ -149,10 +157,14 @@ onMounted(() => {
   &__label {
     align-self: center;
     flex: 1;
+    
     text-align: center;
+    white-space: nowrap;
     color: #465461;
 
     margin-left: 122px;
+
+    transition: all .25s ease-in-out;
   }
 
   &__header-buttons, i {
@@ -217,6 +229,11 @@ onMounted(() => {
   font-size: 0.75rem;
 
   background-color: #ffffff86;
+
+  .canvas-section__label {
+    flex: unset;
+    margin-left: 20px;
+  }
 
   .canvas-section__header-buttons {
     gap: 0;
