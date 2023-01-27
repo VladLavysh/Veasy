@@ -134,17 +134,6 @@ export const shapeConfig = ({ name, konvaName, id, x, y }: Tool): ToolConfig => 
 let selectedShapeName: string
 let stageTransformer: any
 
-type ShapeAttrs = {
-  konvaName: string,
-  x: number,
-  y: number,
-  // width: number,
-  // height: number,
-  radius: number,
-  scaleX: number,
-  scaleY: number
-}
-
 const findShape = (name: string) => {
   if (!stageTransformer) return
 
@@ -181,33 +170,6 @@ const getTargetName = (target: Shape | Stage) => {
   return target.name()
 }
 
-const getShadowCoords = (shapeAttrs: ShapeAttrs, applyToShadow: boolean) => {
-  const { konvaName, x, y, radius, scaleX, scaleY } = shapeAttrs
-
-  // TODO: Make variable for grid rect size (20)
-  let xCoord = Math.round(x / 20) * 20
-  let yCoord = Math.round(y / 20) * 20
-
-  // const circleCoords = {
-  //   x: applyToShadow ? xCoord - Math.round(radius * scaleX) : xCoord + Math.round(radius * scaleX),
-  //   y: applyToShadow ? yCoord - Math.round(radius * scaleY) : yCoord + Math.round(radius * scaleY),
-  // }
-
-  // return konvaName === 'v-circle'
-  //   ? {
-  //     x: circleCoords.x,
-  //     y: circleCoords.y
-  //   }
-  //   : { x: xCoord, y: yCoord }
-
-  return konvaName === 'v-circle'
-    ? {
-      x: xCoord - Math.round(radius * scaleX),
-      y: yCoord - Math.round(radius * scaleY)
-    }
-    : { x: xCoord, y: yCoord }
-}
-
 export const handleStageMouseDown = (event: MouseEvent | string) => {
   const canvasStore = useCanvasStore()
   stageTransformer = canvasStore.transformer?.getNode()
@@ -236,18 +198,30 @@ export const handleTransformEnd = (e: MouseEvent) => {
   const shape = canvasStore.tools.find(r => r.name === selectedShapeName)
 
   if (!shape) return
+  const moved = shape.x !== target.x() && shape.y !== target.y()
 
-  const { x: xCoord, y: yCoord } = getShadowCoords(target.attrs, false)
+  console.log(shape.x, target.x(), shape.y, target.y());
+  
 
-  console.log('SHADOW', canvasStore.shadowPosition.x);
-  console.log('SHAPE', xCoord);
+  const shapeCoords = {
+    x: canvasStore.shadowPosition.x ?? target.x(),
+    y: canvasStore.shadowPosition.y ?? target.y(),
+  }
 
-  shape.x = canvasStore.shadowPosition.x ?? xCoord
-  shape.y = canvasStore.shadowPosition.y ?? yCoord
+  if (shape.konvaName === 'v-circle' && moved) {
+    shapeCoords.x += Math.round(target.attrs.radius * target.scaleX())
+    shapeCoords.y += Math.round(target.attrs.radius * target.scaleY())
+  }
 
+  shape.x = shapeCoords.x
+  shape.y = shapeCoords.y
   shape.rotation = target.rotation()
   shape.scaleX = target.scaleX()
   shape.scaleY = target.scaleY()
+
+  //stageTransformer = canvasStore.transformer?.getNode()
+
+  if (!moved) return
 
   canvasStore.updateShadowPosition(Object.assign(canvasStore.shadowPosition, {
     width: Math.round(target.width() * target.scaleX()),
@@ -256,15 +230,17 @@ export const handleTransformEnd = (e: MouseEvent) => {
 }
 
 export const renderShadow = (e: MouseEvent) => {
-  const canvasStore = useCanvasStore()
+  const {updateShadowPosition, transformer} = useCanvasStore()
   const shape = e.target as unknown as Shape
+  const shapeTransformer = transformer?.getNode()
 
-  if (!(shape instanceof Shape)) return
+  if (!shapeTransformer) return
 
-  canvasStore.updateShadowPosition({
-    width: Math.round(shape.width() * shape.scaleX()),
-    height: Math.round(shape.height() * shape.scaleY()),
-    ...getShadowCoords(shape.attrs, true)
+  updateShadowPosition({
+    width: shapeTransformer.width(),
+    height: shapeTransformer.height(),
+    x: Math.round(shapeTransformer.x() / 20) * 20,
+    y: Math.round(shapeTransformer.y() / 20) * 20,
   })
 }
 

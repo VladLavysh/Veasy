@@ -2,7 +2,7 @@
 import { v4 as uuidv4 } from 'uuid'
 import { ToolFromBar } from '../../types';
 import { toolsBarItems } from '../../utils/ts/tools'
-import { addToCanvas, renderShadow } from '../../utils/ts/canvas'
+import { addToCanvas } from '../../utils/ts/canvas'
 import ToolsBarItem from './ToolsBarItem.vue'
 
 const newToolData = ({ name, konvaName }: ToolFromBar) => ({
@@ -25,7 +25,7 @@ const draggingElementPos = (event: DragEvent) => {
 
     <div class="tools-bar__items-content">
       <ToolsBarItem v-for="item of toolsBarItems" :key="item.name" :tool="item" draggable="true"
-        @dragstart="draggingElementPos" @drag="renderShadow" @dragend="addToCanvas($event, newToolData(item))" />
+        @dragstart="draggingElementPos" @dragend="addToCanvas($event, newToolData(item))" />
     </div>
   </div>
 </template>
