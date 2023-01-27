@@ -32,13 +32,13 @@ export const transformerConfig = {
   anchorSize: 8,
   borderStroke: '#66727d',
 }
-export const shadowConfig = {
-  fill: '#56e398',
-  opacity: 0.5,
-  stroke: '#37ba74',
-  strokeWidth: 2,
-  dash: [15, 2]
-}
+//export const shadowConfig = {
+//  fill: '#56e398',
+//  opacity: 0.5,
+//  stroke: '#37ba74',
+//  strokeWidth: 2,
+//  dash: [15, 2]
+//}
 
 export const shapeConfig = ({ name, konvaName, id, x, y }: Tool): ToolConfig => {
   const defaultConfig: ToolConfig = {
@@ -61,19 +61,11 @@ export const shapeConfig = ({ name, konvaName, id, x, y }: Tool): ToolConfig => 
   }
 
   switch (konvaName) {
-    case 'v-circle':
-      return Object.assign(defaultConfig, {
-        // coords without padding (40)
-        x,
-        y,
-        radius: 40,
-        fill: '#FFFFFFFF'
-      })
-
     case 'v-rect':
       return Object.assign(defaultConfig, {
         width: 80,
         height: 80,
+        cornerRadius: 0,
         fill: '#FFFFFFFF'
       })
 
@@ -191,57 +183,19 @@ export const handleStageMouseDown = (event: MouseEvent | string) => {
   updateTransformer()
 }
 
-export const handleTransformEnd = (e: MouseEvent) => {
+export const handleTransformEnd = (e: MouseEvent, x: number | null, y: number | null) => {
   const canvasStore = useCanvasStore()
 
   const target = e.target as unknown as Shape
   const shape = canvasStore.tools.find(r => r.name === selectedShapeName)
 
   if (!shape) return
-  const moved = shape.x !== target.x() && shape.y !== target.y()
 
-  console.log(shape.x, target.x(), shape.y, target.y());
-  
-
-  const shapeCoords = {
-    x: canvasStore.shadowPosition.x ?? target.x(),
-    y: canvasStore.shadowPosition.y ?? target.y(),
-  }
-
-  if (shape.konvaName === 'v-circle' && moved) {
-    shapeCoords.x += Math.round(target.attrs.radius * target.scaleX())
-    shapeCoords.y += Math.round(target.attrs.radius * target.scaleY())
-  }
-
-  shape.x = shapeCoords.x
-  shape.y = shapeCoords.y
+  shape.x = x ?? target.x()
+  shape.y = y ?? target.y()
   shape.rotation = target.rotation()
   shape.scaleX = target.scaleX()
   shape.scaleY = target.scaleY()
-
-  //stageTransformer = canvasStore.transformer?.getNode()
-
-  if (!moved) return
-
-  canvasStore.updateShadowPosition(Object.assign(canvasStore.shadowPosition, {
-    width: Math.round(target.width() * target.scaleX()),
-    height: Math.round(target.height() * target.scaleY()),
-  }))
-}
-
-export const renderShadow = (e: MouseEvent) => {
-  const {updateShadowPosition, transformer} = useCanvasStore()
-  const shape = e.target as unknown as Shape
-  const shapeTransformer = transformer?.getNode()
-
-  if (!shapeTransformer) return
-
-  updateShadowPosition({
-    width: shapeTransformer.width(),
-    height: shapeTransformer.height(),
-    x: Math.round(shapeTransformer.x() / 20) * 20,
-    y: Math.round(shapeTransformer.y() / 20) * 20,
-  })
 }
 
 // ----- Kanvas methods -----

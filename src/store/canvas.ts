@@ -2,7 +2,6 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 import { ToolConfig, ActiveTools } from '../types/index'
 import { Transformer } from 'konva/lib/shapes/Transformer'
-import { Stage } from 'konva/lib/Stage'
 
 export const useCanvasStore = defineStore('canvas', {
   state: () => ({
@@ -10,12 +9,6 @@ export const useCanvasStore = defineStore('canvas', {
       name: 'Canvas name',
       backgroundColor: '#F5F5F5FF',
     } as { name: string, backgroundColor: string },
-    shadowPosition: {
-      width: 0,
-      height: 0,
-      x: null,
-      y: null
-    } as { width: number, height: number, x: number | null, y: number | null },
     tools: [] as ToolConfig[],
     selectedTool: null as ToolConfig | null,
     transformer: null as Transformer | null,
@@ -33,9 +26,6 @@ export const useCanvasStore = defineStore('canvas', {
     }
   },
   actions: {
-    updateShadowPosition(newConfig: { width: number, height: number, x: number | null, y: number | null }) {
-      this.shadowPosition = Object.assign(this.shadowPosition, newConfig)
-    },
     updateCanvasSettings(newSettings: { name: string, backgroundColor: string }) {
       this.canvasSettings = Object.assign(this.canvasSettings, newSettings)
     },

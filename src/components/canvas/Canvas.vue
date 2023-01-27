@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref } from 'vue';
+import { onMounted, onBeforeUnmount, ref, reactive } from 'vue';
 import { Transformer } from 'konva/lib/shapes/Transformer'
 import { Stage } from 'konva/lib/Stage';
-import { Shape } from 'konva/lib/Shape'; 
+import { Shape } from 'konva/lib/Shape';
 import { Save, UserProfile, SettingsAdjust } from '@vicons/carbon'
 import { MessageReactive, useMessage } from 'naive-ui'
-import { konvaConfig, canvasBackgroundConfig, transformerConfig, shadowConfig, handleStageMouseDown, handleTransformEnd, renderShadow, downloadCanvas, saveCanvas } from '../../utils/ts/canvas'
+import { konvaConfig, canvasBackgroundConfig, transformerConfig, handleStageMouseDown, handleTransformEnd, downloadCanvas, saveCanvas } from '../../utils/ts/canvas'
+import { ToolShadowConfig } from '../../types/index'
 import { useCanvasStore } from '../../store/canvas'
 import SaveModal from './SaveModal.vue'
 import CanvasGrid from './CanvasGrid.vue'
@@ -16,6 +17,18 @@ const stage = ref<Stage | null>(null)
 const savingCanvas = ref<Boolean>(false)
 const showSaveModal = ref<Boolean>(false)
 const showCanvasSettingsModal = ref<Boolean>(false)
+let shadowPosition = reactive<ToolShadowConfig>({
+  width: 0,
+  height: 0,
+  x: null,
+  y: null,
+  rotation: 0,
+  fill: '#56e398',
+  opacity: 0.5,
+  stroke: '#37ba74',
+  strokeWidth: 2,
+  dash: [15, 2],
+})
 
 const message = useMessage()
 const canvasStore = useCanvasStore()
@@ -31,7 +44,25 @@ const dragHandler = (isOver: Boolean) => {
 
 const dragEndHandler = (event: MouseEvent) => {
   canvasStore.changeGridStatus(false)
-  handleTransformEnd(event)
+  handleTransformEnd(event, shadowPosition.x, shadowPosition.y)
+}
+
+const tranAndDragStartHandler = () => canvasStore.changeGridStatus(true)
+
+const renderShadow = () => {
+  const shapeTransformer = transformer.value?.getNode()
+
+  if (!shapeTransformer) return
+
+  const updatedCoords = {
+    width: shapeTransformer.width(),
+    height: shapeTransformer.height(),
+    x: Math.round(shapeTransformer.x() / 20) * 20,
+    y: Math.round(shapeTransformer.y() / 20) * 20,
+    rotation: shapeTransformer.rotation()
+  }
+
+  shadowPosition = Object.assign(shadowPosition, updatedCoords)
 }
 
 const saveCanvasHandler = (fileData: { name: string, type: string, saveTo: string }) => {
@@ -99,18 +130,18 @@ onMounted(() => {
 
         <v-layer>
           <!-- BG for png\jpeg -->
-          <v-rect :config="{...canvasBackgroundConfig, fill: canvasStore.canvasSettings.backgroundColor}" />
+          <v-rect :config="{ ...canvasBackgroundConfig, fill: canvasStore.canvasSettings.backgroundColor }" />
 
           <!-- Grid -->
           <CanvasGrid v-if="canvasStore.showGrid" />
 
           <!-- Shape shadow -->
-          <v-rect v-if="canvasStore.showGrid" :config="{...canvasStore.shadowPosition, ...shadowConfig}" ref="shadow" />
+          <v-rect v-if="canvasStore.showGrid" :config="shadowPosition" ref="shadow" />
 
           <!-- Shapes -->
           <component v-for="(tool, idx) of canvasStore.tools" :key="idx" :is="tool.konvaName" :config="tool"
-            @transformend="handleTransformEnd" @dragstart="canvasStore.changeGridStatus(true)" @dragmove="renderShadow"
-            @dragend="dragEndHandler" />
+            @transformstart="tranAndDragStartHandler" @transform="renderShadow" @transformend="dragEndHandler"
+            @dragstart="tranAndDragStartHandler" @dragmove="renderShadow" @dragend="dragEndHandler" />
 
           <!-- Transformer for shapes -->
           <v-transformer :config="transformerConfig" ref="transformer" />
@@ -118,7 +149,8 @@ onMounted(() => {
       </v-stage>
     </div>
 
-    <n-icon class="canvas-section__save" size="30" :component="Save" @click="showSaveModal = true" title="Save canvas" />
+    <n-icon class="canvas-section__save" size="30" :component="Save" @click="showSaveModal = true"
+      title="Save canvas" />
 
     <SaveModal v-model:isOpen="showSaveModal" v-model:isSaving="savingCanvas" @close="showSaveModal = false"
       @save="saveCanvasHandler" />
@@ -145,11 +177,11 @@ onMounted(() => {
     width: 800px;
     position: sticky;
     top: 0;
-    
+
     margin: auto;
-    
+
     z-index: 8;
-    
+
     transition: all .25s ease-in-out;
     box-sizing: border-box;
   }
@@ -157,7 +189,7 @@ onMounted(() => {
   &__label {
     align-self: center;
     flex: 1;
-    
+
     text-align: center;
     white-space: nowrap;
     color: #465461;
@@ -167,14 +199,17 @@ onMounted(() => {
     transition: all .25s ease-in-out;
   }
 
-  &__header-buttons, i {
+  &__header-buttons,
+  i {
     transition: all .25s ease-in-out;
-  } 
+  }
+
   &__header-buttons {
     display: flex;
     gap: 10px;
-    
+
   }
+
   &__header-buttons i {
     font-size: 30px;
   }

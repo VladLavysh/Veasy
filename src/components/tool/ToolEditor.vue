@@ -165,7 +165,7 @@ const beforeImageUpload = (data: UploadImage) => {
         </div>
 
         <!-- Border -->
-        <div class="items__body" v-if="normalizedToolName !== 'Text'">
+        <div class="items__body" v-if="normalizedToolName === 'Container'">
           <div class="item__label item__label-border">
             <h3>Border</h3>
             <n-switch @update:value="changeBorderVisibility" :value="!!tool.strokeWidth" size="small" />
@@ -174,6 +174,11 @@ const beforeImageUpload = (data: UploadImage) => {
             <span>Type</span>
             <n-select :value="toolBorderType" @update:value="changeToolBorder" :options="borderTypes"
               :disabled="!(!!tool.strokeWidth)" />
+          </div>
+          <div class="item">
+            <span>Radius</span>
+            <n-input-number v-model:value="tool.cornerRadius" :validator="(x: number) => x > 0"
+              :disabled="!(!!tool.strokeWidth)" size="medium" />
           </div>
           <div class="item">
             <span>Width</span>
