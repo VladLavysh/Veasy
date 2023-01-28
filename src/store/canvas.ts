@@ -13,6 +13,7 @@ export const useCanvasStore = defineStore('canvas', {
     selectedTool: null as ToolConfig | null,
     transformer: null as Transformer | null,
     isAddingAllowed: false as Boolean,
+    showShapeShadow: false as Boolean,
     showGrid: false as Boolean,
   }),
   getters: {
@@ -49,11 +50,17 @@ export const useCanvasStore = defineStore('canvas', {
     setTransformer(transformer: Transformer) {
       this.transformer = transformer
     },
+    //setShapeShadow(shape: Shape) {
+    //  this.shapeShadow = shape
+    //},
     changeAddingStatus(isAllowed: Boolean) {
       this.isAddingAllowed = isAllowed
     },
     changeGridStatus(isShow: Boolean) {
       this.showGrid = isShow
+    },
+    changeShadowStatus(isShow: Boolean) {
+      this.showShapeShadow = isShow
     },
     async getSelectedCV() {
       return await axios.get('api/creator/get-selected-cv')

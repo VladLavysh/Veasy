@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref, reactive } from 'vue';
+import { onMounted, ref, reactive, computed } from 'vue';
 import { Transformer } from 'konva/lib/shapes/Transformer'
 import { Stage } from 'konva/lib/Stage';
 import { Shape } from 'konva/lib/Shape';
 import { Save, UserProfile, SettingsAdjust } from '@vicons/carbon'
 import { MessageReactive, useMessage } from 'naive-ui'
-import { konvaConfig, canvasBackgroundConfig, transformerConfig, handleStageMouseDown, handleTransformEnd, downloadCanvas, saveCanvas } from '../../utils/ts/canvas'
+import { konvaConfig, canvasBackgroundConfig, transformerConfig, handleStageMouseDown, handleTransformEnd, downloadCanvas, saveCanvas, checkAvaliableDragPlace } from '../../utils/ts/canvas'
 import { ToolShadowConfig } from '../../types/index'
 import { useCanvasStore } from '../../store/canvas'
 import SaveModal from './SaveModal.vue'
@@ -14,6 +14,7 @@ import SettingsModal from './SettingsModal.vue';
 
 const transformer = ref<Transformer | null>(null)
 const stage = ref<Stage | null>(null)
+const shadow = ref<Shape | null>(null)
 const savingCanvas = ref<Boolean>(false)
 const showSaveModal = ref<Boolean>(false)
 const showCanvasSettingsModal = ref<Boolean>(false)
@@ -33,6 +34,9 @@ let shadowPosition = reactive<ToolShadowConfig>({
 const message = useMessage()
 const canvasStore = useCanvasStore()
 
+const isGridVisible = computed(() => canvasStore.showGrid)
+const isShadowVisible = computed(() => canvasStore.showShapeShadow)
+
 const dragHandler = (isOver: Boolean) => {
   if (canvasStore.isAddingAllowed === isOver) {
     return
@@ -44,25 +48,39 @@ const dragHandler = (isOver: Boolean) => {
 
 const dragEndHandler = (event: MouseEvent) => {
   canvasStore.changeGridStatus(false)
+  canvasStore.changeShadowStatus(false)
+
   handleTransformEnd(event, shadowPosition.x, shadowPosition.y)
 }
 
-const tranAndDragStartHandler = () => canvasStore.changeGridStatus(true)
+const tranAndDragStartHandler = () => {
+  canvasStore.changeGridStatus(true)
+  canvasStore.changeShadowStatus(true)
+}
 
-const renderShadow = () => {
+const renderShadow = (e: { evt: MouseEvent }) => {
   const shapeTransformer = transformer.value?.getNode()
 
   if (!shapeTransformer) return
 
-  const updatedCoords = {
+  const shadowCoords = e.evt.ctrlKey
+    ? {
+      x: shapeTransformer.x(),
+      y: shapeTransformer.y()
+    }
+    : {
+      x: Math.round(shapeTransformer.x() / 20) * 20,
+      y: Math.round(shapeTransformer.y() / 20) * 20
+    }
+
+  const updatedData = {
+    ...shadowCoords,
     width: shapeTransformer.width(),
     height: shapeTransformer.height(),
-    x: Math.round(shapeTransformer.x() / 20) * 20,
-    y: Math.round(shapeTransformer.y() / 20) * 20,
     rotation: shapeTransformer.rotation()
   }
 
-  shadowPosition = Object.assign(shadowPosition, updatedCoords)
+  shadowPosition = Object.assign(shadowPosition, updatedData)
 }
 
 const saveCanvasHandler = (fileData: { name: string, type: string, saveTo: string }) => {
@@ -133,10 +151,10 @@ onMounted(() => {
           <v-rect :config="{ ...canvasBackgroundConfig, fill: canvasStore.canvasSettings.backgroundColor }" />
 
           <!-- Grid -->
-          <CanvasGrid v-if="canvasStore.showGrid" />
+          <CanvasGrid v-if="isGridVisible" />
 
           <!-- Shape shadow -->
-          <v-rect v-if="canvasStore.showGrid" :config="shadowPosition" ref="shadow" />
+          <v-rect v-if="isShadowVisible" :config="shadowPosition" ref="shadow" />
 
           <!-- Shapes -->
           <component v-for="(tool, idx) of canvasStore.tools" :key="idx" :is="tool.konvaName" :config="tool"
@@ -144,6 +162,7 @@ onMounted(() => {
             @dragstart="tranAndDragStartHandler" @dragmove="renderShadow" @dragend="dragEndHandler" />
 
           <!-- Transformer for shapes -->
+          <!--@dragmove="checkAvaliableDragPlace(false)"-->
           <v-transformer :config="transformerConfig" ref="transformer" />
         </v-layer>
       </v-stage>

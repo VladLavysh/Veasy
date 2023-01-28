@@ -1,7 +1,7 @@
 import jsPDF from "jspdf"
 import { Tool, ToolConfig } from "../../types"
 import { useCanvasStore } from '../../store/canvas'
-import { ToolFromBar } from '../../types'
+import { ToolFromBar, TransformerData } from '../../types'
 import { Shape } from "konva/lib/Shape"
 import { Stage } from "konva/lib/Stage"
 import { Text } from "konva/lib/shapes/Text"
@@ -31,14 +31,17 @@ export const transformerConfig = {
   anchorFill: '#ffffff',
   anchorSize: 8,
   borderStroke: '#66727d',
+  //boundBoxFunc: (oldBox: any, newBox: any) => {
+  //  const box = getClientRect(newBox)
+  //  const isOut =
+  //    box.x < 0 ||
+  //    box.y < 0 ||
+  //    box.x + box.width > konvaConfig.width ||
+  //    box.y + box.height > konvaConfig.height
+
+  //    return isOut ? oldBox : newBox
+  //}
 }
-//export const shadowConfig = {
-//  fill: '#56e398',
-//  opacity: 0.5,
-//  stroke: '#37ba74',
-//  strokeWidth: 2,
-//  dash: [15, 2]
-//}
 
 export const shapeConfig = ({ name, konvaName, id, x, y }: Tool): ToolConfig => {
   const defaultConfig: ToolConfig = {
@@ -66,7 +69,7 @@ export const shapeConfig = ({ name, konvaName, id, x, y }: Tool): ToolConfig => 
         width: 80,
         height: 80,
         cornerRadius: 0,
-        fill: '#FFFFFFFF'
+        fill: '#FFFFFFFF',
       })
 
     case 'v-line':
@@ -162,6 +165,29 @@ const getTargetName = (target: Shape | Stage) => {
   return target.name()
 }
 
+// TODO: validate shadow and shape coords (x, y)
+export const validateShadowCoords = (transformerData: TransformerData): { x: number, y: number } => {
+  const { x, y, width, height, rotation } = transformerData
+
+  // Rotated rectangle
+  //const angle = rotation * (Math.PI / 180);
+  //const newHeight = Math.abs(height * Math.cos(angle) + width * Math.sin(angle));
+  //const newWidth = Math.abs(height * Math.sin(angle) + width * Math.cos(angle));
+
+  //if (hei)
+
+  let xCoord = Math.round(x / 20) * 20
+  let yCoord = Math.round(y / 20) * 20
+
+  //if (x < 0) xCoord = 0
+  //if (y < 0) yCoord = 0
+
+  //if (x > konvaConfig.width - width) xCoord = konvaConfig.width - width
+  //if (y > konvaConfig.height - height) yCoord = konvaConfig.height - height
+
+  return { x: xCoord, y: yCoord }
+}
+
 export const handleStageMouseDown = (event: MouseEvent | string) => {
   const canvasStore = useCanvasStore()
   stageTransformer = canvasStore.transformer?.getNode()
@@ -175,6 +201,7 @@ export const handleStageMouseDown = (event: MouseEvent | string) => {
   const shape = canvasStore.tools.find(r => r.name === targetName)
 
   stageTransformer.attrs.resizeEnabled = shape?.konvaName !== 'v-text'
+  //stageTransformer.attrs.rotateEnabled = shape?.konvaName !== 'v-rect'
 
   selectedShapeName = shape ? targetName : ''
 
@@ -305,3 +332,99 @@ function downloadURI(uri: string, name: string) {
 export const saveCanvas = () => {
   console.log('Saving canvas to db...');
 }
+
+// -------------------------------------------
+const getTotalBox = (box) => {
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+
+  //boxes.forEach((box) => {
+    minX = Math.min(minX, box.x);
+    minY = Math.min(minY, box.y);
+    maxX = Math.max(maxX, box.x + box.width);
+    maxY = Math.max(maxY, box.y + box.height);
+  //});
+  return {
+    x: minX,
+    y: minY,
+    width: maxX - minX,
+    height: maxY - minY,
+  };
+}
+
+const getCorner = (pivotX, pivotY, diffX, diffY, angle) => {
+  const distance = Math.sqrt(diffX * diffX + diffY * diffY);
+
+  /// find angle from pivot to corner
+  angle += Math.atan2(diffY, diffX);
+
+  /// get new x and y and round it off to integer
+  const x = pivotX + distance * Math.cos(angle);
+  const y = pivotY + distance * Math.sin(angle);
+
+  return { x: x, y: y };
+}
+
+function getClientRect (rotatedBox) {
+  const { x, y, width, height } = rotatedBox;
+  const rad = rotatedBox.rotation;
+
+  const p1 = getCorner(x, y, 0, 0, rad);
+  const p2 = getCorner(x, y, width, 0, rad);
+  const p3 = getCorner(x, y, width, height, rad);
+  const p4 = getCorner(x, y, 0, height, rad);
+
+  const minX = Math.min(p1.x, p2.x, p3.x, p4.x);
+  const minY = Math.min(p1.y, p2.y, p3.y, p4.y);
+  const maxX = Math.max(p1.x, p2.x, p3.x, p4.x);
+  const maxY = Math.max(p1.y, p2.y, p3.y, p4.y);
+
+  return {
+    x: minX,
+    y: minY,
+    width: maxX - minX,
+    height: maxY - minY,
+  };
+}
+
+export const checkAvaliableDragPlace = (node) => {
+  //const node = findShape(selectedShapeName)
+  //const canvasStore = useCanvasStore()
+  //const shapeShadow = canvasStore.shapeShadow?.getNode()
+  const selectedNode = node ? node : findShape(selectedShapeName)
+  const box = getTotalBox(selectedNode.getClientRect());
+
+  const absPos = selectedNode.getAbsolutePosition();
+  const offsetX = box.x - absPos.x;
+  const offsetY = box.y - absPos.y;
+
+  let isValid = true
+
+  const newAbsPos = { ...absPos };
+  if (box.x < 0) {
+    newAbsPos.x = -offsetX;
+    isValid = false
+  }
+  if (box.y < 0) {
+    newAbsPos.y = -offsetY;
+    isValid = false
+
+  }
+  if (box.x + box.width > konvaConfig.width) {
+    newAbsPos.x = konvaConfig.width - box.width - offsetX;
+    isValid = false
+
+  }
+  if (box.y + box.height > konvaConfig.height) {
+    newAbsPos.y = konvaConfig.height - box.height - offsetY;
+    isValid = false
+  }
+
+  console.log('isValid', isValid);
+  
+
+  selectedNode.setAbsolutePosition(newAbsPos);
+}
+// -------------------------------------------

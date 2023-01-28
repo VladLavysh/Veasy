@@ -79,6 +79,14 @@ export type ToolShadowConfig = {
   dash: [15, 2]
 }
 
+export type TransformerData = {
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  rotation: number,
+}
+
 export type loginUserData = {
   email: string,
   password: string
