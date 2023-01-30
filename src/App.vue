@@ -11,6 +11,6 @@ import Creator from './views/Creator.vue'
 <style>
 /* Overriding the default color of the active tab */
 .n-tabs-tab--active {
-  background-color: #c4d9ed !important;
+  background-color: #deefff !important;
 }
 </style>

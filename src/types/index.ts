@@ -87,6 +87,16 @@ export type TransformerData = {
   rotation: number,
 }
 
+export type CanvasSettings = {
+  name: string,
+  backgroundColor: string,
+  gridStatus: string,
+  size: {
+    width: number,
+    height: number
+  },
+}
+
 export type loginUserData = {
   email: string,
   password: string

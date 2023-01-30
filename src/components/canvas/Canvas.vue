@@ -119,6 +119,10 @@ const changeHeaderStyle = (event: Event) => {
   header.classList.toggle('header-scrolled', target.scrollTop > 40)
 }
 
+const testFun = () => {
+  console.log('test')
+}
+
 onMounted(() => {
   canvasStore.setTransformer(transformer.value as Transformer)
 })
@@ -142,7 +146,8 @@ onMounted(() => {
       </div>
     </div>
 
-    <div class="canvas-section__canvas" @dragover.prevent="dragHandler(true)" @dragleave="dragHandler(false)">
+    <div class="canvas-section__canvas" @dragover.prevent="dragHandler(true)" @dragleave="dragHandler(false)"
+      @keyup.enter="testFun">
       <v-stage :config="konvaConfig" ref="stage" @touchstart="handleStageMouseDown($event)"
         @mousedown="handleStageMouseDown($event)">
 
