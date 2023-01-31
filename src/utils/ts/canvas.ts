@@ -7,16 +7,16 @@ import { Stage } from "konva/lib/Stage"
 import { Text } from "konva/lib/shapes/Text"
 
 // ----- Konfigs -----
-export const konvaConfig = {
-  width: 800,
-  height: 1120
-}
+// export const konvaConfig = {
+//   width: 800,
+//   height: 1120
+// }
 export const canvasBackgroundConfig = {
   name: 'canvas-background',
   x: 0,
   y: 0,
-  width: konvaConfig.width,
-  height: konvaConfig.height,
+  // width: konvaConfig.width,
+  // height: konvaConfig.height,
 
   draggable: false,
   listening: false
@@ -249,7 +249,10 @@ export const addToCanvas = (e: MouseEvent, { name, konvaName, id }: ToolFromBar)
   canvasStore.addNewTool(config)
 
   canvasStore.changeAddingStatus(false)
-  canvasStore.changeGridStatus(false)
+
+  if (canvasStore.canvasSettings.gridStatus === 'default') {
+    canvasStore.changeGridStatus(false)
+  }
 }
 
 export const removeFromCanvas = (toolId: string) => {
@@ -265,8 +268,9 @@ export const removeFromCanvas = (toolId: string) => {
 export const downloadCanvas = (stageElem: Stage, fileName: string, fileType: string) => {
   const stage = stageElem.getStage()
   const canvasStore = useCanvasStore()
+  const { width, height } = canvasStore.canvasSettings
 
-  const pdf = new jsPDF('p', 'px', [konvaConfig.width, konvaConfig.height])
+  const pdf = new jsPDF('p', 'px', [width, height])
   pdf.setTextColor('#000000')
 
   console.log('fileType', fileType);
@@ -293,8 +297,8 @@ export const downloadCanvas = (stageElem: Stage, fileName: string, fileType: str
       stage.toDataURL({ pixelRatio: 2 }),
       0,
       0,
-      konvaConfig.width,
-      konvaConfig.height
+      width,
+      height
     )
 
     pdf.save(`${fileName}.${fileType}`);
@@ -304,8 +308,8 @@ export const downloadCanvas = (stageElem: Stage, fileName: string, fileType: str
       mimeType: `image/${fileType}`,
       x: 0,
       y: 0,
-      width: konvaConfig.width,
-      height: konvaConfig.height,
+      width,
+      height,
       pixelRatio: 2
     });
 
@@ -341,10 +345,10 @@ const getTotalBox = (box) => {
   let maxY = -Infinity;
 
   //boxes.forEach((box) => {
-    minX = Math.min(minX, box.x);
-    minY = Math.min(minY, box.y);
-    maxX = Math.max(maxX, box.x + box.width);
-    maxY = Math.max(maxY, box.y + box.height);
+  minX = Math.min(minX, box.x);
+  minY = Math.min(minY, box.y);
+  maxX = Math.max(maxX, box.x + box.width);
+  maxY = Math.max(maxY, box.y + box.height);
   //});
   return {
     x: minX,
@@ -367,7 +371,7 @@ const getCorner = (pivotX, pivotY, diffX, diffY, angle) => {
   return { x: x, y: y };
 }
 
-function getClientRect (rotatedBox) {
+function getClientRect(rotatedBox) {
   const { x, y, width, height } = rotatedBox;
   const rad = rotatedBox.rotation;
 
@@ -391,7 +395,9 @@ function getClientRect (rotatedBox) {
 
 export const checkAvaliableDragPlace = (node) => {
   //const node = findShape(selectedShapeName)
-  //const canvasStore = useCanvasStore()
+  const canvasStore = useCanvasStore()
+  const { width, height } = canvasStore.canvasSettings
+
   //const shapeShadow = canvasStore.shapeShadow?.getNode()
   const selectedNode = node ? node : findShape(selectedShapeName)
   const box = getTotalBox(selectedNode.getClientRect());
@@ -412,18 +418,18 @@ export const checkAvaliableDragPlace = (node) => {
     isValid = false
 
   }
-  if (box.x + box.width > konvaConfig.width) {
-    newAbsPos.x = konvaConfig.width - box.width - offsetX;
+  if (box.x + box.width > width) {
+    newAbsPos.x = width - box.width - offsetX;
     isValid = false
 
   }
-  if (box.y + box.height > konvaConfig.height) {
-    newAbsPos.y = konvaConfig.height - box.height - offsetY;
+  if (box.y + box.height > height) {
+    newAbsPos.y = height - box.height - offsetY;
     isValid = false
   }
 
   console.log('isValid', isValid);
-  
+
 
   selectedNode.setAbsolutePosition(newAbsPos);
 }

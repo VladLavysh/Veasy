@@ -4,8 +4,8 @@ import { Transformer } from 'konva/lib/shapes/Transformer'
 import { Stage } from 'konva/lib/Stage';
 import { Shape } from 'konva/lib/Shape';
 import { Save, UserProfile, SettingsAdjust } from '@vicons/carbon'
-import { MessageReactive, useMessage } from 'naive-ui'
-import { konvaConfig, canvasBackgroundConfig, transformerConfig, handleStageMouseDown, handleTransformEnd, downloadCanvas, saveCanvas, checkAvaliableDragPlace } from '../../utils/ts/canvas'
+import { MessageReactive, NButton, NIcon, useMessage } from 'naive-ui'
+import { canvasBackgroundConfig, transformerConfig, handleStageMouseDown, handleTransformEnd, downloadCanvas, saveCanvas, checkAvaliableDragPlace } from '../../utils/ts/canvas'
 import { ToolShadowConfig } from '../../types/index'
 import { useCanvasStore } from '../../store/canvas'
 import SaveModal from './SaveModal.vue'
@@ -34,27 +34,48 @@ let shadowPosition = reactive<ToolShadowConfig>({
 const message = useMessage()
 const canvasStore = useCanvasStore()
 
-const isGridVisible = computed(() => canvasStore.showGrid)
+const gridStatus = computed(() => canvasStore.canvasSettings.gridStatus)
+const isGridVisible = computed(() => canvasStore.showGrid || gridStatus.value === 'always')
 const isShadowVisible = computed(() => canvasStore.showShapeShadow)
+
+const stageConfig = computed(() => {
+  const {width, height} = canvasStore.canvasSettings
+
+  return {width, height}
+})
+
+const stageBackgroundConfig = computed(() => {
+  return { 
+    ...canvasBackgroundConfig, 
+    ...stageConfig.value,
+    fill: canvasStore.canvasSettings.backgroundColor
+  }
+})
 
 const dragHandler = (isOver: Boolean) => {
   if (canvasStore.isAddingAllowed === isOver) {
     return
   }
 
-  canvasStore.changeGridStatus(isOver)
+  if (gridStatus.value === 'default') {
+    canvasStore.changeGridStatus(isOver)
+  }
   canvasStore.changeAddingStatus(isOver)
 }
 
 const dragEndHandler = (event: MouseEvent) => {
-  canvasStore.changeGridStatus(false)
+  if (gridStatus.value === 'default') {
+    canvasStore.changeGridStatus(false)
+  }
   canvasStore.changeShadowStatus(false)
 
   handleTransformEnd(event, shadowPosition.x, shadowPosition.y)
 }
 
 const tranAndDragStartHandler = () => {
-  canvasStore.changeGridStatus(true)
+  if (gridStatus.value === 'default') {
+    canvasStore.changeGridStatus(true)
+  }
   canvasStore.changeShadowStatus(true)
 }
 
@@ -148,12 +169,12 @@ onMounted(() => {
 
     <div class="canvas-section__canvas" @dragover.prevent="dragHandler(true)" @dragleave="dragHandler(false)"
       @keyup.enter="testFun">
-      <v-stage :config="konvaConfig" ref="stage" @touchstart="handleStageMouseDown($event)"
+      <v-stage :config="stageConfig" ref="stage" @touchstart="handleStageMouseDown($event)"
         @mousedown="handleStageMouseDown($event)">
 
         <v-layer>
           <!-- BG for png\jpeg -->
-          <v-rect :config="{ ...canvasBackgroundConfig, fill: canvasStore.canvasSettings.backgroundColor }" />
+          <v-rect :config="stageBackgroundConfig" />
 
           <!-- Grid -->
           <CanvasGrid v-if="isGridVisible" />
@@ -239,12 +260,10 @@ onMounted(() => {
   }
 
   &__canvas {
-    width: 800px;
-    height: 1120px;
+    width: fit-content;
 
     margin: auto;
 
-    //border: 2px solid #ccc;
     box-shadow: 0 0 5px 1px #bebebe;
     background-color: #fff;
   }

@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { konvaConfig } from '../../utils/ts/canvas'
+import { useCanvasStore } from '../../store/canvas';
+
+const canvasStore = useCanvasStore()
+const {width, height} = canvasStore.canvasSettings
 
 const divider = 20
-const xLinesCount = Math.round(konvaConfig.width / divider)
-const yLinesCount = Math.round(konvaConfig.height / divider)
+const xLinesCount = Math.round(width / divider)
+const yLinesCount = Math.round(height / divider)
 </script>
 
 <!-- Grid 2.0 -->
@@ -14,7 +17,7 @@ const yLinesCount = Math.round(konvaConfig.height / divider)
     <v-line v-for="n in xLinesCount" :key="n" :config="{
       x: n * divider,
       y: 0,
-      points: [0, 0, 0, konvaConfig.height],
+      points: [0, 0, 0, height],
       stroke: '#ccc',
       strokeWidth: 1,
       opacity: 0.6,
@@ -23,7 +26,7 @@ const yLinesCount = Math.round(konvaConfig.height / divider)
     <v-line v-for="n in yLinesCount" :key="n" :config="{
       x: 0,
       y: n * divider,
-      points: [0, 0, konvaConfig.width, 0],
+      points: [0, 0, width, 0],
       stroke: '#ccc',
       strokeWidth: 1,
       opacity: 0.6,

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import { ToolConfig, ActiveTools } from '../types/index'
+import { ToolConfig, ActiveTools, CanvasSettings } from '../types/index'
 import { Transformer } from 'konva/lib/shapes/Transformer'
 
 export const useCanvasStore = defineStore('canvas', {
@@ -8,7 +8,10 @@ export const useCanvasStore = defineStore('canvas', {
     canvasSettings: {
       name: 'Canvas name',
       backgroundColor: '#F5F5F5FF',
-    } as { name: string, backgroundColor: string },
+      gridStatus: 'default',
+      width: 800,
+      height: 1120
+    } as CanvasSettings,
     tools: [] as ToolConfig[],
     selectedTool: null as ToolConfig | null,
     transformer: null as Transformer | null,

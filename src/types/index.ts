@@ -91,10 +91,20 @@ export type CanvasSettings = {
   name: string,
   backgroundColor: string,
   gridStatus: string,
-  size: {
-    width: number,
-    height: number
-  },
+  width: number,
+  height: number
+}
+
+export type CanvasBackgroundConfig = {
+  name: string,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+
+  draggable: boolean,
+  listening: boolean,
+  fill: string
 }
 
 export type loginUserData = {
