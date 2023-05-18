@@ -338,7 +338,7 @@ export const saveCanvas = () => {
 }
 
 // -------------------------------------------
-const getTotalBox = (box) => {
+const getTotalBox = (box: any) => {
   let minX = Infinity;
   let minY = Infinity;
   let maxX = -Infinity;
@@ -358,7 +358,7 @@ const getTotalBox = (box) => {
   };
 }
 
-const getCorner = (pivotX, pivotY, diffX, diffY, angle) => {
+const getCorner = (pivotX: any, pivotY: any, diffX: any, diffY: any, angle: any) => {
   const distance = Math.sqrt(diffX * diffX + diffY * diffY);
 
   /// find angle from pivot to corner
@@ -371,7 +371,7 @@ const getCorner = (pivotX, pivotY, diffX, diffY, angle) => {
   return { x: x, y: y };
 }
 
-function getClientRect(rotatedBox) {
+function getClientRect(rotatedBox: any) {
   const { x, y, width, height } = rotatedBox;
   const rad = rotatedBox.rotation;
 
@@ -393,7 +393,7 @@ function getClientRect(rotatedBox) {
   };
 }
 
-export const checkAvaliableDragPlace = (node) => {
+export const checkAvaliableDragPlace = (node: any) => {
   //const node = findShape(selectedShapeName)
   const canvasStore = useCanvasStore()
   const { width, height } = canvasStore.canvasSettings

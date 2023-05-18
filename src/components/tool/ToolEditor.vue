@@ -1,9 +1,13 @@
 <script setup lang="ts">
-import { computed, Transition } from 'vue'
-import { Unlocked, Locked } from '@vicons/carbon'
-import { useCanvasStore } from '../../store/canvas'
-import { borderTypes, textConfig, normalizeTextConfigLabel } from '../../utils/ts/tools'
-import { ToolEditItem, ToolConfig, UploadImage } from '../../types/index'
+import { computed, Transition } from "vue"
+import { Unlocked, Locked } from "@vicons/carbon"
+import { useCanvasStore } from "../../store/canvas"
+import {
+  borderTypes,
+  textConfig,
+  normalizeTextConfigLabel,
+} from "../../utils/ts/tools"
+import { ToolEditItem, ToolConfig, UploadImage } from "../../types/index"
 
 const store = useCanvasStore()
 
@@ -17,24 +21,18 @@ const lockerComponent = computed(() => {
 })
 
 const lockerColor = computed<string>(() => {
-  return tool.value?.draggable
-    ? '#aff9c4'
-    : '#ffad9f'
+  return tool.value?.draggable ? "#aff9c4" : "#ffad9f"
 })
 
 const normalizedToolName = computed<string>(() => {
-  return tool.value
-    ? tool.value.name.match(/([^_]+)/)![0]
-    : ''
+  return tool.value ? tool.value.name.match(/([^_]+)/)![0] : ""
 })
 
 const toolBorderType = computed<string | undefined>(() => {
   if (!tool.value) return
   if (!Array.isArray(tool.value.dash)) return
 
-  return tool.value.dash[0] === 0
-    ? 'solid'
-    : 'dashed'
+  return tool.value.dash[0] === 0 ? "solid" : "dashed"
 })
 
 // Helper functions
@@ -57,20 +55,29 @@ const changeBorderVisibility = (isVisible: boolean) => {
 }
 
 // TODO: Fix type errors
-const editItemClickHandler = ({ _, configLabel, optionLabel, isHandler }: ToolEditItem) => {
+const editItemClickHandler = ({
+  _,
+  configLabel,
+  optionLabel,
+  isHandler,
+}: ToolEditItem) => {
   if (!tool.value) return
 
   let normalizedItemName = normalizeTextConfigLabel(configLabel)
 
   if (!(normalizedItemName in tool.value)) return
 
-  if ((isHandler && tool.value[normalizedItemName] === optionLabel) && (configLabel === 'Font style' || configLabel === 'Text decoration')) {
-    tool.value[normalizedItemName] = 'normal'
+  if (
+    isHandler &&
+    tool.value[normalizedItemName] === optionLabel &&
+    (configLabel === "Font style" || configLabel === "Text decoration")
+  ) {
+    tool.value[normalizedItemName] = "normal" as never
     return
   }
 
   if (isHandler) {
-    tool.value[normalizedItemName] = optionLabel
+    tool.value[normalizedItemName] = optionLabel as never
     return
   }
 
@@ -78,7 +85,7 @@ const editItemClickHandler = ({ _, configLabel, optionLabel, isHandler }: ToolEd
 }
 
 const beforeImageUpload = (data: UploadImage) => {
-  console.log(data.file.name);
+  console.log(data.file.name)
 
   // TODO upload image to server
   //tool.value?.image?.src = `http://127.0.0.1:5173/${data.file.name}`
@@ -107,7 +114,12 @@ const beforeImageUpload = (data: UploadImage) => {
         <!-- Tool name -->
         <div class="items__label">
           <span>{{ normalizedToolName }}</span>
-          <n-icon size="20" :color="lockerColor" :component="lockerComponent" @click="toggleToolDraggable" />
+          <n-icon
+            size="20"
+            :color="lockerColor"
+            :component="lockerComponent"
+            @click="toggleToolDraggable"
+          />
         </div>
 
         <!-- Text -->
@@ -118,21 +130,41 @@ const beforeImageUpload = (data: UploadImage) => {
           </div>
           <div class="item">
             <span>Font size</span>
-            <n-input-number v-model:value="tool.fontSize" :validator="(x: number) => x > 0" size="medium" />
+            <n-input-number
+              v-model:value="tool.fontSize"
+              :validator="(x: number) => x > 0"
+              size="medium"
+            />
           </div>
           <div class="item" v-for="config of textConfig" :key="config.label">
             <span>{{ config.label }}</span>
 
             <!-- Font Family -->
-            <n-select v-if="config.label === 'Font family'" v-model:value="tool.fontFamily" size="medium"
-              :options="config.options" />
+            <n-select
+              v-if="config.label === 'Font family'"
+              v-model:value="tool.fontFamily"
+              size="medium"
+              :options="config.options"
+            />
 
             <!-- Font Style, Text Decoration, Horizontal Align, Vertical Align -->
             <div v-else class="item__font-style">
-              <n-icon-wrapper v-for="option of config.options" :key="option.label" :size="24" :border-radius="5"
-                @click="editItemClickHandler({ _: null, configLabel: config.label, optionLabel: option.label as keyof ToolConfig, isHandler: true })"
+              <n-icon-wrapper
+                v-for="option of config.options"
+                :key="option.label"
+                :size="24"
+                :border-radius="5"
+                @click="
+                  editItemClickHandler({
+                    _: null,
+                    configLabel: config.label,
+                    optionLabel: option.label as keyof ToolConfig,
+                    isHandler: true,
+                  })
+                "
                 color="#fff"
-                :class="[editItemClickHandler({ _: null, configLabel: config.label, optionLabel: option.label as keyof ToolConfig, isHandler: false }) ? 'icon-active' : '']">
+                :class="[editItemClickHandler({ _: null, configLabel: config.label, optionLabel: option.label as keyof ToolConfig, isHandler: false }) ? 'icon-active' : '']"
+              >
                 <n-icon :size="18" :component="option.value" color="#333639" />
               </n-icon-wrapper>
             </div>
@@ -144,9 +176,15 @@ const beforeImageUpload = (data: UploadImage) => {
           <h3 class="item__label">Image</h3>
           <div class="item item-no-margin">
             <span>Source</span>
-            <n-input v-model:value="tool.image.src" type="text" placeholder="Image sourse" />
-            <n-upload action="https://www.mocky.io/v2/5e4bafc63100007100d8b70f" @before-upload="beforeImageUpload">
-              <n-button class="upload-btb" secondary color="#fff">Upload image</n-button>
+            <!--v-model:value="tool.image.src"-->
+            <n-input type="text" placeholder="Image sourse" />
+            <n-upload
+              action="https://www.mocky.io/v2/5e4bafc63100007100d8b70f"
+              @before-upload="beforeImageUpload"
+            >
+              <n-button class="upload-btb" secondary color="#fff"
+                >Upload image</n-button
+              >
             </n-upload>
           </div>
         </div>
@@ -154,11 +192,21 @@ const beforeImageUpload = (data: UploadImage) => {
         <!-- Color -->
         <div class="items__body">
           <h3 class="item__label">Color</h3>
-          <div class="item item-no-margin" v-if="normalizedToolName !== 'Barrier' && normalizedToolName !== 'Image'">
+          <div
+            class="item item-no-margin"
+            v-if="
+              normalizedToolName !== 'Barrier' && normalizedToolName !== 'Image'
+            "
+          >
             <span>Fill</span>
             <n-color-picker v-model:value="tool.fill" />
           </div>
-          <div class="item" v-if="normalizedToolName !== 'Arrow' && normalizedToolName !== 'Text'">
+          <div
+            class="item"
+            v-if="
+              normalizedToolName !== 'Arrow' && normalizedToolName !== 'Text'
+            "
+          >
             <span>Stroke</span>
             <n-color-picker v-model:value="tool.stroke" />
           </div>
@@ -168,22 +216,38 @@ const beforeImageUpload = (data: UploadImage) => {
         <div class="items__body" v-if="normalizedToolName === 'Container'">
           <div class="item__label item__label-border">
             <h3>Border</h3>
-            <n-switch @update:value="changeBorderVisibility" :value="!!tool.strokeWidth" size="small" />
+            <n-switch
+              @update:value="changeBorderVisibility"
+              :value="!!tool.strokeWidth"
+              size="small"
+            />
           </div>
           <div class="item">
             <span>Type</span>
-            <n-select :value="toolBorderType" @update:value="changeToolBorder" :options="borderTypes"
-              :disabled="!(!!tool.strokeWidth)" />
+            <n-select
+              :value="toolBorderType"
+              @update:value="changeToolBorder"
+              :options="borderTypes"
+              :disabled="!!!tool.strokeWidth"
+            />
           </div>
           <div class="item">
             <span>Radius</span>
-            <n-input-number v-model:value="tool.cornerRadius" :validator="(x: number) => x > 0"
-              :disabled="!(!!tool.strokeWidth)" size="medium" />
+            <n-input-number
+              v-model:value="tool.cornerRadius"
+              :validator="(x: number) => x > 0"
+              :disabled="!!!tool.strokeWidth"
+              size="medium"
+            />
           </div>
           <div class="item">
             <span>Width</span>
-            <n-input-number v-model:value="tool.strokeWidth" :validator="(x: number) => x > 0"
-              :disabled="!(!!tool.strokeWidth)" size="medium" />
+            <n-input-number
+              v-model:value="tool.strokeWidth"
+              :validator="(x: number) => x > 0"
+              :disabled="!!!tool.strokeWidth"
+              size="medium"
+            />
           </div>
         </div>
       </div>
@@ -193,16 +257,16 @@ const beforeImageUpload = (data: UploadImage) => {
 </template>
 
 <style scoped lang="scss">
-@import '../../utils/css/mixins.scss';
+@import "../../utils/css/mixins.scss";
 
 .tool-editor {
   width: 400px;
   min-width: 250px;
   height: 100%;
 
-  transition: all .3s ease-in-out;
+  transition: all 0.3s ease-in-out;
   //overflow-y: scroll;
-  background-color: #7F91A1;
+  background-color: #7f91a1;
 
   &__label {
     text-align: center;
@@ -259,8 +323,8 @@ const beforeImageUpload = (data: UploadImage) => {
 
   user-select: none;
 
-  >span {
-    font-size: 0.9rem
+  > span {
+    font-size: 0.9rem;
   }
 
   &-no-margin {
