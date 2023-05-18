@@ -1,75 +1,33 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { v4 as uuidv4 } from 'uuid'
-import ToolsBarItem from './ToolsBarItem.vue'
-import { ToolFromBar } from '../../types';
-import { toolsBarItems } from '../../utils/ts/tools'
-import { addToCanvas, removeFromCanvas } from '../../utils/ts/canvas'
-import { useCanvasStore } from '../../store/canvas'
-import { Close } from '@vicons/carbon'
+import { ref } from 'vue'
 
-const props = defineProps({
-  isToolsPanelOpen: Boolean
-})
+import { useToolsStore } from '../../store/tools'
+import ToolsBarItems from './ToolsBarItems.vue'
+import ToolsBarActive from './ToolsBarActive.vue'
 
-const store = useCanvasStore()
+const store = useToolsStore()
 
-const newToolData = ({ name, konvaName }: ToolFromBar) => ({
-  name,
-  konvaName,
-  id: uuidv4()
-})
-
-const draggingElementPos = (event: DragEvent) => {
-  if (event.dataTransfer) {
-    event.dataTransfer.setDragImage((event.target as Element), 45, 45);
-  }
-}
-
-const isListVisible = ref(false)
-
-const toggleListVisibility = () => {
-  if (!props.isToolsPanelOpen) return
-
-  isListVisible.value = !isListVisible.value
+const toggleHandler = () => {
+  store.changePanelStatus(!store.isPanelOpen)
 }
 </script>
 
 <template>
-  <aside class="tools-bar" ref="tools_bar">
-    <div class="tools-bar__items">
-      <h1 class="tools-bar__label">Tools</h1>
+  <aside :class="[store.isPanelOpen ? 'tools-bar-wide' : '', 'tools-bar']" ref="tools_bar">
+    <div class="toggle-btn" @click="toggleHandler" />
 
-      <div class="tools-bar__items-content">
-        <ToolsBarItem v-for="item of toolsBarItems" :key="item.name" :tool="item" draggable="true"
-          @dragstart="draggingElementPos" @dragend="addToCanvas($event, newToolData(item))" />
-      </div>
-    </div>
-
-    <div :class="['tools-bar__list', isListVisible ? 'list-active' : '']" @click="toggleListVisibility()">
-      <h1 class="tools-bar__label">Active</h1>
-
-      <Transition name="list" mode="out-in">
-        <div v-if="isListVisible">
-          <ul v-if="store.getToolsName.length">
-            <li v-for="(itemName, idx) in store.getToolsName" :key="idx" draggable="true">
-              <span>- {{ itemName }}</span>
-              <n-icon size="20" :component="Close" @click.stop="removeFromCanvas(idx)" />
-            </li>
-          </ul>
-          <h3 v-else>There are no tools here yet</h3>
-        </div>
-      </Transition>
-    </div>
-
+    <ToolsBarItems />
+    <ToolsBarActive />
   </aside>
 </template>
 
 <style scoped lang="scss">
-@import '../../utils/css/mixins.scss';
-
 .tools-bar {
   position: relative;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 
   width: 120px;
   min-width: 120px;
@@ -82,93 +40,71 @@ const toggleListVisibility = () => {
   @media screen and (max-width: 850px) {
     display: none;
   }
-
-  &__label {
-    position: sticky;
-    top: 5px;
-
-    width: 100%;
-    height: 30px;
-
-    text-align: center;
-    align-self: flex-start;
-    color: #fff;
-  }
-
-  &__items {
-    @include flex-column;
-    width: 100%;
-    height: calc(100% - 65px);
-
-    padding: 5px 10px;
-    box-sizing: border-box;
-
-    overflow-y: scroll;
-  }
-
-  &__items-content {
-    @include flex-row;
-    flex-wrap: wrap;
-    gap: 15px;
-  }
-
-  &__list {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-
-    width: 100%;
-    height: 65px;
-
-    background: #7f91a1;
-    box-shadow: 0 0 10px #5e5e5e;
-
-    transition: all .3s ease-in-out;
-    cursor: pointer;
-
-    overflow-y: scroll;
-
-    h3 {
-      width: 100%;
-      text-align: center;
-      color: #fff;
-    }
-
-    li {
-      @include flex-row;
-      justify-content: flex-start;
-      gap: 10px;
-
-      list-style-type: none;
-
-      color: #e3e8ed;
-
-      i {
-        padding: 5px;
-      }
-    }
-  }
-
-  .list-active {
-    height: 50%;
-    overflow-y: scroll;
-  }
 }
 
 .tools-bar-wide {
   width: 500px;
+
+  .toggle-btn {
+    left: 98%;
+
+    &::before {
+      transform: translate(-60%, -200%) rotate(-40deg);
+    }
+
+    &::after {
+      transform: translate(-60%, 120%) rotate(40deg);
+    }
+  }
 }
 
-.list-enter-active,
-.list-leave-active {
-  transition: all 0.3s ease-out;
-}
+// Toggle button styles
+.toggle-btn {
+  position: absolute;
+  left: 95%;
+  top: 15px;
 
-.list-enter-from {
-  opacity: 0;
-}
+  width: 20px;
+  height: 20px;
 
-.list-leave-to {
-  opacity: 0;
+  background-color: #ffffff;
+  box-shadow: 4px 0 5px 0 #bebebe;
+
+  font-size: 1.2rem;
+  color: #535353;
+  padding: 5px;
+
+  cursor: pointer;
+  border-radius: 5px;
+  transition: all .2s ease-in-out;
+
+  z-index: 9;
+
+  &::before,
+  &::after {
+    content: '';
+
+    position: absolute;
+    left: 50%;
+    top: 50%;
+
+    transition: all .2s ease-in-out;
+    border-radius: 10px;
+
+    width: 11px;
+    height: 2px;
+
+    background-color: #525252;
+
+    z-index: 9;
+  }
+
+  &::before {
+    transform: translate(-40%, -200%) rotate(40deg);
+  }
+
+  &::after {
+    transform: translate(-40%, 100%) rotate(-40deg);
+  }
 }
 </style>

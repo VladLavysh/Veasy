@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { useToolsStore } from '../../store/tools'
+
+const store = useToolsStore()
+
 defineProps({
   tool: {
     type: Object,
@@ -8,7 +12,7 @@ defineProps({
 </script>
 
 <template>
-  <div class="item">
+  <div :class="[!store.isPanelOpen ? 'item-small' : '', 'item']">
     <span>{{ tool.name }}</span>
     <n-icon size="35">
       <component :is="tool.component" />
@@ -29,6 +33,10 @@ defineProps({
 
   transition: all 0.2s ease-in-out;
 
+  i {
+    transition: all 0.2s ease-in-out;
+  }
+
   &:hover {
     border-color: #98acbf;
   }
@@ -36,6 +44,15 @@ defineProps({
   &:active {
     border-radius: 0;
     cursor: grabbing;
+  }
+}
+
+.item-small {
+  @include nav-and-tools-button(70px, grab, 5px, 7px);
+  height: 50px;
+
+  i {
+    font-size: 22px !important;
   }
 }
 </style>

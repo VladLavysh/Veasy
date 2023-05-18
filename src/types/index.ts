@@ -23,6 +23,11 @@ export type ToolFromBar = {
   id?: string,
 }
 
+export type ActiveTools = {
+  name: string,
+  id: string,
+}
+
 export type ToolConfig = {
   name: string,
   konvaName: string,
@@ -31,7 +36,7 @@ export type ToolConfig = {
   draggable: boolean,
   rotation: number,
 
-  //zIndex: number
+  strokeScaleEnabled: Boolean
 
   x?: number,
   y?: number,
@@ -41,6 +46,7 @@ export type ToolConfig = {
   width?: number,
   height?: number,
   radius?: number,
+  cornerRadius?: number,
 
   fill?: string,
   stroke?: string,
@@ -49,7 +55,7 @@ export type ToolConfig = {
 
   image?: HTMLImageElement,
   text?: string,
-  fontFamily? : string,
+  fontFamily?: string,
   fontSize?: number,
   fontStyle?: string,
   fontVariant?: string,
@@ -58,6 +64,47 @@ export type ToolConfig = {
   verticalAlign?: string
 
   points?: number[],
+}
+
+export type ToolShadowConfig = {
+  width: number,
+  height: number,
+  x: number | null,
+  y: number | null
+  rotation: number,
+  fill: '#56e398',
+  opacity: 0.5,
+  stroke: '#37ba74',
+  strokeWidth: 2,
+  dash: [15, 2]
+}
+
+export type TransformerData = {
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  rotation: number,
+}
+
+export type CanvasSettings = {
+  name: string,
+  backgroundColor: string,
+  gridStatus: string,
+  width: number,
+  height: number
+}
+
+export type CanvasBackgroundConfig = {
+  name: string,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+
+  draggable: boolean,
+  listening: boolean,
+  fill: string
 }
 
 export type loginUserData = {
