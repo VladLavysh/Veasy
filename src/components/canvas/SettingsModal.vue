@@ -18,7 +18,7 @@ const canvasStore = useCanvasStore()
 const message = useMessage()
 
 // const settings = computed<CanvasSettings>(() => Object.assign({}, {...canvasStore.canvasSettings}))
-const settings = reactive<CanvasSettings>({...canvasStore.canvasSettings})
+const settings = reactive<CanvasSettings>({ ...canvasStore.canvasSettings })
 
 
 // Methods
@@ -46,7 +46,7 @@ const changeGridStatus = (e: Event) => {
 }
 
 const applySettingsChanges = () => {
-  const {text, status} = validateCanvasSettings()
+  const { text, status } = validateCanvasSettings()
 
   if (!status) {
     message.info(text)
@@ -54,7 +54,9 @@ const applySettingsChanges = () => {
   }
 
   canvasStore.updateCanvasSettings(settings)
+
   message.success('Canvas settings have been updated!')
+  emit('update:isOpen', false)
 }
 
 </script>

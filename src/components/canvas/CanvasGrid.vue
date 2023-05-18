@@ -1,12 +1,18 @@
 <script setup lang="ts">
+import { onMounted } from 'vue';
 import { useCanvasStore } from '../../store/canvas';
 
 const canvasStore = useCanvasStore()
-const {width, height} = canvasStore.canvasSettings
+const { width, height } = canvasStore.canvasSettings
 
+//const dividerX = width / 30
+//const dividerY = height / 30
 const divider = 20
 const xLinesCount = Math.round(width / divider)
 const yLinesCount = Math.round(height / divider)
+onMounted(() => {
+  console.log('CanvasGrid mounted')
+})
 </script>
 
 <!-- Grid 2.0 -->

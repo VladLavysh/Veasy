@@ -39,14 +39,14 @@ const isGridVisible = computed(() => canvasStore.showGrid || gridStatus.value ==
 const isShadowVisible = computed(() => canvasStore.showShapeShadow)
 
 const stageConfig = computed(() => {
-  const {width, height} = canvasStore.canvasSettings
+  const { width, height } = canvasStore.canvasSettings
 
-  return {width, height}
+  return { width, height }
 })
 
 const stageBackgroundConfig = computed(() => {
-  return { 
-    ...canvasBackgroundConfig, 
+  return {
+    ...canvasBackgroundConfig,
     ...stageConfig.value,
     fill: canvasStore.canvasSettings.backgroundColor
   }
@@ -140,10 +140,6 @@ const changeHeaderStyle = (event: Event) => {
   header.classList.toggle('header-scrolled', target.scrollTop > 40)
 }
 
-const testFun = () => {
-  console.log('test')
-}
-
 onMounted(() => {
   canvasStore.setTransformer(transformer.value as Transformer)
 })
@@ -167,8 +163,7 @@ onMounted(() => {
       </div>
     </div>
 
-    <div class="canvas-section__canvas" @dragover.prevent="dragHandler(true)" @dragleave="dragHandler(false)"
-      @keyup.enter="testFun">
+    <div class="canvas-section__canvas" @dragover.prevent="dragHandler(true)" @dragleave="dragHandler(false)">
       <v-stage :config="stageConfig" ref="stage" @touchstart="handleStageMouseDown($event)"
         @mousedown="handleStageMouseDown($event)">
 
@@ -177,7 +172,7 @@ onMounted(() => {
           <v-rect :config="stageBackgroundConfig" />
 
           <!-- Grid -->
-          <CanvasGrid v-if="isGridVisible" />
+          <CanvasGrid v-if="isGridVisible" :key="[stageConfig.width, stageConfig.height].toString()" />
 
           <!-- Shape shadow -->
           <v-rect v-if="isShadowVisible" :config="shadowPosition" ref="shadow" />
@@ -209,6 +204,7 @@ onMounted(() => {
 
 .canvas-section {
   width: 100%;
+  min-height: 100vh;
   padding-bottom: 40px;
 
   overflow-y: scroll;
@@ -269,9 +265,9 @@ onMounted(() => {
   }
 
   &__save {
-    position: sticky;
-    bottom: -20px;
-    left: 95%;
+    position: fixed;
+    bottom: 25px;
+    right: 330px;
 
     width: 50px;
     height: 50px;
@@ -279,17 +275,17 @@ onMounted(() => {
     display: grid;
     place-items: center;
 
-    cursor: pointer;
-    transition: all .25s ease-in-out;
-
     border-radius: 10px;
-
     color: #fff;
     background-color: #7F91A1;
 
+    cursor: pointer;
+    transition: all .25s ease-in-out;
+
     &:hover {
       //color: rgb(32, 32, 32);
-      box-shadow: 0 0 5px 0 #000000;
+      box-shadow: 0 0 5px 0 #484848;
+      transform: scale(1.1);
     }
   }
 }
@@ -298,10 +294,10 @@ onMounted(() => {
   @include flex-row;
 
   // height: 35px;
-  width: 800px;
+  width: 100%;
   justify-content: space-between;
 
-  padding: 0;
+  padding: 0 100px;
   margin: auto;
 
   font-size: 0.75rem;
